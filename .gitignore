@@ -1,3 +1,10 @@
+# Eclipse
+bin/**
+.classpath
+.project
+.settings/**
+
+# Android Studio
 .gradle/**
 .idea/**
 *.iml
