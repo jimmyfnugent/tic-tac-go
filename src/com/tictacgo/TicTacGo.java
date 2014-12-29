@@ -1,4 +1,4 @@
-package com.example.helloandroid;
+package com.tictacgo;
 
 import java.util.ArrayList;
 
@@ -22,6 +22,9 @@ import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.tictacgo.data.Board;
+import com.tictacgo.data.Piece;
 
 
 public class TicTacGo extends Activity {

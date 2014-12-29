@@ -1,11 +1,13 @@
-package com.example.helloandroid;
+package com.tictacgo.data;
 
 import android.content.Context;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
-class Piece extends ImageView {
+import com.tictacgo.R;
+
+public class Piece extends ImageView {
 
 	/**
 	 * An Integer Array representing the position of the Piece.

@@ -1,4 +1,4 @@
-package com.example.helloandroid;
+package com.tictacgo;
 
 import android.content.Context;
 import android.widget.ImageView;
