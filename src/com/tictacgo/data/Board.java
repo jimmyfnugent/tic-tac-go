@@ -8,10 +8,20 @@ import android.view.View;
 
 public class Board {
 
+    public enum Player {
+        X,
+        O
+    }
+
+    /**
+     * The number of spaces per side of the game board.
+     */
+    private static final int SIDE_LENGTH = 3;
+
 	/**
-	 * 1 if it is X's turn. -1 if it is O's turn.
+     * The player who currently has their turn.
 	 */
-	private int turn;
+	private Player turn;
 
 	/**
 	 * An ArrayList of the Pieces currently on the board.
@@ -22,7 +32,7 @@ public class Board {
 	 * The player who goes first.
 	 * Used to decide when to move the Pieces
 	 */
-	private int startTurn;
+	private Player startTurn;
 	
 	/**
 	 * The X (Vertical) position of the next piece to be added
@@ -35,7 +45,7 @@ public class Board {
 	private int posy;
 	
 	/**
-	 * The height of the board
+	 * The height of the board, in pixels.
 	 */
 	private int height;
 	
@@ -47,51 +57,45 @@ public class Board {
 	/**
 	 * Constructor
 	 * 
-	 * @param t The turn select
-	 *     -1 = O
-	 *      0 = Random
-	 *      1 = X
-	 *      
-	 * @param h the hight of the Board.
+	 * @param startingPlayer The player to start. If null, it is chosen randomly.
+	 *
+	 * @param height the height of the Board, in pixels.
 	 * 
-	 * @param c the Context. Used when creating an ImageView
+	 * @param c the Context. Used when creating an ImageView.
 	 */	
-	public Board (int t, int h, Context c) {
+	public Board(Player startingPlayer, int height, Context c) {
 		context = c;
-		height = h;
-		
+		this.height = height;
+
 		/**
 		 * Initializes the pieces ArrayList to all zeros
 		 */
-		pieces = new ArrayList<ArrayList<ArrayList<Piece>>>(3);
-		pieces.add(new ArrayList<ArrayList<Piece>>(3));
-		pieces.add(new ArrayList<ArrayList<Piece>>(3));
-		pieces.add(new ArrayList<ArrayList<Piece>>(3));
-		pieces.get(0).add(new ArrayList<Piece>(2));
-		pieces.get(0).add(new ArrayList<Piece>(2));
-		pieces.get(0).add(new ArrayList<Piece>(2));
-		pieces.get(1).add(new ArrayList<Piece>(2));
-		pieces.get(1).add(new ArrayList<Piece>(2));
-		pieces.get(1).add(new ArrayList<Piece>(2));
-		pieces.get(2).add(new ArrayList<Piece>(2));
-		pieces.get(2).add(new ArrayList<Piece>(2));
-		pieces.get(2).add(new ArrayList<Piece>(2));
-		
+		pieces = new ArrayList<ArrayList<ArrayList<Piece>>>(SIDE_LENGTH);
+		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            // Each space can have up to 2 overlapping pieces.
+            pieces.get(i).add(new ArrayList<Piece>(2));
+            pieces.get(i).add(new ArrayList<Piece>(2));
+            pieces.get(i).add(new ArrayList<Piece>(2));
+        }
+
 		/**
 		 * Sets up turn
 		 */
-		turn = t;
-		if (turn == 0) { //Random first turn
+		turn = startingPlayer;
+		if (turn == null) { //Random first turn
 			if (Math.random() < .5)
-				turn = -1; //O goes first
+				turn = Player.O; //O goes first
 			else
-				turn = 1; //X goes first
+				turn = Player.X; //X goes first
 		}
 		startTurn = turn; //To decide when to move the Pieces
 	}
 	
 	/**
-	 * Create a new Board object that is a clone of the Object b
+	 * Create a new Board object that is a clone of the Board b
 	 * 
 	 * @param b The Board object to clone
 	 */
@@ -104,10 +108,10 @@ public class Board {
 		/**
 		 * Clones the pieces ArrayList
 		 */
-		pieces = new ArrayList<ArrayList<ArrayList<Piece>>>(3);
-		for (int i = 0; i < 3; i++) {
-			pieces.add(new ArrayList<ArrayList<Piece>>(3));
-			for (int j = 0; j < 3; j++) {
+		pieces = new ArrayList<ArrayList<ArrayList<Piece>>>(SIDE_LENGTH);
+		for (int i = 0; i < SIDE_LENGTH; i++) {
+			pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+			for (int j = 0; j < SIDE_LENGTH; j++) {
 				pieces.get(i).add(new ArrayList<Piece>(2));
 				for (int k = 0; k < b.getPieces(i, j).size(); k++) {
 					pieces.get(i).get(j).add(b.getPieces(i, j).get(k).clone()); //Clones the Piece in slot i, j, k
@@ -121,6 +125,7 @@ public class Board {
 	 * 
 	 * @return A clone of this Board object
 	 */
+    @Override
 	public Board clone() {
 		return new Board(this);
 	}
@@ -131,18 +136,14 @@ public class Board {
 	 * @return True if the board is full, false otherwise
 	 */
 	public boolean isCatsGame() {
-		boolean catGame = true;
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < SIDE_LENGTH; i++) {
+			for (int j = 0; j < SIDE_LENGTH; j++) {
 				if (pieces.get(i).get(j).size() == 0) { //There is an empty slot
-					catGame = false; //Not a cat's game
-					break;
+                    return false;
 				}
 			}
-			if (!catGame)
-				break;
 		}
-		return catGame;
+		return true;
 	}
 
 	/**
@@ -232,10 +233,14 @@ public class Board {
 	}
 	
 	/**
-	 * Goes to the next turn by negating the value of turn.
+	 * Goes to the next turn by flipping the value of turn.
 	 */
 	public void nextTurn() {
-		turn = -turn;
+        if (turn == Player.O) {
+            turn = Player.X;
+        } else {
+            turn = Player.O;
+        }
 	}
 
 
@@ -503,38 +508,18 @@ public class Board {
 		return pieces.get(i).get(j);
 	}
 	
-	/**
-	 * Gets startTurn
-	 * 
-	 * @return startTurn
-	 */
-	public int getStartTurn() {
+	public Player getStartTurn() {
 		return startTurn;
 	}
 	
-	/**
-	 * Gets the current turn
-	 * 
-	 * @return turn
-	 */
-	public int getTurn() {
+	public Player getTurn() {
 		return turn;
 	}
 
-	/**
-	 * Gets the height
-	 * 
-	 * @return height
-	 */
 	public int getHeight() {
 		return height;
 	}
 
-	/**
-	 * Gets the Context
-	 * 
-	 * @return context
-	 */
 	public Context getContext() {
 		return context;
 	}
