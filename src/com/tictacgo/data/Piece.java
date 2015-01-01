@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.tictacgo.R;
+import com.tictacgo.data.Board.Player;
 
 public class Piece extends ImageView {
 
@@ -26,12 +27,12 @@ public class Piece extends ImageView {
 	private int[] direction;
 
 	/**
-	 * 1 if the Piece is an X. -1 if it is an O.
+     * The player this piece belongs to.
 	 */
-	private int isX;
+	private Player player;
 	
 	/**
-	 * The length of each side of the Piece
+	 * The length of each side of the Piece, in pixels.
 	 */
 	private int sideLength;
 
@@ -46,13 +47,13 @@ public class Piece extends ImageView {
 	 *
 	 * @param dirx The x direction of the Piece.
 	 *
-	 * @param x 1 if the Piece is an X. -1 if the Piece is an O.
+	 * @param player The player this piece belongs to.
 	 * 
-	 * @param s the side length of the Piece.
+	 * @param sideLength the side length of the Piece, in pixels.
 	 * 
 	 * @param c the Context of the Piece. Used for the ImageView constructor.
 	 */
-	public Piece (int posx, int posy, int dirx, int diry, int x, int s, Context c) {
+	public Piece(int posx, int posy, int dirx, int diry, Player player, int sideLength, Context c) {
 		super(c); //ImageView constructor
 		position = new int[2];
 		position[0] = posx;
@@ -60,13 +61,13 @@ public class Piece extends ImageView {
 		direction = new int[2];
 		direction[0] = dirx;
 		direction[1] = diry;
-		isX = x;
-		sideLength = s;
+        this.player = player;
+		this.sideLength = sideLength;
 		updateImageResource(); // Initialize which drawable to use for the Piece
 		setLayoutParams(new LayoutParams(sideLength, sideLength, Board.getGravity(posx + 1, posy + 1)));
 		
 		/**
-		 * Set the Piece to rotate around its center
+		 * Set the Piece to rotate around its center, to face the correct direction.
 		 */
 		setPivotX(sideLength / 2);
 		setPivotY(sideLength / 2);
@@ -104,7 +105,7 @@ public class Piece extends ImageView {
 				return 180;
 			default: //right column
 				return 0;
-				//Don't need a middle column becausethat would be no movement
+				//Don't need a middle column because that would be no movement
 			}
 		}
 	}
@@ -115,24 +116,19 @@ public class Piece extends ImageView {
 	 * @return A clone of this Piece object
 	 */
 	public Piece clone() {
-		return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1], isX(), sideLength, getContext());
+		return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1], getPlayer(), sideLength, getContext());
 	}
 
 	/**
 	 * Updates the position of the Piece and fixes wrap-arounds.
 	 */
 	public void updatePosition() {
-		position[0]+= direction[0];
-		position[1]+= direction[1];
-		if (position[0] > 1) //off bottom edge
-			position[0]-= 3;
-		if (position[0] < -1) //off top edge
-			position[0]+= 3;
-		if (position[1] > 1) //off right edge
-			position[1]-= 3;
-		if (position[1] < -1) //of left edge
-			position[1]+= 3;
-		//((LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0] + 1, position[1] + 1);
+		position[0] += direction[0];
+		position[1] += direction[1];
+
+        // Going off one edge results in wrapping around the other side.
+        position[0] = (position[0] + 1) % 3 - 1;
+        position[1] = (position[1] + 1) % 3 - 1;
 	}
 
 	/**
@@ -170,9 +166,9 @@ public class Piece extends ImageView {
 	public int getLastXPosition() {
 		int pos = position[0] - direction[0];
 		if (pos > 1) //Wrap around
-			pos-= 3;
+			pos -= 3;
 		if (pos < -1) //Wrap around
-			pos+= 3;
+			pos += 3;
 		return pos;
 	}
 
@@ -184,12 +180,13 @@ public class Piece extends ImageView {
 	public int getLastYPosition() {
 		int pos = position[1] - direction[1];
 		if (pos > 1) //Wrap around
-			pos-= 3;
+			pos -= 3;
 		if (pos < -1) //Wrap around
-			pos+= 3;
+			pos += 3;
 		return pos;
 	}
-	
+
+    @Override
 	public void finalize() {
 		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0], position[1]);
 	}
@@ -203,31 +200,27 @@ public class Piece extends ImageView {
 		return direction;
 	}
 
-	/**
-	 * Method isX Returns the isX value of the Piece.
-	 *
-	 * @return The isX of the Piece. 1 if the Piece is X, -1 if the Piece is O.
-	 */
-	public int isX() {
-		return isX;
-	}
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+        updateImageResource();
+    }
 
 	/**
-	 * Sets the value of isX and changes the drawable resource if necessary.
-	 *
-	 * @param x the value to set isX to.
+     * Returns true if this piece belongs to player X; false otherwise.
 	 */
-	public void setisX(int x) {
-	 	isX = x;
-	 	if (isX != x) //Piece changed drawables
-	 		updateImageResource();
+	public boolean isX() {
+		return player == Player.X;
 	}
-	
+
 	/**
 	 * Sets the drawable resource for this Piece
 	 */
 	private void updateImageResource() {
-		if (isX == 1) //Piece is an x
+		if (isX()) //Piece is an x
 			setImageResource(R.drawable.piecex);
 		else //Piece is an o
 			setImageResource(R.drawable.pieceo);

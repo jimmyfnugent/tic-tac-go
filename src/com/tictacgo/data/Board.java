@@ -376,7 +376,8 @@ public class Board {
 										   //And the Array goes from 0 to 2
 		pieces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).remove(piece);
 	}
-	
+
+    @Override
 	public void finalize() {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -458,27 +459,6 @@ public class Board {
 		return gravity;
 	}
 
-	/**
-	 * Gets the board value reffered to by the indeces
-	 * 
-	 * @param i First index
-	 * @param j Second index
-	 * @return the value of space i, j
-	 * 
-	 * Values:
-	 * 0 Pieces: 0
-	 * 1 Piece: Piece.isX()
-	 * 2 Pieces: Piece1.isX() + Piece2.isX() + 10
-	 */
-	public int getBoard(int i, int j) {
-		if (pieces.get(i).get(j).size() == 0) //No pieces
-			return 0;
-		if (pieces.get(i).get(j).size() == 1) //One piece
-			return pieces.get(i).get(j).get(0).isX();
-		//More than one piece
-		return 10 + pieces.get(i).get(j).get(0).isX() + pieces.get(i).get(j).get(1).isX();
-	}
-	
 	/**
 	 * Gets the Piece ArrayList
 	 * 
