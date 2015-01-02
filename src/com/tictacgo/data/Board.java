@@ -415,6 +415,7 @@ public class Board {
 	}
 
 	public void updateUiPositions() {
+        // Iterate through the board and update each piece's UI position.
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				for (int k = 0; k < pieces.get(i).get(j).size(); k++) {

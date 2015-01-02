@@ -187,6 +187,7 @@ public class Piece extends ImageView {
 	}
 
 	public void updateUiPosition() {
+        // Move this piece to the appropriate place on the board.
 		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0], position[1]);
 	}
 
