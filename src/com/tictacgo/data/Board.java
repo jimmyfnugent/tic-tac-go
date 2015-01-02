@@ -177,6 +177,7 @@ public class Board {
             sum = 0;
             for (ArrayList<Piece> space : row) {
                 // Spaces with multiple pieces block winning.
+                // TODO: figure out if this is more fun than multi-piece squares being able to win.
                 if (space.size() == 1) {
                     sum += playerValues.get(space.get(0).getPlayer());
                 }
