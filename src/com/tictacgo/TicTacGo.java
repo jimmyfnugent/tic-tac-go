@@ -387,6 +387,7 @@ public class TicTacGo extends Activity {
         				 */
                         notifyWinners(board.getWinners());
         				if (board.willMove()) {
+                            // Only move the pieces after both players have moved.
                             resolveCollisions(board.updatePositions().get(0));
                             board.updateUiPositions();
                         }
