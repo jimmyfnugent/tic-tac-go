@@ -1,6 +1,7 @@
 package com.tictacgo;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.tictacgo.data.Board;
+import com.tictacgo.data.Board.Player;
 import com.tictacgo.data.Piece;
 
 
@@ -92,7 +94,7 @@ public class TicTacGo extends Activity {
 	/**
 	 * The turn selection. Used for the New Game Button
 	 */
-	private int turn;
+	private Player turn;
 	
 	/**
 	 * An ArrayList of collisions to be resolved during animation
@@ -233,12 +235,12 @@ public class TicTacGo extends Activity {
         		/**
         		 * Step 1: Set up turn variable
         		 */
-        		turn = 0; //Default = random
+        		turn = null; //Default = random
            		int first = ((RadioGroup) findViewById(R.id.localTurnSelect)).getCheckedRadioButtonId();
            		if (first == R.id.localTurnSelectO)
-           			turn = -1; //O first
+           			turn = Player.O; //O first
            		else if (first == R.id.localTurnSelectX)
-           			turn = 1; //X first
+           			turn = Player.X; //X first
            		
            		/**
            		 * Step 2: Set up player1 and player2 names
@@ -325,7 +327,7 @@ public class TicTacGo extends Activity {
         				}
         				directions.showAtLocation(fl, Gravity.NO_GRAVITY, xOffset, yOffset); //Make popup visible
         				int id = R.drawable.pieceodirection; //Which picture to use for directions (O)
-        				if (board.getTurn() == 1) //X's turn
+        				if (board.getTurn() == Player.X) //X's turn
         					id = R.drawable.piecexdirection;
         				/**
         				 * Set the Button images for the Popup Window
@@ -339,7 +341,7 @@ public class TicTacGo extends Activity {
         				setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomRight), id, 45);
         				setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleRight), id, 0);
         				id = R.drawable.pieceo; //What picture to use for center (O)
-        				if (board.getTurn() == 1) //X's turn
+        				if (board.getTurn() == Player.X) //X's turn
         					id = R.drawable.piecex;
         				setDirectionButton((ImageView) grid.findViewById(R.id.directionClear), id, 0); //Set center button image
         			}
@@ -502,7 +504,7 @@ public class TicTacGo extends Activity {
 	 * Should be called in between every turn
 	 */
 	private void updateTurnIndicator() {
-		if (board.getTurn() == 1)
+		if (board.getTurn() == Player.X)
 			((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.piecex);
 		else
 			((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.pieceo);
@@ -563,7 +565,7 @@ public class TicTacGo extends Activity {
 			if (i > 4) //Four moves hasn't solved it
 				notifyWinners(null); //Cat's game
 		}
-		if ((board.getTurn() == 1 && isCPU1) || (board.getTurn() == -1 && isCPU2)) { //CPU Move
+		if ((board.getTurn() == Player.X && isCPU1) || (board.getTurn() == Player.O && isCPU2)) { //CPU Move
 			CPUMove();
 			play();
 		}
@@ -592,22 +594,20 @@ public class TicTacGo extends Activity {
 	 * 
 	 * @param winners The ArrayList<Piece> returned from getWinners
 	 */
-	private void notifyWinners(ArrayList<Piece> winners) {
+	private void notifyWinners(Map<Player, Integer> winners) {
 		if (winners == null) { //Cat's Game
 			
 		}
-		else if (winners.size() == 0) { //No winner yet
+        int winnersX = winners.get(Player.X);
+        int winnersO = winners.get(Player.O);
+		if (winnersX == 0 && winnersO == 0) { // No winners yet
 			return;
 		}
 		else {
-			int win = 0;
-			for (int i = 0; i < winners.size(); i++) {
-				win+= winners.get(i).isX();
-			}
-			if (win == 0) { //Tie
+			if (winnersX == winnersO) { //Tie
 				
 			}
-			else if (win < 0) { //O wins
+			else if (winnersX < winnersO) { //O wins
 				
 			}
 			else { //X wins
@@ -707,9 +707,9 @@ public class TicTacGo extends Activity {
 			}
 			else if (collisions.get(i).get(0).isX() != collisions.get(i).get(1).isX()) {
 				//Switch their isX values
-				int temp = collisions.get(i).get(1).isX();
-				collisions.get(i).get(1).setisX(collisions.get(i).get(0).isX());
-				collisions.get(i).get(0).setisX(temp);
+				Player temp = collisions.get(i).get(1).getPlayer();
+				collisions.get(i).get(1).setPlayer(collisions.get(i).get(0).getPlayer());
+				collisions.get(i).get(0).setPlayer(temp);
 			}
 		}
 	}
