@@ -186,8 +186,7 @@ public class Piece extends ImageView {
 		return pos;
 	}
 
-    @Override
-	public void finalize() {
+	public void updateUiPosition() {
 		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0], position[1]);
 	}
 

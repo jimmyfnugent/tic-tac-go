@@ -414,12 +414,11 @@ public class Board {
 		pieces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).remove(piece);
 	}
 
-    @Override
-	public void finalize() {
+	public void updateUiPositions() {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				for (int k = 0; k < pieces.get(i).get(j).size(); k++) {
-					pieces.get(i).get(j).get(k).finalize();
+					pieces.get(i).get(j).get(k).updateUiPosition();
 				}
 			}
 		}

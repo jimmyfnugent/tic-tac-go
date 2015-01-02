@@ -634,7 +634,7 @@ public class TicTacGo extends Activity {
 				animation.setAnimationListener(new AnimationListener() {
 					public void onAnimationEnd(Animation animation) {
 						resolveCollisions(collisions.get(1));
-						//board.finalize();
+						//board.updateUiPositions();
 						notifyWinners(board.getWinners());
 						board.nextTurn();
 						updateTurnIndicator();
