@@ -344,7 +344,7 @@ public class Board {
 		ArrayList<ArrayList<Piece>> collisions = new ArrayList<>();
 		for (int i = 0; i < temp.size() - 1; i++) { //For each Piece
 			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with temp(i)
-			collisions.get(i).add(temp.get(i)); //Add Piece temp(i)
+			collisions.get(collisions.size() - 1).add(temp.get(i)); //Add Piece temp(i)
 			for (int j = i + 1; j < temp.size(); j++) { //For every Piece after i in temp.
 														//This eliminates having two ArrayLists for one collisions
 				/**

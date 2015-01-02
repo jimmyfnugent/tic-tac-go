@@ -127,8 +127,8 @@ public class Piece extends ImageView {
 		position[1] += direction[1];
 
         // Going off one edge results in wrapping around the other side.
-        position[0] = (position[0] + 1) % 3 - 1;
-        position[1] = (position[1] + 1) % 3 - 1;
+        position[0] = (position[0] + 4) % 3 - 1;
+        position[1] = (position[1] + 4) % 3 - 1;
 	}
 
 	/**
@@ -187,8 +187,8 @@ public class Piece extends ImageView {
 	}
 
 	public void updateUiPosition() {
-        // Move this piece to the appropriate place on the board.
-		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0], position[1]);
+        // Board expects positions in the [0, 2] range.
+		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0] + 1, position[1] + 1);
 	}
 
 	/**

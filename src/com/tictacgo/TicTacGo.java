@@ -385,15 +385,15 @@ public class TicTacGo extends Activity {
         				/**
         				 * Game loop
         				 */
+                        notifyWinners(board.getWinners());
         				if (board.willMove()) {
-        					notifyWinners(board.getWinners());
-        					animate();
-        				} else {
-        					board.nextTurn();
-        					notifyWinners(board.getWinners());
-        					updateTurnIndicator();
-        					updateClearPieces();
-        				}
+                            // Only move the pieces after both players have moved.
+                            resolveCollisions(board.updatePositions().get(0));
+                            board.updateUiPositions();
+                        }
+                        board.nextTurn();
+                        updateTurnIndicator();
+                        updateClearPieces();
         				play();
         			}
         		};
@@ -580,7 +580,7 @@ public class TicTacGo extends Activity {
 		// TODO Draw the piece
 		if (board.willMove()) {
 			notifyWinners(board.getWinners());
-			animate();
+			//animate();
 		} else {
 			board.nextTurn();
 			notifyWinners(board.getWinners());
@@ -705,7 +705,7 @@ public class TicTacGo extends Activity {
 			if (collisions.get(i).size() > 2) { //3 or more Pieces
 				removePieces(collisions.get(i));
 			}
-			else if (collisions.get(i).get(0).isX() != collisions.get(i).get(1).isX()) {
+			else if (collisions.get(i).get(0).getPlayer() != collisions.get(i).get(1).getPlayer()) {
 				//Switch their isX values
 				Player temp = collisions.get(i).get(1).getPlayer();
 				collisions.get(i).get(1).setPlayer(collisions.get(i).get(0).getPlayer());
