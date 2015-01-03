@@ -315,10 +315,19 @@ public class Board {
       spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
     }
 
+    // halfway collisions
     List<List<Piece>> halfwayCollisions = getHalfwayCollisions();
-
     for (List<Piece> collision : halfwayCollisions) {
       resolveCollision(collision);
+    }
+
+    // Full collisions
+    for (List<Space> row : spaces) {
+      for (Space space : row) {
+        if (space.collisionOccurred()) {
+          resolveCollision(space.getPieces());
+        }
+      }
     }
 	}
 	
@@ -375,26 +384,6 @@ public class Board {
       }
 		}
 
-		return collisions;
-	}
-
-	/**
-	 * Gets the collisions within a space
-	 *
-	 * If there are two Pieces in a square, we should simply switch their isX values.
-	 * If there are more than two Pieces in a square, we should remove them all from the Board.
-	 * 
-	 * @return An ArrayList of the collisions
-	 */
-	public List<List<Piece>> getCollisions() {
-		List<List<Piece>> collisions = new ArrayList<>();
-		for (List<Space> row : spaces) { //Vertical coordinate
-			for (Space space : row) { //horizontal coordinate
-				if (space.collisionOccurred()) { //More than one piece in the same space
-					collisions.add(space.getPieces());
-				}
-			}
-		}
 		return collisions;
 	}
 
