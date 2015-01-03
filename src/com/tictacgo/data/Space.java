@@ -1,5 +1,7 @@
 package com.tictacgo.data;
 
+import android.content.Context;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -110,10 +112,12 @@ public class Space {
   /**
    * Render this Space on the screen
    */
-  public void render() {
+  public void render(FrameLayout fl, Context context, int height, int gravity,
+                     View.OnClickListener pieceClicked) {
     if (isEmpty()) { //No Pieces here
-      FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
-      ImageView piece = new ImageView(getBaseContext());
+      FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3, height / 3,
+          gravity);
+      ImageView piece = new ImageView(context);
       piece.setImageResource(R.drawable.clearpiece);
       piece.setLayoutParams(pieceLayout);
       piece.setOnClickListener(pieceClicked);
@@ -121,8 +125,8 @@ public class Space {
       fl.addView(piece);
     }
     else { //Pieces here
-      for (int k = 0; k < board.getSpace(i, j).getPieces().size(); k++) {
-        fl.addView(board.getSpace(i, j).getPieces().get(k));
+      for (Piece piece : pieces) {
+        fl.addView(piece);
       }
     }
   }

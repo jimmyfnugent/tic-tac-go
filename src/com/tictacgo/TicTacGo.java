@@ -476,7 +476,8 @@ public class TicTacGo extends Activity {
     	for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
     		for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
     			if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
-    				board.getSpace(i, j).render();
+    				board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+                pieceClicked);
     			}
     		}
     	}
@@ -515,7 +516,8 @@ public class TicTacGo extends Activity {
 	private void fillBoard() {
 		for (int i = 0; i < Board.SIDE_LENGTH; i++) {
 			for (int j = 0; j < Board.SIDE_LENGTH; j++) {
-        board.getSpace(i, j).render();
+        board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+            pieceClicked);
 			}
 		}
 	}
