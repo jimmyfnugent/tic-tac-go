@@ -1,5 +1,10 @@
 package com.tictacgo.data;
 
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+
+import com.tictacgo.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +105,25 @@ public class Space {
 
   public boolean collisionOccurred() {
     return pieces.size() > 1;
+  }
+
+  /**
+   * Render this Space on the screen
+   */
+  public void render() {
+    if (isEmpty()) { //No Pieces here
+      FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
+      ImageView piece = new ImageView(getBaseContext());
+      piece.setImageResource(R.drawable.clearpiece);
+      piece.setLayoutParams(pieceLayout);
+      piece.setOnClickListener(pieceClicked);
+      //piece.setOnDragListener(pieceDragged);
+      fl.addView(piece);
+    }
+    else { //Pieces here
+      for (int k = 0; k < board.getSpace(i, j).getPieces().size(); k++) {
+        fl.addView(board.getSpace(i, j).getPieces().get(k));
+      }
+    }
   }
 }

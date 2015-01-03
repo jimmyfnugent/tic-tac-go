@@ -22,7 +22,7 @@ public class Board {
     /**
      * The number of spaces per side of the game board.
      */
-    private static final int SIDE_LENGTH = 3;
+    public static final int SIDE_LENGTH = 3;
 
 	/**
      * The player who currently has their turn.
