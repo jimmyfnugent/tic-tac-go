@@ -26,9 +26,9 @@ public class Board {
 	private Player turn;
 
 	/**
-	 * An ArrayList of the Pieces currently on the board.
+	 * An ArrayList of the Spaces currently on the board.
 	 */
-	private ArrayList<ArrayList<ArrayList<Piece>>> pieces;
+	private ArrayList<ArrayList<Space>> spaces;
 
 	/**
 	 * The player who goes first.
@@ -70,18 +70,17 @@ public class Board {
 		this.height = height;
 
 		/**
-		 * Initializes the pieces ArrayList to all zeros
+		 * Initializes the spaces ArrayList to all empty Spaces
 		 */
-		pieces = new ArrayList<>(SIDE_LENGTH);
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-        for (int i = 0; i < SIDE_LENGTH; i++) {
-            // Each space can have up to 2 overlapping pieces.
-            pieces.get(i).add(new ArrayList<Piece>(2));
-            pieces.get(i).add(new ArrayList<Piece>(2));
-            pieces.get(i).add(new ArrayList<Piece>(2));
-        }
+		spaces = new ArrayList<>(SIDE_LENGTH);
+
+    for (int i = 0; i < SIDE_LENGTH; i++) {
+      spaces.add(new ArrayList<Space>(SIDE_LENGTH));
+
+      spaces.get(i).add(new Space());
+      spaces.get(i).add(new Space());
+      spaces.get(i).add(new Space());
+    }
 
 		/**
 		 * Sets up turn
@@ -110,14 +109,11 @@ public class Board {
 		/**
 		 * Clones the pieces ArrayList
 		 */
-		pieces = new ArrayList<>(SIDE_LENGTH);
+		spaces = new ArrayList<>(SIDE_LENGTH);
 		for (int i = 0; i < SIDE_LENGTH; i++) {
-			pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				pieces.get(i).add(new ArrayList<Piece>(2));
-				for (int k = 0; k < b.getPieces(i, j).size(); k++) {
-					pieces.get(i).get(j).add(b.getPieces(i, j).get(k).clone()); //Clones the Piece in slot i, j, k
-				}
+				spaces.get(i).add(b.getSpace(i, j).clone());
 			}
 		}
 	}
@@ -140,7 +136,7 @@ public class Board {
 	public boolean isCatsGame() {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				if (pieces.get(i).get(j).size() == 0) { //There is an empty slot
+				if (spaces.get(i).get(j).isEmpty()) { //There is an empty slot
                     return false;
 				}
 			}
@@ -256,7 +252,7 @@ public class Board {
 	 */
 	public View newPiece(int dirx, int diry) {
 		Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
-		pieces.get(posx + 1).get(posy + 1).add(p); //Adds the Piece to the pieces ArrayList
+		spaces.get(posx + 1).get(posy + 1).addPiece(p); //Adds the Piece to the pieces ArrayList
 		return p;
 	}
 
@@ -407,20 +403,18 @@ public class Board {
 	 * Removes a Piece from the pieces ArrayList.
 	 * Called from the collision resolution in TicTacGo.java
 	 * 
-	 * @param piece The Piece to be romoved
+	 * @param piece The Piece to be removed
 	 */
 	public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
 										   //And the Array goes from 0 to 2
-		pieces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).remove(piece);
+		spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
 	}
 
 	public void updateUiPositions() {
         // Iterate through the board and update each piece's UI position.
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				for (int k = 0; k < pieces.get(i).get(j).size(); k++) {
-					pieces.get(i).get(j).get(k).updateUiPosition();
-				}
+		for (ArrayList<Space> row : spaces) {
+			for (Space space : row) {
+        space.updateUiPosition();
 			}
 		}
 	}
@@ -495,34 +489,16 @@ public class Board {
 			gravity = gravity | Gravity.RIGHT;
 		return gravity;
 	}
-
-	/**
-	 * Gets the Piece ArrayList
-	 * 
-	 * @return pieces
-	 */
-	public ArrayList<ArrayList<ArrayList<Piece>>> getPieces() {
-		return pieces;
-	}
-	/**
-	 * Returns the value of pieces.get(i)
-	 * 
-	 * @param i the index
-	 * @return The ArrayList<ArrayList<Piece>> at index i
-	 */
-	public ArrayList<ArrayList<Piece>> getPieces(int i) {
-		return pieces.get(i);
-	}
 	
 	/**
-	 * Returns the value of pieces.get(i).get(j)
+	 * Returns the Space at index i, j
 	 * 
 	 * @param i the first index
 	 * @param j the second index
-	 * @return The ArrayList<Piece> at index i, j
+	 * @return The Space at index i, j
 	 */
-	public ArrayList<Piece> getPieces(int i, int j) {
-		return pieces.get(i).get(j);
+	public Space getSpace(int i, int j) {
+		return spaces.get(i).get(j);
 	}
 	
 	public Player getStartTurn() {

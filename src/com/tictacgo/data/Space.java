@@ -72,4 +72,25 @@ public class Space {
 
     return false;
   }
+
+  /**
+   * Creates and returns a deep copy of this Space. That is, one whose Pieces have also been cloned.
+   *
+   * @return A deep copy of this Space.
+   */
+  public Space clone() {
+    Space newSpace = new Space();
+
+    for (Piece piece : pieces) {
+      newSpace.addPiece(piece.clone());
+    }
+
+    return newSpace;
+  }
+
+  public void updateUiPosition() {
+    for (Piece piece : pieces) {
+      piece.updateUiPosition();
+    }
+  }
 }
