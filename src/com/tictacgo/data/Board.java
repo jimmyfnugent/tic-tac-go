@@ -316,10 +316,7 @@ public class Board {
     }
 
     // halfway collisions
-    List<List<Piece>> halfwayCollisions = getHalfwayCollisions();
-    for (List<Piece> collision : halfwayCollisions) {
-      resolveCollision(collision);
-    }
+    resolveHalfwayCollisions();
 
     // Full collisions
     for (List<Space> row : spaces) {
@@ -332,21 +329,17 @@ public class Board {
 	}
 	
 	/**
-	 * Method getHalfwayCollisions Gets all halfway collisions, ie. when two or more Pieces meet in
-   * between squares.
+	 * Resolves all halfway collisions, ie. when two or more Pieces meet in between squares.
 	 *
 	 * There are three cases:
 	 *  Their Y's cross
 	 *  Their X's cross
 	 *  Both cross
-	 * 
-	 * @return A List of the halfway collisions.
 	 */
-	private List<List<Piece>> getHalfwayCollisions() {
-		List<List<Piece>> collisions = new ArrayList<>();
+	private void resolveHalfwayCollisions() {
 		for (int i = 0; i < pieces.size() - 1; i++) {
-      List<Piece> individual = new ArrayList<>(4);
-			individual.add(pieces.get(i));
+      List<Piece> collision = new ArrayList<>(4);
+			collision.add(pieces.get(i));
 			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after the current one.
 				/**
 				 * X values are the same.
@@ -375,16 +368,15 @@ public class Board {
 					 pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
 					 pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
 
-						individual.add(pieces.get(j)); //A collision occurred
+						collision.add(pieces.get(j)); //A collision occurred
 				}
 			}
 
-			if (individual.size() > 1) { // Collision occurred
-        collisions.add(individual);
+			if (collision.size() > 1) { // Collision occurred
+        resolveCollision(collision);
+        i--;
       }
 		}
-
-		return collisions;
 	}
 
   /**
@@ -400,8 +392,8 @@ public class Board {
       collision.get(1).setPlayer(temp);
 
     } else if (collision.size() > 2) {
-      for (Piece piece : collision) {
-        removePiece(piece);
+      for (int i = collision.size() - 1; i >= 0; i--) { // Foreach here creates concurrent mod exception.
+        removePiece(collision.get(i));
       }
     }
   }
