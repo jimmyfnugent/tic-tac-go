@@ -149,6 +149,14 @@ public class Piece extends ImageView {
 		return position[0];
 	}
 
+  public int getRow() {
+    return position[0] + 1;
+  }
+
+  public int getColumn() {
+    return position[1] + 1;
+  }
+
 	/**
 	 * Returns the y position of the Piece.
 	 *

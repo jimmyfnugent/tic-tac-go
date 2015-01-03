@@ -29,9 +29,14 @@ public class Board {
 	private Player turn;
 
 	/**
-	 * An ArrayList of the Spaces currently on the board.
+	 * A List of the Spaces currently on the board.
 	 */
-	private ArrayList<ArrayList<Space>> spaces;
+	private List<List<Space>> spaces;
+
+  /**
+   * A List of the Pieces currently on the board.
+   */
+  private List<Piece> pieces;
 
 	/**
 	 * The player who goes first.
@@ -76,6 +81,7 @@ public class Board {
 		 * Initializes the spaces ArrayList to all empty Spaces
 		 */
 		spaces = new ArrayList<>(SIDE_LENGTH);
+    pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
 
     for (int i = 0; i < SIDE_LENGTH; i++) {
       spaces.add(new ArrayList<Space>(SIDE_LENGTH));
@@ -108,15 +114,15 @@ public class Board {
 		startTurn = b.getStartTurn();
 		context = b.getContext();
 		height = b.getHeight();
-		
-		/**
-		 * Clones the pieces ArrayList
-		 */
+
+		// Clones the spaces and pieces lists
 		spaces = new ArrayList<>(SIDE_LENGTH);
+    pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
 				spaces.get(i).add(b.getSpace(i, j).clone());
+        pieces.addAll(spaces.get(i).get(j).getPieces());
 			}
 		}
 	}
@@ -162,7 +168,7 @@ public class Board {
 
     // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
     // Rows
-    for (ArrayList<Space> row : spaces) {
+    for (List<Space> row : spaces) {
       mergeWinners(getWinners(row), winners);
     }
 
@@ -170,7 +176,7 @@ public class Board {
     for (int col = 0; col < SIDE_LENGTH; col++) {
       ArrayList<Space> columnSpaces = new ArrayList<>(SIDE_LENGTH);
 
-      for (ArrayList<Space> row : spaces) {
+      for (List<Space> row : spaces) {
         columnSpaces.add(row.get(col));
       }
 
@@ -271,7 +277,8 @@ public class Board {
 	 */
 	public View newPiece(int dirx, int diry) {
 		Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
-		spaces.get(posx + 1).get(posy + 1).addPiece(p); //Adds the Piece to the pieces ArrayList
+		spaces.get(posx + 1).get(posy + 1).addPiece(p);
+    pieces.add(p);
 		return p;
 	}
 
@@ -302,16 +309,12 @@ public class Board {
 	 * @return An ArrayList of Pieces to be changed during Animation. (Collisions)
 	 */
 	public List<List<List<Piece>>> updatePositions() {
-		ArrayList<Piece> temp = new ArrayList<>(9); //ArrayList of the Pieces
-		for (ArrayList<Space> row : spaces) { //Each Row
-			for (Space space : row) { //Each Space
-				for (int i = 0; i < space.getPieces().size();) { //Each Piece
-					temp.add(space.getPieces().remove(i)); //Adds the Piece to our new ArrayList of Pieces
-															  //and removes it from pieces since it will be changing positions
-					temp.get(temp.size() - 1).updatePosition(); //Changes the position of the Piece
-				}
-			}
-		}
+    for (Piece piece : pieces) {
+      spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
+      piece.updatePosition();
+      spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
+    }
+
 		/**
 		 * ArrayList of the collisions of the Board.
 		 * collisions(0) will be the halfway collisions
@@ -324,16 +327,9 @@ public class Board {
 		 * Sets up the collisions ArrayList.
 		 * Note that we don't deal with the collisions here, we just list them.
 		 */
-		collisions.add(getHalfwayCollisions(temp));
+		collisions.add(getHalfwayCollisions());
 		collisions.add(getCollisions());
-		for (int i = 0; i < temp.size(); i++) { //Each Piece
-			/**
-			 * We need the + 1 because pos ranges from -1 to 1
-			 * And the Array goes from 0 to 2
-			 */
-			spaces.get(temp.get(i).getXPosition() + 1).get(temp.get(i).getYPosition() + 1)
-          .addPiece(temp.get(i));
-		}
+    
 		return collisions;
 	}
 	
@@ -349,48 +345,46 @@ public class Board {
 	 *
 	 * If three or more Pieces bounce off of each other, they should explode. (Remove them).
 	 * 
-	 * @param temp An ArrayList of the Pieces in the Board
-	 * 
 	 * @return An ArrayList of the collisions.
 	 * 	For each collision:
 	 * 		If its length is 2, we should switch the isX values.
 	 * 		If its length is greater than 2, we should remove the Pieces.
 	 */
-	public List<List<Piece>> getHalfwayCollisions(ArrayList<Piece> temp) {
+	public List<List<Piece>> getHalfwayCollisions() {
 		List<List<Piece>> collisions = new ArrayList<>();
-		for (int i = 0; i < temp.size() - 1; i++) { //For each Piece
-			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with temp(i)
-			collisions.get(collisions.size() - 1).add(temp.get(i)); //Add Piece temp(i)
-			for (int j = i + 1; j < temp.size(); j++) { //For every Piece after i in temp.
+		for (int i = 0; i < pieces.size() - 1; i++) { //For each Piece
+			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with pieces(i)
+			collisions.get(collisions.size() - 1).add(pieces.get(i)); //Add Piece temp(i)
+			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after i in temp.
 														//This eliminates having two ArrayLists for one collisions
 				/**
 				 * X values are the same.
 				 * Y values cross.
 				 */
-				if ((temp.get(i).getLastXPosition() == temp.get(j).getLastXPosition() &&
-					 temp.get(i).getXPosition() == temp.get(j).getXPosition() &&
-					 temp.get(i).getLastYPosition() == temp.get(j).getYPosition() &&
-					 temp.get(i).getYPosition() == temp.get(j).getLastYPosition()) ||
+				if ((pieces.get(i).getLastXPosition() == pieces.get(j).getLastXPosition() &&
+					 pieces.get(i).getXPosition() == pieces.get(j).getXPosition() &&
+					 pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
+					 pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition()) ||
 				
 				/**
 				 * X values cross.
 				 * Y values are the same.
 				 */
-					(temp.get(i).getLastXPosition() == temp.get(j).getXPosition() &&
-					 temp.get(i).getXPosition() == temp.get(j).getLastXPosition() &&
-					 temp.get(i).getLastYPosition() == temp.get(j).getLastYPosition() &&
-					 temp.get(i).getYPosition() == temp.get(j).getYPosition()) ||
+					(pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
+					 pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
+					 pieces.get(i).getLastYPosition() == pieces.get(j).getLastYPosition() &&
+					 pieces.get(i).getYPosition() == pieces.get(j).getYPosition()) ||
 
 				/**
 				 * X values cross.
 				 * Y values cross.
 				 */
-					(temp.get(i).getLastXPosition() == temp.get(j).getXPosition() &&
-					 temp.get(i).getXPosition() == temp.get(j).getLastXPosition() &&
-					 temp.get(i).getLastYPosition() == temp.get(j).getYPosition() &&
-					 temp.get(i).getYPosition() == temp.get(j).getLastYPosition())) {
+					(pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
+					 pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
+					 pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
+					 pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
 
-						collisions.get(collisions.size() - 1).add(temp.get(j)); //A collision occurred
+						collisions.get(collisions.size() - 1).add(pieces.get(j)); //A collision occurred
 				}
 			}
 			if (collisions.get(collisions.size() - 1).size() == 1) //No collision occurred
@@ -409,9 +403,9 @@ public class Board {
 	 */
 	public List<List<Piece>> getCollisions() {
 		List<List<Piece>> collisions = new ArrayList<>();
-		for (ArrayList<Space> row : spaces) { //Vertical coordinate
+		for (List<Space> row : spaces) { //Vertical coordinate
 			for (Space space : row) { //horizontal coordinate
-				if (space.getPieces().size() > 1) { //More than one piece in the same space
+				if (space.collisionOccurred()) { //More than one piece in the same space
 					collisions.add(space.getPieces());
 				}
 			}
@@ -428,11 +422,12 @@ public class Board {
 	public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
 										   //And the Array goes from 0 to 2
 		spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
+    pieces.remove(piece);
 	}
 
 	public void updateUiPositions() {
         // Iterate through the board and update each piece's UI position.
-		for (ArrayList<Space> row : spaces) {
+		for (List<Space> row : spaces) {
 			for (Space space : row) {
         space.updateUiPosition();
 			}
