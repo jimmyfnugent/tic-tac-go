@@ -2,7 +2,10 @@ package com.tictacgo.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -150,98 +153,114 @@ public class Board {
 	 * @return a count of how many winning combinations each player has.
 	 */
 	public Map<Player, Integer> getWinners() {
-        // Assign values to the players to calculate winners.
-        Map<Player, Integer> playerValues = new HashMap<>();
-        playerValues.put(Player.X, 1);
-        playerValues.put(Player.O, -1);
-
-        int winningSumX = playerValues.get(Player.X) * SIDE_LENGTH;
-        int winningSumY = playerValues.get(Player.O) * SIDE_LENGTH;
-
-		int sum; //Used to add the rows/columns/diagonals
-		
 		/**
 		 * A map of Players to the count of their winning combinations.
 		 */
 		Map<Player, Integer> winners = new HashMap<>();
-        winners.put(Player.X, 0);
-        winners.put(Player.O, 0);
+    winners.put(Player.X, 0);
+    winners.put(Player.O, 0);
 
-        // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
-        // Rows
-        for (ArrayList<ArrayList<Piece>> row : pieces) {
-            sum = 0;
-            for (ArrayList<Piece> space : row) {
-                // Spaces with multiple pieces block winning.
-                // TODO: figure out if this is more fun than multi-piece squares being able to win.
-                if (space.size() == 1) {
-                    sum += playerValues.get(space.get(0).getPlayer());
-                }
-            }
-            if (sum == winningSumX) {
-                winners.put(Player.X, winners.get(Player.X) + 1);
-            } else if (sum == winningSumY) {
-                winners.put(Player.O, winners.get(Player.O) + 1);
-            }
-        }
+    // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
+    // Rows
+    for (ArrayList<Space> row : spaces) {
+      mergeWinners(getWinners(row), winners);
+    }
 
-        // Columns
-        for (int col = 0; col < SIDE_LENGTH; col++) {
-            sum = 0;
-            for (ArrayList<ArrayList<Piece>> row : pieces) {
-                ArrayList<Piece> space = row.get(col);
-                // Spaces with multiple pieces block winning.
-                if (space.size() == 1) {
-                    sum += playerValues.get(space.get(0).getPlayer());
-                }
-            }
-            if (sum == winningSumX) {
-                winners.put(Player.X, winners.get(Player.X) + 1);
-            } else if (sum == winningSumY) {
-                winners.put(Player.O, winners.get(Player.O) + 1);
-            }
-        }
+    // Columns
+    for (int col = 0; col < SIDE_LENGTH; col++) {
+      ArrayList<Space> columnSpaces = new ArrayList<>(SIDE_LENGTH);
 
-        // Top left to bottom right diagonal
-        sum = 0;
-        int row = 0;
-        int col = 0;
-        while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
-            ArrayList<Piece> space = pieces.get(row).get(col);
-            // Spaces with multiple pieces block winning.
-            if (space.size() == 1) {
-                sum += playerValues.get(space.get(0).getPlayer());
-            }
-            row++;
-            col++;
-        }
-        if (sum == winningSumX) {
-            winners.put(Player.X, winners.get(Player.X) + 1);
-        } else if (sum == winningSumY) {
-            winners.put(Player.O, winners.get(Player.O) + 1);
-        }
+      for (ArrayList<Space> row : spaces) {
+        columnSpaces.add(row.get(col));
+      }
 
-        // Top right to bottom left diagonal
-        sum = 0;
-        row = SIDE_LENGTH - 1;
-        col = SIDE_LENGTH - 1;
-        while (row >= 0 && col >= 0) {
-            ArrayList<Piece> space = pieces.get(row).get(col);
-            // Spaces with multiple pieces block winning.
-            if (space.size() == 1) {
-                sum += playerValues.get(space.get(0).getPlayer());
-            }
-            row--;
-            col--;
-        }
-        if (sum == winningSumX) {
-            winners.put(Player.X, winners.get(Player.X) + 1);
-        } else if (sum == winningSumY) {
-            winners.put(Player.O, winners.get(Player.O) + 1);
-        }
+      mergeWinners(getWinners(columnSpaces), winners);
+    }
+
+    // Top left to bottom right diagonal
+    int row = 0;
+    int col = 0;
+    ArrayList<Space> diagSpaces = new ArrayList<>(SIDE_LENGTH);
+    while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
+        diagSpaces.add(spaces.get(row).get(col));
+        row++;
+        col++;
+    }
+
+    mergeWinners(getWinners(diagSpaces), winners);
+
+    // Top right to bottom left diagonal
+    diagSpaces.clear();
+    row = 0;
+    col = SIDE_LENGTH - 1;
+    while (row < SIDE_LENGTH && col >= 0) {
+        diagSpaces.add(spaces.get(row).get(col));
+        row++;
+        col--;
+    }
+
+    mergeWinners(getWinners(diagSpaces), winners);
 
 		return winners;
 	}
+
+  /**
+   * Figures out if there is a winner in the given Spaces. A winner must be in every single Space
+   * to win.
+   *
+   * @param toCheck A List of the Spaces to check for a winner. This should be an entire row,
+   *                column, or diagonal of Spaces.
+   * @return A Set of the Players who won in this List of Spaces. We don't need to map to a count
+   * here because a Player may only win once per row, column, or diagonal.
+   */
+  private Set<Player> getWinners(List<Space> toCheck) {
+    //TODO: This allows spaces with multiple Pieces in them to still contribute to a win.
+    Set<Player> winners = new HashSet<>(2);
+
+    boolean xWins = true;
+    boolean oWins = true;
+
+    for (Space space : toCheck) {
+      if (!space.hasX()) {
+        xWins = false;
+      }
+
+      if (!space.hasO()) {
+        oWins = false;
+      }
+
+      if (!xWins && !oWins) {
+        return winners;
+      }
+    }
+
+    if (xWins) {
+      winners.add(Player.X);
+    }
+
+    if (oWins) {
+      winners.add(Player.O);
+    }
+
+    return winners;
+  }
+
+  /**
+   * Merges the winners from an individual row, column, or diagonal with the running sum of overall
+   * winners.
+   *
+   * @param individual The set of winners from an individual row, column, or diagonal.
+   * @param sum The running total of wins for each Player.
+   */
+  private void mergeWinners(Set<Player> individual, Map<Player, Integer> sum) {
+    if (individual.contains(Player.X)) {
+      sum.put(Player.X, sum.get(Player.X) + 1);
+    }
+
+    if (individual.contains(Player.O)) {
+      sum.put(Player.O, sum.get(Player.O) + 1);
+    }
+  }
 
 	/**
 	 * Method newPiece Adds a new Piece to the Board
