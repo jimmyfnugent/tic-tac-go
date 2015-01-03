@@ -305,58 +305,40 @@ public class Board {
 
 	/**
 	 * Updates the positions of the Pieces and wraps around out of bounds Pieces.
-	 * 
-	 * @return An ArrayList of Pieces to be changed during Animation. (Collisions)
+   *
+   * This method handles collisions as well.
 	 */
-	public List<List<List<Piece>>> updatePositions() {
+	public void updatePositions() {
     for (Piece piece : pieces) {
       spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
-      piece.updatePosition();
+      piece.updatePositionNoCollision();
       spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
     }
 
-		/**
-		 * ArrayList of the collisions of the Board.
-		 * collisions(0) will be the halfway collisions
-		 * collisions(1) will be the full collisions
-		 * Each of those contains an ArrayList of collisions
-		 * Each of which are ArrayLists of the Pieces that collide
-		 */
-		List<List<List<Piece>>> collisions = new ArrayList<>();
-		/**
-		 * Sets up the collisions ArrayList.
-		 * Note that we don't deal with the collisions here, we just list them.
-		 */
-		collisions.add(getHalfwayCollisions());
-		collisions.add(getCollisions());
-    
-		return collisions;
+    List<List<Piece>> halfwayCollisions = getHalfwayCollisions();
+
+    for (List<Piece> collision : halfwayCollisions) {
+      resolveCollision(collision);
+    }
 	}
 	
 	/**
-	 * Method getHalfwayCollisions Gets all halfway collisions, ie. when two Pieces meet in between squares.
+	 * Method getHalfwayCollisions Gets all halfway collisions, ie. when two or more Pieces meet in
+   * between squares.
 	 *
 	 * There are three cases:
 	 *  Their Y's cross
 	 *  Their X's cross
 	 *  Both cross
-	 *
-	 * The Pieces should bounce off each other, which is essentially the same as simply switching their isX values or their directions.
-	 *
-	 * If three or more Pieces bounce off of each other, they should explode. (Remove them).
 	 * 
-	 * @return An ArrayList of the collisions.
-	 * 	For each collision:
-	 * 		If its length is 2, we should switch the isX values.
-	 * 		If its length is greater than 2, we should remove the Pieces.
+	 * @return A List of the halfway collisions.
 	 */
-	public List<List<Piece>> getHalfwayCollisions() {
+	private List<List<Piece>> getHalfwayCollisions() {
 		List<List<Piece>> collisions = new ArrayList<>();
-		for (int i = 0; i < pieces.size() - 1; i++) { //For each Piece
-			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with pieces(i)
-			collisions.get(collisions.size() - 1).add(pieces.get(i)); //Add Piece temp(i)
-			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after i in temp.
-														//This eliminates having two ArrayLists for one collisions
+		for (int i = 0; i < pieces.size() - 1; i++) {
+      List<Piece> individual = new ArrayList<>(4);
+			individual.add(pieces.get(i));
+			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after the current one.
 				/**
 				 * X values are the same.
 				 * Y values cross.
@@ -384,12 +366,15 @@ public class Board {
 					 pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
 					 pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
 
-						collisions.get(collisions.size() - 1).add(pieces.get(j)); //A collision occurred
+						individual.add(pieces.get(j)); //A collision occurred
 				}
 			}
-			if (collisions.get(collisions.size() - 1).size() == 1) //No collision occurred
-				collisions.remove(collisions.size() - 1); //Don't want it in the collisions ArrayList
+
+			if (individual.size() > 1) { // Collision occurred
+        collisions.add(individual);
+      }
 		}
+
 		return collisions;
 	}
 
@@ -412,6 +397,25 @@ public class Board {
 		}
 		return collisions;
 	}
+
+  /**
+   * Resolve the given collision. If 2 Pieces collide, this requires swapping their Player value.
+   * If 3 or more Pieces collide, they should explode and be removed.
+   *
+   * @param collision A List of the Pieces which caused a single collision.
+   */
+  private void resolveCollision(List<Piece> collision) {
+    if (collision.size() == 2) {
+      Player temp = collision.get(0).getPlayer();
+      collision.get(0).setPlayer(collision.get(1).getPlayer());
+      collision.get(1).setPlayer(temp);
+
+    } else if (collision.size() > 2) {
+      for (Piece piece : collision) {
+        removePiece(piece);
+      }
+    }
+  }
 	
 	/**
 	 * Removes a Piece from the pieces ArrayList.

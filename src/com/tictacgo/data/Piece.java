@@ -122,7 +122,7 @@ public class Piece extends ImageView {
 	/**
 	 * Updates the position of the Piece and fixes wrap-arounds.
 	 */
-	public void updatePosition() {
+	public void updatePositionNoCollision() {
 		position[0] += direction[0];
 		position[1] += direction[1];
 

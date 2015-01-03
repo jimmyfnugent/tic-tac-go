@@ -383,18 +383,19 @@ public class TicTacGo extends Activity {
         					return; //Only reason we need this case
         				}
         				directions.dismiss();
+
         				/**
         				 * Game loop
         				 */
                         notifyWinners(board.getWinners());
         				if (board.willMove()) {
-                            // Only move the pieces after both players have moved.
-                            resolveCollisions(board.updatePositions().get(0));
-                            board.updateUiPositions();
-                        }
-                        board.nextTurn();
-                        updateTurnIndicator();
-                        updateClearPieces();
+                  // Only move the pieces after both players have moved.
+                  board.updatePositions();
+                  board.updateUiPositions();
+                }
+                board.nextTurn();
+                updateTurnIndicator();
+                updateClearPieces();
         				play();
         			}
         		};
@@ -663,7 +664,6 @@ public class TicTacGo extends Activity {
 	 */
 	private void animate() {
 		int j = 0;
-		collisions = board.updatePositions();
 		for (int i = 1; i < fl.getChildCount(); i++) {
 			try {
 				Piece piece = (Piece) fl.getChildAt(i);
