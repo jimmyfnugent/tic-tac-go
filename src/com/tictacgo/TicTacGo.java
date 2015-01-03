@@ -635,7 +635,6 @@ public class TicTacGo extends Activity {
 				if (j == 1)
 				animation.setAnimationListener(new AnimationListener() {
 					public void onAnimationEnd(Animation animation) {
-						resolveCollisions(collisions.get(1));
 						//board.updateUiPositions();
 						notifyWinners(board.getWinners());
 						board.nextTurn();
@@ -673,7 +672,6 @@ public class TicTacGo extends Activity {
 				if (j == 1)
 				animation.setAnimationListener(new AnimationListener() {
 					public void onAnimationEnd(Animation animation) {
-						resolveCollisions(collisions.get(0));
 						//piece.setX(piece.getX() + piece.getDirection()[1] * height / 6);
 						animateConclude();
 						//this.
@@ -689,28 +687,6 @@ public class TicTacGo extends Activity {
 			}
 			catch (Exception e) {
 				
-			}
-		}
-	}
-	
-	/**
-	 * Resolves the collisions
-	 * 
-	 * @param collisions The collisions to be resolved
-	 * For each collision:
-	 * 		If its length is 2, switch the isX values.
-	 * 		If its length is greater than 2, remove the Pieces.
-	 */
-	public void resolveCollisions(List<List<Piece>> collisions) {
-		for (int i = 0; i < collisions.size(); i++) {
-			if (collisions.get(i).size() > 2) { //3 or more Pieces
-				removePieces(collisions.get(i));
-			}
-			else if (collisions.get(i).get(0).getPlayer() != collisions.get(i).get(1).getPlayer()) {
-				//Switch their isX values
-				Player temp = collisions.get(i).get(1).getPlayer();
-				collisions.get(i).get(1).setPlayer(collisions.get(i).get(0).getPlayer());
-				collisions.get(i).get(0).setPlayer(temp);
 			}
 		}
 	}

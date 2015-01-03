@@ -10,6 +10,7 @@ import java.util.Set;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewManager;
 
 public class Board {
 
@@ -373,8 +374,9 @@ public class Board {
 			}
 
 			if (collision.size() > 1) { // Collision occurred
-        resolveCollision(collision);
-        i--;
+        if (resolveCollision(collision)) {
+          i--;
+        }
       }
 		}
 	}
@@ -384,8 +386,10 @@ public class Board {
    * If 3 or more Pieces collide, they should explode and be removed.
    *
    * @param collision A List of the Pieces which caused a single collision.
+   *
+   * @return True if we had to remove any Pieces. False otherwise.
    */
-  private void resolveCollision(List<Piece> collision) {
+  private boolean resolveCollision(List<Piece> collision) {
     if (collision.size() == 2) {
       Player temp = collision.get(0).getPlayer();
       collision.get(0).setPlayer(collision.get(1).getPlayer());
@@ -395,7 +399,9 @@ public class Board {
       for (int i = collision.size() - 1; i >= 0; i--) { // Foreach here creates concurrent mod exception.
         removePiece(collision.get(i));
       }
+      return true;
     }
+    return false;
   }
 	
 	/**
@@ -408,6 +414,7 @@ public class Board {
 										   //And the Array goes from 0 to 2
 		spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
     pieces.remove(piece);
+    ((ViewManager)piece.getParent()).removeView(piece);
 	}
 
 	public void updateUiPositions() {
