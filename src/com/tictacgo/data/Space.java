@@ -123,10 +123,27 @@ public class Space {
       piece.setOnClickListener(pieceClicked);
       //piece.setOnDragListener(pieceDragged);
       fl.addView(piece);
-    }
-    else { //Pieces here
+
+    } else { //Pieces here
       for (Piece piece : pieces) {
         fl.addView(piece);
+      }
+    }
+  }
+
+  /**
+   * Update the image resources of all of our Pieces. That is, ensure that they are just directions
+   * if need be, and full pieces otherwise.
+   */
+  public void updateImageResources() {
+    if (pieces.size() == 2 && pieces.get(0).isX() == pieces.get(1).isX()) {
+      // The only case we need a direction only
+      pieces.get(0).updateImageResource(true);
+      pieces.get(1).updateImageResource(false);
+
+    } else {
+      for (Piece piece : pieces) {
+        piece.updateImageResource(true);
       }
     }
   }
