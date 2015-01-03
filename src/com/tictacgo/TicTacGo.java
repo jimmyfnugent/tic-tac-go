@@ -1,6 +1,7 @@
 package com.tictacgo;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -102,7 +103,7 @@ public class TicTacGo extends Activity {
 	 * collisions.get(0) happen at the halfway point
 	 * collisions.get(1) happen at the end of animation
 	 */
-	private ArrayList<ArrayList<ArrayList<Piece>>> collisions;
+	private List<List<List<Piece>>> collisions;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -473,7 +474,7 @@ public class TicTacGo extends Activity {
     	}
     	for (int i = 0; i < 3; i++) { //Each row
     		for (int j = 0; j < 3; j++) { //Each column
-    			if (board.getPieces(i, j).size() == 0) {// We need a clear piece here
+    			if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
     				LayoutParams pieceLayout = new LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
     				ImageView piece = new ImageView(getBaseContext());
     				piece.setImageResource(R.drawable.clearpiece);
@@ -519,7 +520,7 @@ public class TicTacGo extends Activity {
 	private void fillBoard() {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				if (board.getPieces(i, j).size() == 0) { //No Pieces here
+				if (board.getSpace(i, j).isEmpty()) { //No Pieces here
 					LayoutParams pieceLayout = new LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
 					ImageView piece = new ImageView(getBaseContext());
 					piece.setImageResource(R.drawable.clearpiece);
@@ -529,8 +530,8 @@ public class TicTacGo extends Activity {
 					fl.addView(piece);
 				}
 				else { //Pieces here
-					for (int k = 0; k < board.getPieces(i, j).size(); k++) {
-						fl.addView(board.getPieces(i, j).get(k));
+					for (int k = 0; k < board.getSpace(i, j).getPieces().size(); k++) {
+						fl.addView(board.getSpace(i, j).getPieces().get(k));
 					}
 				}
 			}
@@ -700,7 +701,7 @@ public class TicTacGo extends Activity {
 	 * 		If its length is 2, switch the isX values.
 	 * 		If its length is greater than 2, remove the Pieces.
 	 */
-	public void resolveCollisions(ArrayList<ArrayList<Piece>> collisions) {
+	public void resolveCollisions(List<List<Piece>> collisions) {
 		for (int i = 0; i < collisions.size(); i++) {
 			if (collisions.get(i).size() > 2) { //3 or more Pieces
 				removePieces(collisions.get(i));
@@ -720,7 +721,7 @@ public class TicTacGo extends Activity {
 	 * 
 	 * @param pieces An ArrayList of the Pieces to be removed
 	 */
-	private void removePieces(ArrayList<Piece> pieces) {
+	private void removePieces(List<Piece> pieces) {
 		for (int i = 0; i < pieces.size(); i++) {
 			fl.removeView(pieces.get(i)); //Remove from FrameLayout
 			board.removePiece(pieces.get(i)); //Remove from Board

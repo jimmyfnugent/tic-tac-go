@@ -301,12 +301,12 @@ public class Board {
 	 * 
 	 * @return An ArrayList of Pieces to be changed during Animation. (Collisions)
 	 */
-	public ArrayList<ArrayList<ArrayList<Piece>>> updatePositions() {
+	public List<List<List<Piece>>> updatePositions() {
 		ArrayList<Piece> temp = new ArrayList<>(9); //ArrayList of the Pieces
-		for (int i = 0; i < 3; i++) { //Each Row
-			for (int j = 0; j < 3; j++) { //Each Column
-				for (int k = 0; k < pieces.get(i).get(j).size();) { //Each Piece 
-					temp.add(pieces.get(i).get(j).remove(k)); //Adds the Piece to our new ArrayList of Pieces
+		for (ArrayList<Space> row : spaces) { //Each Row
+			for (Space space : row) { //Each Space
+				for (int i = 0; i < space.getPieces().size();) { //Each Piece
+					temp.add(space.getPieces().remove(i)); //Adds the Piece to our new ArrayList of Pieces
 															  //and removes it from pieces since it will be changing positions
 					temp.get(temp.size() - 1).updatePosition(); //Changes the position of the Piece
 				}
@@ -319,7 +319,7 @@ public class Board {
 		 * Each of those contains an ArrayList of collisions
 		 * Each of which are ArrayLists of the Pieces that collide
 		 */
-		ArrayList<ArrayList<ArrayList<Piece>>> collisions = new ArrayList<>();
+		List<List<List<Piece>>> collisions = new ArrayList<>();
 		/**
 		 * Sets up the collisions ArrayList.
 		 * Note that we don't deal with the collisions here, we just list them.
@@ -331,7 +331,8 @@ public class Board {
 			 * We need the + 1 because pos ranges from -1 to 1
 			 * And the Array goes from 0 to 2
 			 */
-			pieces.get(temp.get(i).getXPosition() + 1).get(temp.get(i).getYPosition() + 1).add(temp.get(i));
+			spaces.get(temp.get(i).getXPosition() + 1).get(temp.get(i).getYPosition() + 1)
+          .addPiece(temp.get(i));
 		}
 		return collisions;
 	}
@@ -355,8 +356,8 @@ public class Board {
 	 * 		If its length is 2, we should switch the isX values.
 	 * 		If its length is greater than 2, we should remove the Pieces.
 	 */
-	public ArrayList<ArrayList<Piece>> getHalfwayCollisions(ArrayList<Piece> temp) {
-		ArrayList<ArrayList<Piece>> collisions = new ArrayList<>();
+	public List<List<Piece>> getHalfwayCollisions(ArrayList<Piece> temp) {
+		List<List<Piece>> collisions = new ArrayList<>();
 		for (int i = 0; i < temp.size() - 1; i++) { //For each Piece
 			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with temp(i)
 			collisions.get(collisions.size() - 1).add(temp.get(i)); //Add Piece temp(i)
@@ -406,12 +407,12 @@ public class Board {
 	 * 
 	 * @return An ArrayList of the collisions
 	 */
-	public ArrayList<ArrayList<Piece>> getCollisions() {
-		ArrayList<ArrayList<Piece>> collisions = new ArrayList<>();
-		for (int i = 0; i < 3; i++) { //Vertical coordinate
-			for (int j = 0; j < 3; j++) { //horizontal coordinate
-				if (pieces.get(i).get(j).size() > 1) { //More than one piece in the same space
-					collisions.add(pieces.get(i).get(j));
+	public List<List<Piece>> getCollisions() {
+		List<List<Piece>> collisions = new ArrayList<>();
+		for (ArrayList<Space> row : spaces) { //Vertical coordinate
+			for (Space space : row) { //horizontal coordinate
+				if (space.getPieces().size() > 1) { //More than one piece in the same space
+					collisions.add(space.getPieces());
 				}
 			}
 		}

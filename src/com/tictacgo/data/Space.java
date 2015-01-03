@@ -93,4 +93,8 @@ public class Space {
       piece.updateUiPosition();
     }
   }
+
+  public List<Piece> getPieces() {
+    return pieces;
+  }
 }
