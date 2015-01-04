@@ -210,11 +210,12 @@ public class Board {
    *
    * @param toCheck A List of the Spaces to check for a winner. This should be an entire row,
    *                column, or diagonal of Spaces.
-   * @return A Set of the Players who won in this List of Spaces. We don't need to map to a count
-   * here because a Player may only win once per row, column, or diagonal.
+   * @return A Set of the Players who won in this List of Spaces.
    */
   private Set<Player> getWinners(List<Space> toCheck) {
     //TODO: This allows spaces with multiple Pieces in them to still contribute to a win.
+    // We don't need to map to a count here because a Player may only win once per row, column, or
+    // diagonal.
     Set<Player> winners = new HashSet<>(2);
 
     boolean xWins = true;
@@ -249,15 +250,15 @@ public class Board {
    * Merges the winners from an individual row, column, or diagonal with the running sum of overall
    * winners.
    *
-   * @param individual The set of winners from an individual row, column, or diagonal.
+   * @param winners The set of winners from an individual row, column, or diagonal.
    * @param sum The running total of wins for each Player.
    */
-  private void mergeWinners(Set<Player> individual, Map<Player, Integer> sum) {
-    if (individual.contains(Player.X)) {
+  private void mergeWinners(Set<Player> winners, Map<Player, Integer> sum) {
+    if (winners.contains(Player.X)) {
       sum.put(Player.X, sum.get(Player.X) + 1);
     }
 
-    if (individual.contains(Player.O)) {
+    if (winners.contains(Player.O)) {
       sum.put(Player.O, sum.get(Player.O) + 1);
     }
   }
@@ -409,9 +410,9 @@ public class Board {
 	 */
 	public List<List<Piece>> getCollisions() {
 		List<List<Piece>> collisions = new ArrayList<>();
-		for (ArrayList<Space> row : spaces) { //Vertical coordinate
-			for (Space space : row) { //horizontal coordinate
-				if (space.getPieces().size() > 1) { //More than one piece in the same space
+		for (ArrayList<Space> row : spaces) {
+			for (Space space : row) {
+				if (space.getPieces().size() > 1) {
 					collisions.add(space.getPieces());
 				}
 			}

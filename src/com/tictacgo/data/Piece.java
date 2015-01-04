@@ -216,6 +216,13 @@ public class Piece extends ImageView {
 		return player == Player.X;
 	}
 
+  /**
+   * Returns true if this piece belongs to player O; false otherwise.
+   */
+  public boolean isO() {
+    return player == Player.O;
+  }
+
 	/**
 	 * Sets the drawable resource for this Piece
 	 */
