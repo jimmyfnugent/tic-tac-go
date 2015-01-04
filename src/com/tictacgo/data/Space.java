@@ -20,7 +20,7 @@ public class Space {
    * Creates a new Space, initially empty.
    */
   public Space() {
-    pieces = new ArrayList<Piece>(2);
+    pieces = new ArrayList<>(2);
   }
 
   /**

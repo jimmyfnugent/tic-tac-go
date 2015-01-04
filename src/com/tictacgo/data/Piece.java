@@ -45,7 +45,7 @@ public class Piece extends ImageView {
 	 *
 	 * @param dirx The x direction of the Piece.
 	 *
-	 * @param dirx The x direction of the Piece.
+	 * @param diry The y direction of the Piece.
 	 *
 	 * @param player The player this piece belongs to.
 	 * 
@@ -129,15 +129,6 @@ public class Piece extends ImageView {
         // Going off one edge results in wrapping around the other side.
         position[0] = (position[0] + 4) % 3 - 1;
         position[1] = (position[1] + 4) % 3 - 1;
-	}
-
-	/**
-	 * Returns the position Array of the Piece.
-	 *
-	 * @return The position Array of the Piece.
-	 */
-	public int[] getPosition() {
-		return position;
 	}
 
 	/**

@@ -97,14 +97,6 @@ public class TicTacGo extends Activity {
 	 */
 	private Player turn;
 	
-	/**
-	 * An ArrayList of collisions to be resolved during animation
-	 * 
-	 * collisions.get(0) happen at the halfway point
-	 * collisions.get(1) happen at the end of animation
-	 */
-	private List<List<List<Piece>>> collisions;
-	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,7 +114,7 @@ public class TicTacGo extends Activity {
         /**
          * Initialize the undo/redo function
          */
-        undoHistory = new ArrayList<Board>();
+        undoHistory = new ArrayList<>();
         historyIndex = 0;
         
         RotateAnimation anim = new RotateAnimation(0, 359);
@@ -420,7 +412,7 @@ public class TicTacGo extends Activity {
                 		board = new Board(turn, height, getBaseContext());
                 		updateBoard();
                 		updateTurnIndicator();
-                		undoHistory = new ArrayList<Board>();
+                		undoHistory = new ArrayList<>();
                 		historyIndex = 0;
                 		play();
                    	}

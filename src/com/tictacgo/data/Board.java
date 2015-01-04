@@ -481,7 +481,7 @@ public class Board {
 	 * @return The Gravity value
 	 */
 	public static int getGravity(int i, int j) {
-		int gravity = 0;
+		int gravity;
 		if (i == 0) //Top row
 			gravity = Gravity.TOP;
 		else if (i == 1) //Middle row
