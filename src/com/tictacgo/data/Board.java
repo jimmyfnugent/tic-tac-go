@@ -138,11 +138,11 @@ public class Board {
 	}
 
 	/**
-	 * Tests if the game is a Cats Game
+	 * Tests if the board is full
 	 *
 	 * @return True if the board is full, false otherwise
 	 */
-	public boolean isCatsGame() {
+	public boolean isFull() {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			for (int j = 0; j < SIDE_LENGTH; j++) {
 				if (spaces.get(i).get(j).isEmpty()) { //There is an empty slot

@@ -535,15 +535,7 @@ public class TicTacGo extends Activity {
 		}
 		undoHistory.add(board.copy()); //Add our board to the undo history
 		historyIndex++;
-		while (board.isCatsGame()) { //Board is full
-			int i = 0; //Count number of times Board has been full with no winners
-			board.updatePositions(); //Move Pieces
-			updateBoard();
-			notifyWinners(board.getWinners()); //Check for winners
-			i++;
-			if (i > 4) //Four moves hasn't solved it
-				notifyWinners(null); //Cat's game
-		}
+		
 		if ((board.getTurn() == Player.X && isCPU1) || (board.getTurn() == Player.O && isCPU2)) { //CPU Move
 			CPUMove();
 			play();
@@ -575,7 +567,7 @@ public class TicTacGo extends Activity {
 	 */
 	private void notifyWinners(Map<Player, Integer> winners) {
 		if (winners == null) { //Cat's Game
-			
+
 		}
         int winnersX = winners.get(Player.X);
         int winnersO = winners.get(Player.O);
@@ -584,13 +576,13 @@ public class TicTacGo extends Activity {
 		}
 		else {
 			if (winnersX == winnersO) { //Tie
-				
+
 			}
 			else if (winnersX < winnersO) { //O wins
-				
+
 			}
 			else { //X wins
-				
+
 			}
 		}
 		for (int i = 0; i < fl.getChildCount(); i++) {
