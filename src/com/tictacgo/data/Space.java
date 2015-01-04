@@ -138,12 +138,12 @@ public class Space {
   public void updateImageResources() {
     if (pieces.size() == 2 && pieces.get(0).isX() == pieces.get(1).isX()) {
       // The only case we need a direction only
-      pieces.get(0).updateImageResource(true);
-      pieces.get(1).updateImageResource(false);
+      pieces.get(0).updateImageResourceFullPiece();
+      pieces.get(1).updateImageResourceDirectionOnly();
 
     } else {
       for (Piece piece : pieces) {
-        piece.updateImageResource(true);
+        piece.updateImageResourceFullPiece();
       }
     }
   }

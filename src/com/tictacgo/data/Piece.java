@@ -63,7 +63,7 @@ public class Piece extends ImageView {
 		direction[1] = diry;
         this.player = player;
 		this.sideLength = sideLength;
-		updateImageResource(true); // Initialize which drawable to use for the Piece
+		updateImageResourceFullPiece();
 		setLayoutParams(new LayoutParams(sideLength, sideLength, Board.getGravity(posx + 1, posy + 1)));
 		
 		/**
@@ -214,7 +214,7 @@ public class Piece extends ImageView {
 
     public void setPlayer(Player player) {
         this.player = player;
-        updateImageResource(true);
+        updateImageResourceFullPiece();
     }
 
 	/**
@@ -225,17 +225,26 @@ public class Piece extends ImageView {
 	}
 
 	/**
-	 * Sets the drawable resource for this Piece
-   *
-   * @param fullPiece True if we need to use the full piece. False if we need to use just the
-   *                  direction.
+	 * Sets the drawable resource for this Piece to be the full piece with direction.
 	 */
-	public void updateImageResource(boolean fullPiece) {
+	public void updateImageResourceFullPiece() {
 		if (isX()) {
-      setImageResource(fullPiece ? R.drawable.piecex : R.drawable.piecexdirection);
+      setImageResource(R.drawable.piecex);
 
     } else { //Piece is an o
-      setImageResource(fullPiece ? R.drawable.pieceo : R.drawable.pieceodirection);
+      setImageResource(R.drawable.pieceo);
     }
 	}
+
+  /**
+   * Sets the drawable resource for this Piece to be the direction only.
+   */
+  public void updateImageResourceDirectionOnly() {
+    if (isX()) {
+      setImageResource(R.drawable.piecexdirection);
+
+    } else { //Piece is an o
+      setImageResource(R.drawable.pieceodirection);
+    }
+  }
 }
