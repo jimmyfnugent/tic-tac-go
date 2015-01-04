@@ -426,7 +426,7 @@ public class TicTacGo extends Activity {
                 		if (historyIndex == 0) //First turn already
                 			return;
                 		historyIndex--; //Go back one index
-                		board = undoHistory.get(historyIndex).clone(); //Go back one Board
+                		board = undoHistory.get(historyIndex).copy(); //Go back one Board
                 		updateBoard();
             			updateTurnIndicator();
                    	}
@@ -440,7 +440,7 @@ public class TicTacGo extends Activity {
                 		if (historyIndex == undoHistory.size() - 1) //Last turn already
                 			return;
                 		historyIndex++; //Go forward one index
-                		board = undoHistory.get(historyIndex).clone(); //Go forward one Board
+                		board = undoHistory.get(historyIndex).copy(); //Go forward one Board
                 		updateBoard();
             			updateTurnIndicator();
                    	}
@@ -533,7 +533,7 @@ public class TicTacGo extends Activity {
 		while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
 			undoHistory.remove(historyIndex + 1);
 		}
-		undoHistory.add(board.clone()); //Add our board to the undo history
+		undoHistory.add(board.copy()); //Add our board to the undo history
 		historyIndex++;
 		while (board.isCatsGame()) { //Board is full
 			int i = 0; //Count number of times Board has been full with no winners

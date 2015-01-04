@@ -85,11 +85,11 @@ public class Space {
    *
    * @return A deep copy of this Space.
    */
-  public Space clone() {
+  public Space copy() {
     Space newSpace = new Space();
 
     for (Piece piece : pieces) {
-      newSpace.addPiece(piece.clone());
+      newSpace.addPiece(piece.copy());
     }
 
     return newSpace;

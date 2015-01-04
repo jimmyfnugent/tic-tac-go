@@ -122,19 +122,18 @@ public class Board {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				spaces.get(i).add(b.getSpace(i, j).clone());
+				spaces.get(i).add(b.getSpace(i, j).copy());
         pieces.addAll(spaces.get(i).get(j).getPieces());
 			}
 		}
 	}
 
 	/**
-	 * Creates a clone of the Board Object
+	 * Creates a deep copy of the Board Object
 	 * 
-	 * @return A clone of this Board object
+	 * @return A deep copy of this Board object
 	 */
-    @Override
-	public Board clone() {
+	public Board copy() {
 		return new Board(this);
 	}
 
