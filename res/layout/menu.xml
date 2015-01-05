@@ -2,20 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gameSelectScreen"
     android:layout_width="wrap_content" android:layout_height="fill_parent">
-	<Button
-		android:id="@+id/localButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:text="Local Match"/>
-	<Button
-		android:id="@+id/onlineButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentTop="true"
-		android:text="Online Match"/>
 	<RelativeLayout
 		android:id="@+id/localScreen"
 		android:layout_width="wrap_content"
@@ -44,23 +30,6 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="100"
 					android:hint="Player 1"/>
-				<EditText
-					android:id="@+id/localComputerOneName"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:visibility="gone"
-					android:layout_weight="100"
-					android:hint="CPU"/>
-				<Button
-					android:id="@+id/localPlayerOneButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Human"/>
-				<Button
-					android:id="@+id/localComputerOneButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="CPU"/>
 				</LinearLayout>
 			<LinearLayout
 				android:id="@+id/localScreenPlayerTwo"
@@ -79,23 +48,6 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="100"
 					android:hint="Player 2"/>
-				<EditText
-					android:id="@+id/localComputerTwoName"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_weight="100"
-					android:visibility="gone"
-					android:hint="CPU"/>
-				<Button
-					android:id="@+id/localPlayerTwoButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Human"/>
-				<Button
-					android:id="@+id/localComputerTwoButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="CPU"/>
 			</LinearLayout>
 			<RadioGroup 
 				android:id="@+id/localTurnSelect" 
@@ -124,33 +76,12 @@
 					android:text="Random" ></RadioButton>
 			</RadioGroup>
 		</LinearLayout>
-	</RelativeLayout>	
-	<TextView
-		android:id="@+id/onlineScreen"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		android:text="Not Gonna Happen"
-		android:visibility="gone"/>
-    <Button
-		android:id="@+id/helpButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"
-		android:text="Help"/>
-	 <Button
-		android:id="@+id/optionsButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true"
-		android:text="Options"/>  
+	</RelativeLayout>
 	<Button
 		android:id="@+id/playButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:layout_alignParentRight="true"
+		android:layout_centerHorizontal="true"
 		android:text="Play!"/>
 </RelativeLayout>
