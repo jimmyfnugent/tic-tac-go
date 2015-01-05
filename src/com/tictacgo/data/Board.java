@@ -405,7 +405,7 @@ public class Board {
 	
 	/**
 	 * Removes a Piece from the pieces ArrayList.
-	 * Called from the collision resolution in TicTacGo.java
+	 * Called from the collision resolution in TicTacGoMenu.java
 	 * 
 	 * @param piece The Piece to be removed
 	 */

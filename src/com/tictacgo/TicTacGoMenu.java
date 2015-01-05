@@ -30,7 +30,7 @@ import com.tictacgo.data.Board.Player;
 import com.tictacgo.data.Piece;
 
 
-public class TicTacGo extends Activity {
+public class TicTacGoMenu extends Activity {
 	
 	/**
 	 * The Board of the game
