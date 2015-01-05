@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -61,13 +62,14 @@ public class TicTacGoGame extends Activity {
   private int historyIndex;
 
   /**
-   * The turn selection. Used for the New Game Button
+   * The initial turn selection. Used for the New Game Button
    */
   private Board.Player turn;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
     setContentView(R.layout.game);
 
     Intent intent = getIntent();
@@ -76,33 +78,24 @@ public class TicTacGoGame extends Activity {
     if (first == R.id.localTurnSelectX) {
       turn = Board.Player.X;
     } else if (first == R.id.localTurnSelectO) {
-      turn = Board.Player.X;
+      turn = Board.Player.O;
     } else {
-      Random rand = new Random();
-      turn = rand.nextBoolean() ? Board.Player.X : Board.Player.O;
+      turn = null;
     }
 
     // Undo/redo initialization
     undoHistory = new ArrayList<>();
     historyIndex = 0;
 
-    /**
-     * Step 3: Set up board
-     */
-    height = findViewById(R.id.gameSelectScreen).getBottom();
+    height = intent.getIntExtra("height", 300);
     board = new Board(turn, height, getBaseContext());
 
-    /**
-     * Step 4: Sets up the screen
-     */
-    setContentView(R.layout.game); //Change layout
+    // Set up the screen
     ((TextView) findViewById(R.id.gamePlayerOneName)).setText(intent.getStringExtra("p1Name"));
     ((TextView) findViewById(R.id.gamePlayerTwoName)).setText(intent.getStringExtra("p2Name"));
     fl = (FrameLayout) findViewById(R.id.gameBoard);
 
-    /**
-     * What to do when an empty space is clicked
-     */
+    // What to do when an empty space is clicked
     pieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
         if (directions != null) //Popup already active

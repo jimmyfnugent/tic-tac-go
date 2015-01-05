@@ -37,6 +37,7 @@ public class TicTacGoMenu extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
     setContentView(R.layout.menu);
 
     findViewById(R.id.playButton).setOnClickListener(new OnClickListener() {
@@ -49,9 +50,11 @@ public class TicTacGoMenu extends Activity {
         String p2Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerTwoName));
         playGame.putExtra("p2Name", p2Name);
 
-        // First turn
         int first = ((RadioGroup) findViewById(R.id.localTurnSelect)).getCheckedRadioButtonId();
         playGame.putExtra("first", first);
+
+        int height = findViewById(R.id.gameSelectScreen).getBottom();
+        playGame.putExtra("height", height);
 
         v.getContext().startActivity(playGame);
       }
