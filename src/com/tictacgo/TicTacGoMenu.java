@@ -35,26 +35,15 @@ public class TicTacGoMenu extends Activity {
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	requestWindowFeature(Window.FEATURE_NO_TITLE); //Full screen
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu); //Display menu
-        
-        /**
-         * Default = player vs. player
-         */
-        isCPU1 = false;
-        isCPU2 = false;
-        setUpButtons();
-        
-        /**
-         * Initialize the undo/redo function
-         */
-        undoHistory = new ArrayList<>();
-        historyIndex = 0;
-        
-        RotateAnimation anim = new RotateAnimation(0, 359);
-        anim.setDuration(2000);
-        anim.setRepeatMode(Animation.INFINITE);
+      setContentView(R.layout.menu); //Display menu
+
+      /**
+       * Default = player vs. player
+       */
+      isCPU1 = false;
+      isCPU2 = false;
+      setUpButtons();
     }
 
 	/**

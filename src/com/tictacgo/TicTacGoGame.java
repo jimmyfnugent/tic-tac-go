@@ -1,6 +1,7 @@
 package com.tictacgo;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -30,16 +31,6 @@ public class TicTacGoGame extends Activity {
    * The name of Player Two
    */
   private String player2;
-
-  /**
-   * Whether Player One is a CPU Player
-   */
-  private boolean isCPU1;
-
-  /**
-   * Whether Player Two is a CPU Player
-   */
-  private boolean isCPU2;
 
   /**
    * The FrameLayout in which the game is to be drawn
@@ -80,6 +71,14 @@ public class TicTacGoGame extends Activity {
    * The turn selection. Used for the New Game Button
    */
   private Board.Player turn;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+
+    // Undo/redo initialization
+    undoHistory = new ArrayList<>();
+    historyIndex = 0;
+  }
 
 
 
@@ -170,7 +169,6 @@ public class TicTacGoGame extends Activity {
     // TODO Draw the piece
     if (board.willMove()) {
       notifyWinners(board.getWinners());
-      //animate();
     } else {
       board.nextTurn();
       notifyWinners(board.getWinners());
@@ -206,76 +204,6 @@ public class TicTacGoGame extends Activity {
     }
     for (int i = 0; i < fl.getChildCount(); i++) {
       fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
-    }
-  }
-
-  /**
-   * Runs the second half of the Animation
-   */
-  private void animateConclude() {
-    int j = 0;
-    for (int i = 1; i < fl.getChildCount(); i++) {
-      try {
-        Piece piece = (Piece) fl.getChildAt(i);
-        j++;
-        TranslateAnimation animation = new TranslateAnimation(piece.getX(), piece.getX() + piece.getDirection()[1] * height / 6, piece.getY(), piece.getY() + piece.getDirection()[0] * height / 6);
-        animation.setDuration(1000);
-        if (j == 1)
-          animation.setAnimationListener(new Animation.AnimationListener() {
-            public void onAnimationEnd(Animation animation) {
-              //board.updateUiPositions();
-              notifyWinners(board.getWinners());
-              board.nextTurn();
-              updateTurnIndicator();
-              updateClearPieces();
-            }
-
-            public void onAnimationRepeat(Animation arg0) {
-            }
-
-            public void onAnimationStart(Animation animation) {
-
-            }
-          });
-        piece.setAnimation(animation);
-        piece.startAnimation(animation);
-      }
-      catch (Exception e) {
-
-      }
-    }
-  }
-
-  /**
-   * Starts the first half of the Animation
-   */
-  private void animate() {
-    int j = 0;
-    for (int i = 1; i < fl.getChildCount(); i++) {
-      try {
-        Piece piece = (Piece) fl.getChildAt(i);
-        j++;
-        TranslateAnimation animation = new TranslateAnimation(piece.getX(), piece.getX() + piece.getDirection()[1] * height / 6, piece.getY(), piece.getY() + piece.getDirection()[0] * height / 6);
-        animation.setDuration(20000);
-        if (j == 1)
-          animation.setAnimationListener(new Animation.AnimationListener() {
-            public void onAnimationEnd(Animation animation) {
-              //piece.setX(piece.getX() + piece.getDirection()[1] * height / 6);
-              animateConclude();
-              //this.
-            }
-
-            public void onAnimationRepeat(Animation arg0) {
-            }
-
-            public void onAnimationStart(Animation animation) {
-            }
-          });
-        animation.startNow();
-      }
-      catch (Exception e) {
-
-      }
     }
   }
 }
