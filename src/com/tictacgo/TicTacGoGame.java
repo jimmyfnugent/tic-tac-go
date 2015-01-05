@@ -104,7 +104,13 @@ public class TicTacGoGame extends Activity {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        DirectionPicker directionPicker = new DirectionPicker(board.getTurn(), gravity, height);
+        DirectionPicker directionPicker = new DirectionPicker();
+        Bundle arguments = new Bundle();
+        arguments.putString("player", board.getTurn() == Board.Player.X ? "X" : "O");
+        arguments.putInt("gravity", gravity);
+        arguments.putInt("height", height);
+        directionPicker.setArguments(arguments);
+
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
         fragmentTransaction.commit();
       }

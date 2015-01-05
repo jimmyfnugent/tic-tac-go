@@ -20,12 +20,15 @@ public class DirectionPicker extends DialogFragment {
 
   private int height;
 
-  public DirectionPicker(Board.Player player, int gravity, int height) {
-    super();
-    this.player = player;
-    this.height = height;
+  @Override
+  public void setArguments(Bundle arguments) {
+    System.out.println("setArguments");
+    String p = arguments.getString("player");
+    player = p.equals("X") ? Board.Player.X : Board.Player.O;
 
-    switch (gravity) {
+    height = arguments.getInt("height");
+
+    switch (arguments.getInt("gravity")) {
       case Gravity.TOP | Gravity.LEFT:
         break;
       case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
@@ -61,25 +64,27 @@ public class DirectionPicker extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    //getDialog().setCanceledOnTouchOutside(true);
+    System.out.println("onCreateView");
 
-    getDialog().setCanceledOnTouchOutside(true);
+    View view = inflater.inflate(R.layout.direction, container, false);
 
     int id = player == Board.Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
 
     // Set direction buttons
-    setDirectionButton((ImageView) container.findViewById(R.id.directionTopRight), id, 315);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionTopMiddle), id, 270);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionTopLeft), id, 225);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionMiddleLeft), id, 180);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionBottomLeft), id, 135);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionBottomMiddle), id, 90);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionBottomRight), id, 45);
-    setDirectionButton((ImageView) container.findViewById(R.id.directionMiddleRight), id, 0);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopRight), id, 315);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopMiddle), id, 270);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopLeft), id, 225);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleLeft), id, 180);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomLeft), id, 135);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomMiddle), id, 90);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomRight), id, 45);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleRight), id, 0);
 
     id = player == Board.Player.X ? R.drawable.piecex : R.drawable.pieceo;
-    setDirectionButton((ImageView) container.findViewById(R.id.directionClear), id, 0);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionClear), id, 0);
 
-    return inflater.inflate(R.layout.direction, container, false);
+    return view;
   }
 
   /**
@@ -92,7 +97,7 @@ public class DirectionPicker extends DialogFragment {
   private void setDirectionButton(ImageView imageView, int id, int rotation) {
     TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
     imageView.setLayoutParams(pieceLayout);
-    imageView.setOnClickListener(directionClicked);
+    //imageView.setOnClickListener(directionClicked);
     imageView.setImageResource(id);
     imageView.setPivotX(height / 12);
     imageView.setPivotY(height / 12);
