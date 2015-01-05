@@ -1,11 +1,14 @@
 package com.tictacgo;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -95,67 +98,15 @@ public class TicTacGoGame extends Activity {
     // What to do when an empty space is clicked
     pieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
-        if (directions != null) //Popup already active
-          directions.dismiss(); //Dismiss old popup
-        board.makePiece(((FrameLayout.LayoutParams) v.getLayoutParams()).gravity); //Set the location for the new Piece
-        LayoutInflater inflater = getLayoutInflater();
-        View grid = inflater.inflate(R.layout.direction, null); //Show popup
-        directions = new PopupWindow(grid, -2, -2); //Show  popup
-        /**
-         * Offset is used so that the correct edge of the popup window will
-         * line up with the edge of the Board
-         */
-        int xOffset = 0, yOffset = 0; //No offset
-        switch (((FrameLayout.LayoutParams) v.getLayoutParams()).gravity) {
-          case Gravity.TOP | Gravity.LEFT:
-            break;
-          case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-            xOffset = height / 4;
-            break;
-          case Gravity.TOP | Gravity.RIGHT:
-            xOffset = height / 2;
-            break;
-          case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-            yOffset = height / 4;
-            break;
-          case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-            xOffset = height / 2;
-            yOffset = height / 4;
-            break;
-          case Gravity.BOTTOM | Gravity.LEFT:
-            yOffset = height / 2;
-            break;
-          case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-            xOffset = height / 4;
-            yOffset = height / 2;
-            break;
-          case Gravity.BOTTOM | Gravity.RIGHT:
-            xOffset = height / 2;
-            yOffset = height / 2;
-            break;
-          default:
-            xOffset = height / 4;
-            yOffset = height / 4;
-        }
-        directions.showAtLocation(fl, Gravity.NO_GRAVITY, xOffset, yOffset); //Make popup visible
-        int id = R.drawable.pieceodirection; //Which picture to use for directions (O)
-        if (board.getTurn() == Board.Player.X) //X's turn
-          id = R.drawable.piecexdirection;
-        /**
-         * Set the Button images for the Popup Window
-         */
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopRight), id, 315);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopMiddle), id, 270);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopLeft), id, 225);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleLeft), id, 180);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomLeft), id, 135);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomMiddle), id, 90);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomRight), id, 45);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleRight), id, 0);
-        id = R.drawable.pieceo; //What picture to use for center (O)
-        if (board.getTurn() == Board.Player.X) //X's turn
-          id = R.drawable.piecex;
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionClear), id, 0); //Set center button image
+        int gravity = ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity;
+        board.makePiece(gravity); // Preset Piece location in board
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        DirectionPicker directionPicker = new DirectionPicker(board.getTurn(), gravity, height);
+        fragmentTransaction.add(R.id.gameBoard, directionPicker);
+        fragmentTransaction.commit();
       }
     };
 
@@ -381,22 +332,5 @@ public class TicTacGoGame extends Activity {
     for (int i = 0; i < fl.getChildCount(); i++) {
       fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
     }
-  }
-
-  /**
-   * Helper method for creating the direction picker PopupWindow
-   *
-   * @param imageView the ImageView to edit
-   * @param id the image to use
-   * @param rotation the rotation of the image
-   */
-  private void setDirectionButton(ImageView imageView, int id, int rotation) {
-    TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
-    imageView.setLayoutParams(pieceLayout);
-    imageView.setOnClickListener(directionClicked);
-    imageView.setImageResource(id);
-    imageView.setPivotX(height / 12);
-    imageView.setPivotY(height / 12);
-    imageView.setRotation(rotation);
   }
 }
