@@ -21,6 +21,13 @@ public class DirectionPicker extends DialogFragment {
 
   private View.OnClickListener directionClicked;
 
+  private OnDirectionPickedListener listener;
+
+  // Container Activity must implement this interface
+  public interface OnDirectionPickedListener {
+    public void onDirectionPicked(int dirx, int diry);
+  }
+
   @Override
   public void setArguments(Bundle arguments) {
     System.out.println("setArguments");
@@ -66,32 +73,34 @@ public class DirectionPicker extends DialogFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    listener = (OnDirectionPickedListener) getActivity();
+
     directionClicked = new View.OnClickListener() {
       public void onClick(View v) {
        switch (v.getId()) { //Which direction was picked
           case R.id.directionTopLeft:
-            ((TicTacGoGame) getActivity()).newPiece(-1, -1);
+            listener.onDirectionPicked(-1, -1);
             break;
           case R.id.directionTopMiddle:
-            ((TicTacGoGame) getActivity()).newPiece(-1, 0);
+            listener.onDirectionPicked(-1, 0);
             break;
           case R.id.directionTopRight:
-            ((TicTacGoGame) getActivity()).newPiece(-1, 1);
+            listener.onDirectionPicked(-1, 1);
             break;
           case R.id.directionMiddleLeft:
-            ((TicTacGoGame) getActivity()).newPiece(0, -1);
+            listener.onDirectionPicked(0, -1);
             break;
           case R.id.directionMiddleRight:
-            ((TicTacGoGame) getActivity()).newPiece(0, 1);
+            listener.onDirectionPicked(0, 1);
             break;
           case R.id.directionBottomLeft:
-            ((TicTacGoGame) getActivity()).newPiece(1, -1);
+            listener.onDirectionPicked(1, -1);
             break;
           case R.id.directionBottomMiddle:
-            ((TicTacGoGame) getActivity()).newPiece(1, 0);
+            listener.onDirectionPicked(1, 0);
             break;
           case R.id.directionBottomRight:
-            ((TicTacGoGame) getActivity()).newPiece(1, 1);
+            listener.onDirectionPicked(1, 1);
             break;
           default: //Center Button
             getFragmentManager().popBackStack();

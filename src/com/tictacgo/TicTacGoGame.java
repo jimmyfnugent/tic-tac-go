@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TicTacGoGame extends Activity {
+public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectionPickedListener {
   /**
    * The Board of the game
    */
@@ -152,11 +152,10 @@ public class TicTacGoGame extends Activity {
     updateTurnIndicator();
   }
 
-  public void newPiece(int dirx, int diry) {
+  @Override
+  public void onDirectionPicked(int dirx, int diry) {
     board.newPiece(dirx, diry);
   }
-
-
 
   /**
    * Updates the clear Pieces on the FrameLayout
