@@ -2,7 +2,10 @@ package com.tictacgo.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -26,9 +29,9 @@ public class Board {
 	private Player turn;
 
 	/**
-	 * An ArrayList of the Pieces currently on the board.
+	 * An ArrayList of the Spaces currently on the board.
 	 */
-	private ArrayList<ArrayList<ArrayList<Piece>>> pieces;
+	private ArrayList<ArrayList<Space>> spaces;
 
 	/**
 	 * The player who goes first.
@@ -70,18 +73,17 @@ public class Board {
 		this.height = height;
 
 		/**
-		 * Initializes the pieces ArrayList to all zeros
+		 * Initializes the spaces ArrayList to all empty Spaces
 		 */
-		pieces = new ArrayList<>(SIDE_LENGTH);
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-		pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
-        for (int i = 0; i < SIDE_LENGTH; i++) {
-            // Each space can have up to 2 overlapping pieces.
-            pieces.get(i).add(new ArrayList<Piece>(2));
-            pieces.get(i).add(new ArrayList<Piece>(2));
-            pieces.get(i).add(new ArrayList<Piece>(2));
-        }
+		spaces = new ArrayList<>(SIDE_LENGTH);
+
+    for (int i = 0; i < SIDE_LENGTH; i++) {
+      spaces.add(new ArrayList<Space>(SIDE_LENGTH));
+
+      spaces.get(i).add(new Space());
+      spaces.get(i).add(new Space());
+      spaces.get(i).add(new Space());
+    }
 
 		/**
 		 * Sets up turn
@@ -110,14 +112,11 @@ public class Board {
 		/**
 		 * Clones the pieces ArrayList
 		 */
-		pieces = new ArrayList<>(SIDE_LENGTH);
+		spaces = new ArrayList<>(SIDE_LENGTH);
 		for (int i = 0; i < SIDE_LENGTH; i++) {
-			pieces.add(new ArrayList<ArrayList<Piece>>(SIDE_LENGTH));
+			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				pieces.get(i).add(new ArrayList<Piece>(2));
-				for (int k = 0; k < b.getPieces(i, j).size(); k++) {
-					pieces.get(i).get(j).add(b.getPieces(i, j).get(k).clone()); //Clones the Piece in slot i, j, k
-				}
+				spaces.get(i).add(b.getSpace(i, j).clone());
 			}
 		}
 	}
@@ -140,7 +139,7 @@ public class Board {
 	public boolean isCatsGame() {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				if (pieces.get(i).get(j).size() == 0) { //There is an empty slot
+				if (spaces.get(i).get(j).isEmpty()) { //There is an empty slot
                     return false;
 				}
 			}
@@ -154,98 +153,115 @@ public class Board {
 	 * @return a count of how many winning combinations each player has.
 	 */
 	public Map<Player, Integer> getWinners() {
-        // Assign values to the players to calculate winners.
-        Map<Player, Integer> playerValues = new HashMap<>();
-        playerValues.put(Player.X, 1);
-        playerValues.put(Player.O, -1);
-
-        int winningSumX = playerValues.get(Player.X) * SIDE_LENGTH;
-        int winningSumY = playerValues.get(Player.O) * SIDE_LENGTH;
-
-		int sum; //Used to add the rows/columns/diagonals
-		
 		/**
 		 * A map of Players to the count of their winning combinations.
 		 */
 		Map<Player, Integer> winners = new HashMap<>();
-        winners.put(Player.X, 0);
-        winners.put(Player.O, 0);
+    winners.put(Player.X, 0);
+    winners.put(Player.O, 0);
 
-        // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
-        // Rows
-        for (ArrayList<ArrayList<Piece>> row : pieces) {
-            sum = 0;
-            for (ArrayList<Piece> space : row) {
-                // Spaces with multiple pieces block winning.
-                // TODO: figure out if this is more fun than multi-piece squares being able to win.
-                if (space.size() == 1) {
-                    sum += playerValues.get(space.get(0).getPlayer());
-                }
-            }
-            if (sum == winningSumX) {
-                winners.put(Player.X, winners.get(Player.X) + 1);
-            } else if (sum == winningSumY) {
-                winners.put(Player.O, winners.get(Player.O) + 1);
-            }
-        }
+    // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
+    // Rows
+    for (ArrayList<Space> row : spaces) {
+      mergeWinners(getWinners(row), winners);
+    }
 
-        // Columns
-        for (int col = 0; col < SIDE_LENGTH; col++) {
-            sum = 0;
-            for (ArrayList<ArrayList<Piece>> row : pieces) {
-                ArrayList<Piece> space = row.get(col);
-                // Spaces with multiple pieces block winning.
-                if (space.size() == 1) {
-                    sum += playerValues.get(space.get(0).getPlayer());
-                }
-            }
-            if (sum == winningSumX) {
-                winners.put(Player.X, winners.get(Player.X) + 1);
-            } else if (sum == winningSumY) {
-                winners.put(Player.O, winners.get(Player.O) + 1);
-            }
-        }
+    // Columns
+    for (int col = 0; col < SIDE_LENGTH; col++) {
+      ArrayList<Space> columnSpaces = new ArrayList<>(SIDE_LENGTH);
 
-        // Top left to bottom right diagonal
-        sum = 0;
-        int row = 0;
-        int col = 0;
-        while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
-            ArrayList<Piece> space = pieces.get(row).get(col);
-            // Spaces with multiple pieces block winning.
-            if (space.size() == 1) {
-                sum += playerValues.get(space.get(0).getPlayer());
-            }
-            row++;
-            col++;
-        }
-        if (sum == winningSumX) {
-            winners.put(Player.X, winners.get(Player.X) + 1);
-        } else if (sum == winningSumY) {
-            winners.put(Player.O, winners.get(Player.O) + 1);
-        }
+      for (ArrayList<Space> row : spaces) {
+        columnSpaces.add(row.get(col));
+      }
 
-        // Top right to bottom left diagonal
-        sum = 0;
-        row = SIDE_LENGTH - 1;
-        col = SIDE_LENGTH - 1;
-        while (row >= 0 && col >= 0) {
-            ArrayList<Piece> space = pieces.get(row).get(col);
-            // Spaces with multiple pieces block winning.
-            if (space.size() == 1) {
-                sum += playerValues.get(space.get(0).getPlayer());
-            }
-            row--;
-            col--;
-        }
-        if (sum == winningSumX) {
-            winners.put(Player.X, winners.get(Player.X) + 1);
-        } else if (sum == winningSumY) {
-            winners.put(Player.O, winners.get(Player.O) + 1);
-        }
+      mergeWinners(getWinners(columnSpaces), winners);
+    }
+
+    // Top left to bottom right diagonal
+    int row = 0;
+    int col = 0;
+    ArrayList<Space> diagSpaces = new ArrayList<>(SIDE_LENGTH);
+    while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
+        diagSpaces.add(spaces.get(row).get(col));
+        row++;
+        col++;
+    }
+
+    mergeWinners(getWinners(diagSpaces), winners);
+
+    // Top right to bottom left diagonal
+    diagSpaces.clear();
+    row = 0;
+    col = SIDE_LENGTH - 1;
+    while (row < SIDE_LENGTH && col >= 0) {
+        diagSpaces.add(spaces.get(row).get(col));
+        row++;
+        col--;
+    }
+
+    mergeWinners(getWinners(diagSpaces), winners);
 
 		return winners;
 	}
+
+  /**
+   * Figures out if there is a winner in the given Spaces. A winner must be in every single Space
+   * to win.
+   *
+   * @param toCheck A List of the Spaces to check for a winner. This should be an entire row,
+   *                column, or diagonal of Spaces.
+   * @return A Set of the Players who won in this List of Spaces.
+   */
+  private Set<Player> getWinners(List<Space> toCheck) {
+    //TODO: This allows spaces with multiple Pieces in them to still contribute to a win.
+    // We don't need to map to a count here because a Player may only win once per row, column, or
+    // diagonal.
+    Set<Player> winners = new HashSet<>(2);
+
+    boolean xWins = true;
+    boolean oWins = true;
+
+    for (Space space : toCheck) {
+      if (!space.hasX()) {
+        xWins = false;
+      }
+
+      if (!space.hasO()) {
+        oWins = false;
+      }
+
+      if (!xWins && !oWins) {
+        return winners;
+      }
+    }
+
+    if (xWins) {
+      winners.add(Player.X);
+    }
+
+    if (oWins) {
+      winners.add(Player.O);
+    }
+
+    return winners;
+  }
+
+  /**
+   * Merges the winners from an individual row, column, or diagonal with the running sum of overall
+   * winners.
+   *
+   * @param winners The set of winners from an individual row, column, or diagonal.
+   * @param sum The running total of wins for each Player.
+   */
+  private void mergeWinners(Set<Player> winners, Map<Player, Integer> sum) {
+    if (winners.contains(Player.X)) {
+      sum.put(Player.X, sum.get(Player.X) + 1);
+    }
+
+    if (winners.contains(Player.O)) {
+      sum.put(Player.O, sum.get(Player.O) + 1);
+    }
+  }
 
 	/**
 	 * Method newPiece Adds a new Piece to the Board
@@ -256,7 +272,7 @@ public class Board {
 	 */
 	public View newPiece(int dirx, int diry) {
 		Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
-		pieces.get(posx + 1).get(posy + 1).add(p); //Adds the Piece to the pieces ArrayList
+		spaces.get(posx + 1).get(posy + 1).addPiece(p); //Adds the Piece to the pieces ArrayList
 		return p;
 	}
 
@@ -286,12 +302,12 @@ public class Board {
 	 * 
 	 * @return An ArrayList of Pieces to be changed during Animation. (Collisions)
 	 */
-	public ArrayList<ArrayList<ArrayList<Piece>>> updatePositions() {
+	public List<List<List<Piece>>> updatePositions() {
 		ArrayList<Piece> temp = new ArrayList<>(9); //ArrayList of the Pieces
-		for (int i = 0; i < 3; i++) { //Each Row
-			for (int j = 0; j < 3; j++) { //Each Column
-				for (int k = 0; k < pieces.get(i).get(j).size();) { //Each Piece 
-					temp.add(pieces.get(i).get(j).remove(k)); //Adds the Piece to our new ArrayList of Pieces
+		for (ArrayList<Space> row : spaces) { //Each Row
+			for (Space space : row) { //Each Space
+				for (int i = 0; i < space.getPieces().size();) { //Each Piece
+					temp.add(space.getPieces().remove(i)); //Adds the Piece to our new ArrayList of Pieces
 															  //and removes it from pieces since it will be changing positions
 					temp.get(temp.size() - 1).updatePosition(); //Changes the position of the Piece
 				}
@@ -304,7 +320,7 @@ public class Board {
 		 * Each of those contains an ArrayList of collisions
 		 * Each of which are ArrayLists of the Pieces that collide
 		 */
-		ArrayList<ArrayList<ArrayList<Piece>>> collisions = new ArrayList<>();
+		List<List<List<Piece>>> collisions = new ArrayList<>();
 		/**
 		 * Sets up the collisions ArrayList.
 		 * Note that we don't deal with the collisions here, we just list them.
@@ -316,7 +332,8 @@ public class Board {
 			 * We need the + 1 because pos ranges from -1 to 1
 			 * And the Array goes from 0 to 2
 			 */
-			pieces.get(temp.get(i).getXPosition() + 1).get(temp.get(i).getYPosition() + 1).add(temp.get(i));
+			spaces.get(temp.get(i).getXPosition() + 1).get(temp.get(i).getYPosition() + 1)
+          .addPiece(temp.get(i));
 		}
 		return collisions;
 	}
@@ -340,8 +357,8 @@ public class Board {
 	 * 		If its length is 2, we should switch the isX values.
 	 * 		If its length is greater than 2, we should remove the Pieces.
 	 */
-	public ArrayList<ArrayList<Piece>> getHalfwayCollisions(ArrayList<Piece> temp) {
-		ArrayList<ArrayList<Piece>> collisions = new ArrayList<>();
+	public List<List<Piece>> getHalfwayCollisions(ArrayList<Piece> temp) {
+		List<List<Piece>> collisions = new ArrayList<>();
 		for (int i = 0; i < temp.size() - 1; i++) { //For each Piece
 			collisions.add(new ArrayList<Piece>()); //Will be the Pieces that collide with temp(i)
 			collisions.get(collisions.size() - 1).add(temp.get(i)); //Add Piece temp(i)
@@ -391,12 +408,12 @@ public class Board {
 	 * 
 	 * @return An ArrayList of the collisions
 	 */
-	public ArrayList<ArrayList<Piece>> getCollisions() {
-		ArrayList<ArrayList<Piece>> collisions = new ArrayList<>();
-		for (int i = 0; i < 3; i++) { //Vertical coordinate
-			for (int j = 0; j < 3; j++) { //horizontal coordinate
-				if (pieces.get(i).get(j).size() > 1) { //More than one piece in the same space
-					collisions.add(pieces.get(i).get(j));
+	public List<List<Piece>> getCollisions() {
+		List<List<Piece>> collisions = new ArrayList<>();
+		for (ArrayList<Space> row : spaces) {
+			for (Space space : row) {
+				if (space.getPieces().size() > 1) {
+					collisions.add(space.getPieces());
 				}
 			}
 		}
@@ -407,20 +424,18 @@ public class Board {
 	 * Removes a Piece from the pieces ArrayList.
 	 * Called from the collision resolution in TicTacGo.java
 	 * 
-	 * @param piece The Piece to be romoved
+	 * @param piece The Piece to be removed
 	 */
 	public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
 										   //And the Array goes from 0 to 2
-		pieces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).remove(piece);
+		spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
 	}
 
 	public void updateUiPositions() {
         // Iterate through the board and update each piece's UI position.
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				for (int k = 0; k < pieces.get(i).get(j).size(); k++) {
-					pieces.get(i).get(j).get(k).updateUiPosition();
-				}
+		for (ArrayList<Space> row : spaces) {
+			for (Space space : row) {
+        space.updateUiPosition();
 			}
 		}
 	}
@@ -495,34 +510,16 @@ public class Board {
 			gravity = gravity | Gravity.RIGHT;
 		return gravity;
 	}
-
-	/**
-	 * Gets the Piece ArrayList
-	 * 
-	 * @return pieces
-	 */
-	public ArrayList<ArrayList<ArrayList<Piece>>> getPieces() {
-		return pieces;
-	}
-	/**
-	 * Returns the value of pieces.get(i)
-	 * 
-	 * @param i the index
-	 * @return The ArrayList<ArrayList<Piece>> at index i
-	 */
-	public ArrayList<ArrayList<Piece>> getPieces(int i) {
-		return pieces.get(i);
-	}
 	
 	/**
-	 * Returns the value of pieces.get(i).get(j)
+	 * Returns the Space at index i, j
 	 * 
 	 * @param i the first index
 	 * @param j the second index
-	 * @return The ArrayList<Piece> at index i, j
+	 * @return The Space at index i, j
 	 */
-	public ArrayList<Piece> getPieces(int i, int j) {
-		return pieces.get(i).get(j);
+	public Space getSpace(int i, int j) {
+		return spaces.get(i).get(j);
 	}
 	
 	public Player getStartTurn() {
