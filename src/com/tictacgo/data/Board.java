@@ -85,11 +85,13 @@ public class Board {
     pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
 
     for (int i = 0; i < SIDE_LENGTH; i++) {
-      spaces.add(new ArrayList<Space>(SIDE_LENGTH));
-
-      spaces.get(i).add(new Space());
-      spaces.get(i).add(new Space());
-      spaces.get(i).add(new Space());
+      List<Space> row = new ArrayList<>(SIDE_LENGTH);
+      
+      for (int j = 0; j < SIDE_LENGTH; j++) {
+      	row.add(new Space());
+      }
+      
+      spaces.add(row);
     }
 
 		/**
@@ -255,6 +257,8 @@ public class Board {
   /**
    * Merges the winners from an individual row, column, or diagonal with the running sum of overall
    * winners.
+   * 
+   * This method modifies its input parameter sum.
    *
    * @param individual The set of winners from an individual row, column, or diagonal.
    * @param sum The running total of wins for each Player.
