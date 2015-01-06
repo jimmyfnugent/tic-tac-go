@@ -149,7 +149,18 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
 
   @Override
   public void onDirectionPicked(int dirx, int diry) {
-    board.newPiece(dirx, diry);
+    fl.addView(board.newPiece(dirx, diry));
+
+    notifyWinners(board.getWinners());
+    if (board.willMove()) {
+      // Only move the pieces after both players have moved.
+      board.updatePositions();
+      board.updateUiPositions();
+    }
+    board.nextTurn();
+    updateTurnIndicator();
+    updateClearPieces();
+    play();
   }
 
   /**
@@ -223,23 +234,6 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
     }
     undoHistory.add(board.copy()); //Add our board to the undo history
     historyIndex++;
-  }
-
-  /**
-   * The CPU's turn
-   */
-  private void CPUMove() {
-    // TODO Make a move
-
-    // TODO Draw the piece
-    if (board.willMove()) {
-      notifyWinners(board.getWinners());
-    } else {
-      board.nextTurn();
-      notifyWinners(board.getWinners());
-      updateTurnIndicator();
-      updateClearPieces();
-    }
   }
 
   /**

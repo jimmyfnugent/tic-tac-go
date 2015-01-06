@@ -48,7 +48,6 @@ public class DirectionPicker extends DialogFragment {
 
   @Override
   public void setArguments(Bundle arguments) {
-    System.out.println("setArguments");
     String p = arguments.getString("player");
     player = p.equals("X") ? Board.Player.X : Board.Player.O;
 
@@ -126,20 +125,6 @@ public class DirectionPicker extends DialogFragment {
         }
 
         getFragmentManager().popBackStack();
-
-        /**
-         * Game loop
-         *
-        notifyWinners(board.getWinners());
-        if (board.willMove()) {
-          // Only move the pieces after both players have moved.
-          board.updatePositions();
-          board.updateUiPositions();
-        }
-        board.nextTurn();
-        updateTurnIndicator();
-        updateClearPieces();
-        play();*/
       }
     };
   }
