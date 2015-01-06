@@ -5,14 +5,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.tictacgo.data.Board;
@@ -36,16 +31,6 @@ public class TicTacGoGame extends Activity {
    * OnClickListener to use for each piece
    */
   private View.OnClickListener pieceClicked;
-
-  /**
-   * OnClickListener to use to pick direction
-   */
-  private View.OnClickListener directionClicked;
-
-  /**
-   * PopupWindow with direction Buttons
-   */
-  private PopupWindow directions;
 
   /**
    * The height of the usable screen area
@@ -112,63 +97,10 @@ public class TicTacGoGame extends Activity {
         directionPicker.setArguments(arguments);
 
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
       }
     };
-
-    /**
-     * What to do when a direction is clicked
-     */
-    directionClicked = new View.OnClickListener() {
-      public void onClick(View v) {
-        switch (v.getId()) { //Which direction was picked
-          case R.id.directionTopLeft:
-            fl.addView(board.newPiece(-1, -1));
-            break;
-          case R.id.directionTopMiddle:
-            fl.addView(board.newPiece(-1, 0));
-            break;
-          case R.id.directionTopRight:
-            fl.addView(board.newPiece(-1, 1));
-            break;
-          case R.id.directionMiddleLeft:
-            fl.addView(board.newPiece(0, -1));
-            break;
-          case R.id.directionMiddleRight:
-            fl.addView(board.newPiece(0, 1));
-            break;
-          case R.id.directionBottomLeft:
-            fl.addView(board.newPiece(1, -1));
-            break;
-          case R.id.directionBottomMiddle:
-            fl.addView(board.newPiece(1, 0));
-            break;
-          case R.id.directionBottomRight:
-            fl.addView(board.newPiece(1, 1));
-            break;
-          default: //Center Button
-            directions.dismiss();
-            return; //Only reason we need this case
-        }
-        directions.dismiss();
-
-        /**
-         * Game loop
-         */
-        notifyWinners(board.getWinners());
-        if (board.willMove()) {
-          // Only move the pieces after both players have moved.
-          board.updatePositions();
-          board.updateUiPositions();
-        }
-        board.nextTurn();
-        updateTurnIndicator();
-        updateClearPieces();
-        play();
-      }
-    };
-    updateBoard();
-    updateTurnIndicator();
 
     /**
      * Sets the New Game Button to work
@@ -216,6 +148,12 @@ public class TicTacGoGame extends Activity {
      * Step 5: Play the game
      */
     play();
+    updateBoard();
+    updateTurnIndicator();
+  }
+
+  public void newPiece(int dirx, int diry) {
+    board.newPiece(dirx, diry);
   }
 
 

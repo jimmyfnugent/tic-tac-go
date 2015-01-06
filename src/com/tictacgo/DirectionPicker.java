@@ -6,7 +6,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableRow;
 
@@ -19,6 +18,8 @@ public class DirectionPicker extends DialogFragment {
   private int yOffset;
 
   private int height;
+
+  private View.OnClickListener directionClicked;
 
   @Override
   public void setArguments(Bundle arguments) {
@@ -62,11 +63,63 @@ public class DirectionPicker extends DialogFragment {
   }
 
   @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    directionClicked = new View.OnClickListener() {
+      public void onClick(View v) {
+       switch (v.getId()) { //Which direction was picked
+          case R.id.directionTopLeft:
+            ((TicTacGoGame) getActivity()).newPiece(-1, -1);
+            break;
+          case R.id.directionTopMiddle:
+            ((TicTacGoGame) getActivity()).newPiece(-1, 0);
+            break;
+          case R.id.directionTopRight:
+            ((TicTacGoGame) getActivity()).newPiece(-1, 1);
+            break;
+          case R.id.directionMiddleLeft:
+            ((TicTacGoGame) getActivity()).newPiece(0, -1);
+            break;
+          case R.id.directionMiddleRight:
+            ((TicTacGoGame) getActivity()).newPiece(0, 1);
+            break;
+          case R.id.directionBottomLeft:
+            ((TicTacGoGame) getActivity()).newPiece(1, -1);
+            break;
+          case R.id.directionBottomMiddle:
+            ((TicTacGoGame) getActivity()).newPiece(1, 0);
+            break;
+          case R.id.directionBottomRight:
+            ((TicTacGoGame) getActivity()).newPiece(1, 1);
+            break;
+          default: //Center Button
+            getFragmentManager().popBackStack();
+            return; //Only reason we need this case
+        }
+
+        getFragmentManager().popBackStack();
+
+        /**
+         * Game loop
+         *
+        notifyWinners(board.getWinners());
+        if (board.willMove()) {
+          // Only move the pieces after both players have moved.
+          board.updatePositions();
+          board.updateUiPositions();
+        }
+        board.nextTurn();
+        updateTurnIndicator();
+        updateClearPieces();
+        play();*/
+      }
+    };
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    //getDialog().setCanceledOnTouchOutside(true);
-    System.out.println("onCreateView");
-
     View view = inflater.inflate(R.layout.direction, container, false);
 
     int id = player == Board.Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
@@ -97,7 +150,7 @@ public class DirectionPicker extends DialogFragment {
   private void setDirectionButton(ImageView imageView, int id, int rotation) {
     TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
     imageView.setLayoutParams(pieceLayout);
-    //imageView.setOnClickListener(directionClicked);
+    imageView.setOnClickListener(directionClicked);
     imageView.setImageResource(id);
     imageView.setPivotX(height / 12);
     imageView.setPivotY(height / 12);
