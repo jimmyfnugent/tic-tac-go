@@ -2,10 +2,10 @@ package com.tictacgo;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TableRow;
 
@@ -14,8 +14,7 @@ import com.tictacgo.data.Board;
 public class DirectionPicker extends DialogFragment {
   private Board.Player player;
 
-  private int xOffset;
-  private int yOffset;
+  private int gravity;
 
   private int height;
 
@@ -53,37 +52,7 @@ public class DirectionPicker extends DialogFragment {
 
     height = arguments.getInt("height");
 
-    switch (arguments.getInt("gravity")) {
-      case Gravity.TOP | Gravity.LEFT:
-        break;
-      case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-        xOffset = height / 4;
-        break;
-      case Gravity.TOP | Gravity.RIGHT:
-        xOffset = height / 2;
-        break;
-      case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-        yOffset = height / 4;
-        break;
-      case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-        xOffset = height / 2;
-        yOffset = height / 4;
-        break;
-      case Gravity.BOTTOM | Gravity.LEFT:
-        yOffset = height / 2;
-        break;
-      case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-        xOffset = height / 4;
-        yOffset = height / 2;
-        break;
-      case Gravity.BOTTOM | Gravity.RIGHT:
-        xOffset = height / 2;
-        yOffset = height / 2;
-        break;
-      default:
-        xOffset = height / 4;
-        yOffset = height / 4;
-    }
+    this.gravity = arguments.getInt("gravity");
   }
 
   @Override
@@ -133,6 +102,9 @@ public class DirectionPicker extends DialogFragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.direction, container, false);
+    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+        gravity);
+    view.setLayoutParams(params);
 
     int id = player == Board.Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
 
