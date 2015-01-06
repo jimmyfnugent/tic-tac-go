@@ -45,7 +45,7 @@ public class Piece extends ImageView {
 	 *
 	 * @param dirx The x direction of the Piece.
 	 *
-	 * @param dirx The x direction of the Piece.
+	 * @param diry The y direction of the Piece.
 	 *
 	 * @param player The player this piece belongs to.
 	 * 
@@ -223,6 +223,13 @@ public class Piece extends ImageView {
 	public boolean isX() {
 		return player == Player.X;
 	}
+
+  /**
+   * Returns true if this piece belongs to player O; false otherwise.
+   */
+  public boolean isO() {
+    return player == Player.O;
+  }
 
 	/**
 	 * Sets the drawable resource for this Piece
