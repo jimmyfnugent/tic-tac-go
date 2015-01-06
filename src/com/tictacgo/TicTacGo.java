@@ -473,16 +473,12 @@ public class TicTacGo extends Activity {
     			i--; //When we remove a View, every other one goes up one index
     		}
     	}
-    	for (int i = 0; i < 3; i++) { //Each row
-    		for (int j = 0; j < 3; j++) { //Each column
+    	for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
+    		for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
+          board.getSpace(i, j).updateImageResources();
     			if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
-    				LayoutParams pieceLayout = new LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
-    				ImageView piece = new ImageView(getBaseContext());
-    				piece.setImageResource(R.drawable.clearpiece);
-    				piece.setLayoutParams(pieceLayout);
-    				piece.setOnClickListener(pieceClicked);
-    				//piece.setOnDragListener(pieceDragged);
-    				fl.addView(piece);
+    				board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+                pieceClicked);
     			}
     		}
     	}
@@ -519,22 +515,11 @@ public class TicTacGo extends Activity {
 	 * Needed in case of undo, redo, or new game
 	 */
 	private void fillBoard() {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (board.getSpace(i, j).isEmpty()) { //No Pieces here
-					LayoutParams pieceLayout = new LayoutParams(height / 3, height / 3, Board.getGravity(i, j));
-					ImageView piece = new ImageView(getBaseContext());
-					piece.setImageResource(R.drawable.clearpiece);
-					piece.setLayoutParams(pieceLayout);
-					piece.setOnClickListener(pieceClicked);
-					//piece.setOnDragListener(pieceDragged);
-					fl.addView(piece);
-				}
-				else { //Pieces here
-					for (int k = 0; k < board.getSpace(i, j).getPieces().size(); k++) {
-						fl.addView(board.getSpace(i, j).getPieces().get(k));
-					}
-				}
+		for (int i = 0; i < Board.SIDE_LENGTH; i++) {
+			for (int j = 0; j < Board.SIDE_LENGTH; j++) {
+        board.getSpace(i, j).updateImageResources();
+        board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+            pieceClicked);
 			}
 		}
 	}

@@ -1,5 +1,12 @@
 package com.tictacgo.data;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+
+import com.tictacgo.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +107,44 @@ public class Space {
 
   public boolean collisionOccurred() {
     return pieces.size() > 1;
+  }
+
+  /**
+   * Render this Space on the screen
+   */
+  public void render(FrameLayout fl, Context context, int height, int gravity,
+                     View.OnClickListener pieceClicked) {
+    if (isEmpty()) { //No Pieces here
+      FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3, height / 3,
+          gravity);
+      ImageView piece = new ImageView(context);
+      piece.setImageResource(R.drawable.clearpiece);
+      piece.setLayoutParams(pieceLayout);
+      piece.setOnClickListener(pieceClicked);
+      //piece.setOnDragListener(pieceDragged);
+      fl.addView(piece);
+
+    } else { //Pieces here
+      for (Piece piece : pieces) {
+        fl.addView(piece);
+      }
+    }
+  }
+
+  /**
+   * Update the image resources of all of our Pieces. That is, ensure that they are just directions
+   * if need be, and full pieces otherwise.
+   */
+  public void updateImageResources() {
+    if (pieces.size() == 2 && pieces.get(0).isX() == pieces.get(1).isX()) {
+      // The only case we need a direction only
+      pieces.get(0).updateImageResourceFullPiece();
+      pieces.get(1).updateImageResourceDirectionOnly();
+
+    } else {
+      for (Piece piece : pieces) {
+        piece.updateImageResourceFullPiece();
+      }
+    }
   }
 }
