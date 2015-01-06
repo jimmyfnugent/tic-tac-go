@@ -28,6 +28,24 @@ public class DirectionPicker extends DialogFragment {
     public void onDirectionPicked(int dirx, int diry);
   }
 
+  /**
+   * Creates and returns a new DirectionPicker object.
+   *
+   * @param player The player whose turn it is.
+   * @param gravity The gravity of the location that was just pressed.
+   * @param height The height of the board.
+   * @return A new DirectionPicker object with the given parameters.
+   */
+  public static DirectionPicker getInstance(Board.Player player, int gravity, int height) {
+    DirectionPicker directionPicker = new DirectionPicker();
+    Bundle arguments = new Bundle();
+    arguments.putString("player", player == Board.Player.X ? "X" : "O");
+    arguments.putInt("gravity", gravity);
+    arguments.putInt("height", height);
+    directionPicker.setArguments(arguments);
+    return directionPicker;
+  }
+
   @Override
   public void setArguments(Bundle arguments) {
     System.out.println("setArguments");

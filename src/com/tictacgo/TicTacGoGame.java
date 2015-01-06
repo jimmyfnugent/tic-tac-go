@@ -88,13 +88,8 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        DirectionPicker directionPicker = new DirectionPicker();
-        Bundle arguments = new Bundle();
-        arguments.putString("player", board.getTurn() == Board.Player.X ? "X" : "O");
-        arguments.putInt("gravity", gravity);
-        arguments.putInt("height", height);
-        directionPicker.setArguments(arguments);
+        DirectionPicker directionPicker = DirectionPicker.getInstance(board.getTurn(), gravity,
+            height);
 
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
         fragmentTransaction.addToBackStack(null);
