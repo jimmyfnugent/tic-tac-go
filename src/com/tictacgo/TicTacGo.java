@@ -97,14 +97,6 @@ public class TicTacGo extends Activity {
 	 */
 	private Player turn;
 	
-	/**
-	 * An ArrayList of collisions to be resolved during animation
-	 * 
-	 * collisions.get(0) happen at the halfway point
-	 * collisions.get(1) happen at the end of animation
-	 */
-	private List<List<List<Piece>>> collisions;
-	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,7 +114,7 @@ public class TicTacGo extends Activity {
         /**
          * Initialize the undo/redo function
          */
-        undoHistory = new ArrayList<Board>();
+        undoHistory = new ArrayList<>();
         historyIndex = 0;
         
         RotateAnimation anim = new RotateAnimation(0, 359);
@@ -420,7 +412,7 @@ public class TicTacGo extends Activity {
                 		board = new Board(turn, height, getBaseContext());
                 		updateBoard();
                 		updateTurnIndicator();
-                		undoHistory = new ArrayList<Board>();
+                		undoHistory = new ArrayList<>();
                 		historyIndex = 0;
                 		play();
                    	}
@@ -434,7 +426,7 @@ public class TicTacGo extends Activity {
                 		if (historyIndex == 0) //First turn already
                 			return;
                 		historyIndex--; //Go back one index
-                		board = undoHistory.get(historyIndex).clone(); //Go back one Board
+                		board = undoHistory.get(historyIndex).copy(); //Go back one Board
                 		updateBoard();
             			updateTurnIndicator();
                    	}
@@ -448,7 +440,7 @@ public class TicTacGo extends Activity {
                 		if (historyIndex == undoHistory.size() - 1) //Last turn already
                 			return;
                 		historyIndex++; //Go forward one index
-                		board = undoHistory.get(historyIndex).clone(); //Go forward one Board
+                		board = undoHistory.get(historyIndex).copy(); //Go forward one Board
                 		updateBoard();
             			updateTurnIndicator();
                    	}
@@ -541,17 +533,9 @@ public class TicTacGo extends Activity {
 		while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
 			undoHistory.remove(historyIndex + 1);
 		}
-		undoHistory.add(board.clone()); //Add our board to the undo history
+		undoHistory.add(board.copy()); //Add our board to the undo history
 		historyIndex++;
-		while (board.isCatsGame()) { //Board is full
-			int i = 0; //Count number of times Board has been full with no winners
-			board.updatePositions(); //Move Pieces
-			updateBoard();
-			notifyWinners(board.getWinners()); //Check for winners
-			i++;
-			if (i > 4) //Four moves hasn't solved it
-				notifyWinners(null); //Cat's game
-		}
+		
 		if ((board.getTurn() == Player.X && isCPU1) || (board.getTurn() == Player.O && isCPU2)) { //CPU Move
 			CPUMove();
 			play();
@@ -583,7 +567,7 @@ public class TicTacGo extends Activity {
 	 */
 	private void notifyWinners(Map<Player, Integer> winners) {
 		if (winners == null) { //Cat's Game
-			
+
 		}
         int winnersX = winners.get(Player.X);
         int winnersO = winners.get(Player.O);
@@ -592,13 +576,13 @@ public class TicTacGo extends Activity {
 		}
 		else {
 			if (winnersX == winnersO) { //Tie
-				
+
 			}
 			else if (winnersX < winnersO) { //O wins
-				
+
 			}
 			else { //X wins
-				
+
 			}
 		}
 		for (int i = 0; i < fl.getChildCount(); i++) {

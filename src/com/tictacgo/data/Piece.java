@@ -111,11 +111,11 @@ public class Piece extends ImageView {
 	}
 
 	/**
-	 * Creates a clone of the Piece Object. Used to copy the Board object
+	 * Creates a deep copy of the Piece Object. Used to copy the Board object
 	 * 
-	 * @return A clone of this Piece object
+	 * @return A deep copy of this Piece object
 	 */
-	public Piece clone() {
+	public Piece copy() {
 		return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1], getPlayer(), sideLength, getContext());
 	}
 
@@ -129,15 +129,6 @@ public class Piece extends ImageView {
         // Going off one edge results in wrapping around the other side.
         position[0] = (position[0] + 4) % 3 - 1;
         position[1] = (position[1] + 4) % 3 - 1;
-	}
-
-	/**
-	 * Returns the position Array of the Piece.
-	 *
-	 * @return The position Array of the Piece.
-	 */
-	public int[] getPosition() {
-		return position;
 	}
 
 	/**

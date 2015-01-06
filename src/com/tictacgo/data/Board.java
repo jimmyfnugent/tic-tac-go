@@ -124,28 +124,27 @@ public class Board {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
-				spaces.get(i).add(b.getSpace(i, j).clone());
+				spaces.get(i).add(b.getSpace(i, j).copy());
         pieces.addAll(spaces.get(i).get(j).getPieces());
 			}
 		}
 	}
 
 	/**
-	 * Creates a clone of the Board Object
+	 * Creates a deep copy of the Board Object
 	 * 
-	 * @return A clone of this Board object
+	 * @return A deep copy of this Board object
 	 */
-    @Override
-	public Board clone() {
+	public Board copy() {
 		return new Board(this);
 	}
 
 	/**
-	 * Tests if the game is a Cats Game
+	 * Tests if the board is full
 	 *
 	 * @return True if the board is full, false otherwise
 	 */
-	public boolean isCatsGame() {
+	public boolean isFull() {
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			for (int j = 0; j < SIDE_LENGTH; j++) {
 				if (spaces.get(i).get(j).isEmpty()) { //There is an empty slot
@@ -486,7 +485,7 @@ public class Board {
 	 * @return The Gravity value
 	 */
 	public static int getGravity(int i, int j) {
-		int gravity = 0;
+		int gravity;
 		if (i == 0) //Top row
 			gravity = Gravity.TOP;
 		else if (i == 1) //Middle row
