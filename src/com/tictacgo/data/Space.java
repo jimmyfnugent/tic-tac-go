@@ -97,4 +97,8 @@ public class Space {
   public List<Piece> getPieces() {
     return pieces;
   }
+
+  public boolean collisionOccurred() {
+    return pieces.size() > 1;
+  }
 }

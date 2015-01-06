@@ -45,7 +45,7 @@ public class Piece extends ImageView {
 	 *
 	 * @param dirx The x direction of the Piece.
 	 *
-	 * @param dirx The x direction of the Piece.
+	 * @param diry The y direction of the Piece.
 	 *
 	 * @param player The player this piece belongs to.
 	 * 
@@ -122,7 +122,7 @@ public class Piece extends ImageView {
 	/**
 	 * Updates the position of the Piece and fixes wrap-arounds.
 	 */
-	public void updatePosition() {
+	public void updatePositionNoCollision() {
 		position[0] += direction[0];
 		position[1] += direction[1];
 
@@ -148,6 +148,14 @@ public class Piece extends ImageView {
 	public int getXPosition() {
 		return position[0];
 	}
+
+  public int getRow() {
+    return position[0] + 1;
+  }
+
+  public int getColumn() {
+    return position[1] + 1;
+  }
 
 	/**
 	 * Returns the y position of the Piece.
