@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
@@ -225,15 +226,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
     ImageView view = (ImageView) findViewById(R.id.turnIndicator);
 
-    RotateAnimation rotation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF,
-        0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    rotation.setDuration(5000);
-    rotation.setRepeatMode(Animation.RESTART);
-    rotation.setRepeatCount(Animation.INFINITE);
-    rotation.setInterpolator(new LinearInterpolator());
-
-    view.setAnimation(rotation);
-    view.animate();
+    view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.spin_animation));
   }
 
   /**
