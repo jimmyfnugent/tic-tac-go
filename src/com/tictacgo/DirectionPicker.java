@@ -52,7 +52,7 @@ public class DirectionPicker extends DialogFragment {
 
     height = arguments.getInt("height");
 
-    this.gravity = arguments.getInt("gravity");
+    gravity = arguments.getInt("gravity");
   }
 
   @Override
@@ -88,12 +88,9 @@ public class DirectionPicker extends DialogFragment {
           case R.id.directionBottomRight:
             listener.onDirectionPicked(1, 1);
             break;
-          default: //Center Button
+          default:
             getFragmentManager().popBackStack();
-            return; //Only reason we need this case
         }
-
-        getFragmentManager().popBackStack();
       }
     };
   }
@@ -120,6 +117,12 @@ public class DirectionPicker extends DialogFragment {
 
     id = player == Board.Player.X ? R.drawable.piecex : R.drawable.pieceo;
     setDirectionButton((ImageView) view.findViewById(R.id.directionClear), id, 0);
+
+    if (this.getDialog() == null) {
+      System.out.println("NULL");
+    } else {
+      System.out.println("NOT NULL");
+    }
 
     return view;
   }

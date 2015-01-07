@@ -87,12 +87,13 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
         board.makePiece(gravity); // Preset Piece location in board
 
         FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.popBackStackImmediate("Picker", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         DirectionPicker directionPicker = DirectionPicker.getInstance(board.getTurn(), gravity,
             height);
 
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
-        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.addToBackStack("Picker");
         fragmentTransaction.commit();
       }
     };
@@ -149,6 +150,7 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
 
   @Override
   public void onDirectionPicked(int dirx, int diry) {
+    getFragmentManager().popBackStack();
     fl.addView(board.newPiece(dirx, diry));
 
     notifyWinners(board.getWinners());
