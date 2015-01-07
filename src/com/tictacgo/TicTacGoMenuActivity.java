@@ -8,8 +8,15 @@ import android.view.View.OnClickListener;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.tictacgo.data.Board.Player;
+
 
 public class TicTacGoMenuActivity extends Activity {
+
+  public static final String p1NameKey = "com.tictacgo.p1Name";
+  public static final String p2NameKey = "com.tictacgo.p2Name";
+  public static final String playerKey = "com.tictacgo.player";
+  public static final String heightKey = "com.tictacgo.height";
 	
 	/** Called when the activity is first created. */
   @Override
@@ -22,16 +29,22 @@ public class TicTacGoMenuActivity extends Activity {
         Intent playGame = new Intent(v.getContext(), TicTacGoGameActivity.class);
 
         String p1Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerOneName));
-        playGame.putExtra("p1Name", p1Name);
+        playGame.putExtra(p1NameKey, p1Name);
 
         String p2Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerTwoName));
-        playGame.putExtra("p2Name", p2Name);
+        playGame.putExtra(p2NameKey, p2Name);
 
         int first = ((RadioGroup) findViewById(R.id.localTurnSelect)).getCheckedRadioButtonId();
-        playGame.putExtra("first", first);
+        Player turn = null;
+        if (first == R.id.localTurnSelectX) {
+          turn = Player.X;
+        } else if (first == R.id.localTurnSelectO) {
+          turn = Player.O;
+        }
+        playGame.putExtra(playerKey, turn);
 
         int height = findViewById(R.id.gameSelectScreen).getBottom();
-        playGame.putExtra("height", height);
+        playGame.putExtra(heightKey, height);
 
         v.getContext().startActivity(playGame);
       }

@@ -72,25 +72,20 @@ public class TicTacGoGameActivity extends Activity {
 
     Intent intent = getIntent();
 
-    int first = intent.getIntExtra("first", R.id.localTurnSelectX);
-    if (first == R.id.localTurnSelectX) {
-      turn = Player.X;
-    } else if (first == R.id.localTurnSelectO) {
-      turn = Player.O;
-    } else {
-      turn = null;
-    }
+    turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.playerKey);
 
     // Undo/redo initialization
     undoHistory = new ArrayList<>();
     historyIndex = 0;
 
-    height = intent.getIntExtra("height", 300);
+    height = intent.getIntExtra(TicTacGoMenuActivity.heightKey, 300);
     board = new Board(turn, height, getBaseContext());
 
     // Set up the screen
-    ((TextView) findViewById(R.id.gamePlayerOneName)).setText(intent.getStringExtra("p1Name"));
-    ((TextView) findViewById(R.id.gamePlayerTwoName)).setText(intent.getStringExtra("p2Name"));
+    ((TextView) findViewById(R.id.gamePlayerOneName))
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.p1NameKey));
+    ((TextView) findViewById(R.id.gamePlayerTwoName))
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.p2NameKey));
     fl = (FrameLayout) findViewById(R.id.gameBoard);
 
     // What to do when an empty space is clicked
