@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectionPickedListener {
+public class TicTacGoGame extends Activity implements DirectionPickerFragment.OnDirectionPickedListener {
   /**
    * The Board of the game
    */
@@ -87,13 +87,14 @@ public class TicTacGoGame extends Activity implements DirectionPicker.OnDirectio
         board.makePiece(gravity); // Preset Piece location in board
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.popBackStackImmediate("Picker", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
+            FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DirectionPicker directionPicker = DirectionPicker.getInstance(board.getTurn(), gravity,
+        DirectionPickerFragment directionPicker = DirectionPickerFragment.getInstance(board.getTurn(), gravity,
             height);
 
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
-        fragmentTransaction.addToBackStack("Picker");
+        fragmentTransaction.addToBackStack(DirectionPickerFragment.class.getName());
         fragmentTransaction.commit();
       }
     };

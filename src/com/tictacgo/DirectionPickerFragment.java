@@ -9,10 +9,13 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TableRow;
 
-import com.tictacgo.data.Board;
+import com.tictacgo.data.Board.Player;
 
-public class DirectionPicker extends DialogFragment {
-  private Board.Player player;
+public class DirectionPickerFragment extends DialogFragment {
+  public static final String playerArgumentKey = "player";
+  public static final String gravityArgumentKey = "gravity";
+  public static final String heightArgumentKey = "height";
+  private Player player;
 
   private int gravity;
 
@@ -35,24 +38,22 @@ public class DirectionPicker extends DialogFragment {
    * @param height The height of the board.
    * @return A new DirectionPicker object with the given parameters.
    */
-  public static DirectionPicker getInstance(Board.Player player, int gravity, int height) {
-    DirectionPicker directionPicker = new DirectionPicker();
+  public static DirectionPickerFragment getInstance(Player player, int gravity, int height) {
     Bundle arguments = new Bundle();
-    arguments.putString("player", player == Board.Player.X ? "X" : "O");
-    arguments.putInt("gravity", gravity);
-    arguments.putInt("height", height);
+    arguments.putSerializable(playerArgumentKey, player);
+    arguments.putInt(gravityArgumentKey, gravity);
+    arguments.putInt(heightArgumentKey, height);
+
+    DirectionPickerFragment directionPicker = new DirectionPickerFragment();
     directionPicker.setArguments(arguments);
     return directionPicker;
   }
 
   @Override
   public void setArguments(Bundle arguments) {
-    String p = arguments.getString("player");
-    player = p.equals("X") ? Board.Player.X : Board.Player.O;
-
-    height = arguments.getInt("height");
-
-    gravity = arguments.getInt("gravity");
+    player = (Player) arguments.getSerializable(playerArgumentKey);
+    height = arguments.getInt(heightArgumentKey);
+    gravity = arguments.getInt(gravityArgumentKey);
   }
 
   @Override
@@ -98,12 +99,12 @@ public class DirectionPicker extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.direction, container, false);
+    View view = inflater.inflate(R.layout.fragment_direction_picker, container, false);
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
         gravity);
     view.setLayoutParams(params);
 
-    int id = player == Board.Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
+    int id = player == Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
 
     // Set direction buttons
     setDirectionButton((ImageView) view.findViewById(R.id.directionTopRight), id, 315);
@@ -115,7 +116,7 @@ public class DirectionPicker extends DialogFragment {
     setDirectionButton((ImageView) view.findViewById(R.id.directionBottomRight), id, 45);
     setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleRight), id, 0);
 
-    id = player == Board.Player.X ? R.drawable.piecex : R.drawable.pieceo;
+    id = player == Player.X ? R.drawable.piecex : R.drawable.pieceo;
     setDirectionButton((ImageView) view.findViewById(R.id.directionClear), id, 0);
 
     if (this.getDialog() == null) {
