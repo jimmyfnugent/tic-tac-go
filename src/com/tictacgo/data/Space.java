@@ -47,7 +47,7 @@ public class Space {
    * @return True if this Space contains no Pieces. False otherwise.
    */
   public boolean isEmpty() {
-    return pieces.size() == 0;
+    return pieces.isEmpty();
   }
 
   /**
@@ -68,11 +68,11 @@ public class Space {
   /**
    * Checks if this Space contains any O Pieces.
    *
-   * @return True if any of the Pieces in this Space are X. False otherwise.
+   * @return True if any of the Pieces in this Space are O. False otherwise.
    */
   public boolean hasO() {
     for (Piece piece : pieces) {
-      if (!piece.isX()) {
+      if (piece.isO()) {
         return true;
       }
     }
@@ -81,7 +81,7 @@ public class Space {
   }
 
   /**
-   * Creates and returns a deep copy of this Space. That is, one whose Pieces have also been cloned.
+   * Creates and returns a deep copy of this Space.
    *
    * @return A deep copy of this Space.
    */
