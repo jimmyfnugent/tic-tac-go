@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
+import com.tictacgo.data.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,7 +166,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     getFragmentManager().popBackStack();
 
     board.makePiece(gravity);
-    fl.addView(board.newPiece(dirx, diry));
+    Piece p = (Piece) board.newPiece(dirx, diry);
+    fl.addView(p);
+    AnimationSet set = new AnimationSet(true);
+    set.addAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation));
+    set.addAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_in_animation));
+    p.startAnimation(set);
 
     notifyWinners(board.getWinners());
     if (board.willMove()) {
