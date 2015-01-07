@@ -83,21 +83,30 @@ public class TicTacGoGame extends Activity implements DirectionPickerFragment.On
     // What to do when an empty space is clicked
     pieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
-        int gravity = ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity;
-        board.makePiece(gravity); // Preset Piece location in board
-
+        // Create new Fragment Transaction and remove all previous DirectionPickers
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
             FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DirectionPickerFragment directionPicker = DirectionPickerFragment.getInstance(board.getTurn(), gravity,
-            height);
 
+        // Make the new DirectionPicker
+        DirectionPickerFragment directionPicker = DirectionPickerFragment.getInstance(
+            board.getTurn(), ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity, height);
+
+        // Add the new DirectionPicker
         fragmentTransaction.add(R.id.gameBoard, directionPicker);
         fragmentTransaction.addToBackStack(DirectionPickerFragment.class.getName());
         fragmentTransaction.commit();
       }
     };
+
+    // Remove and active Direction Pickers whenever we click anywhere
+    findViewById(R.id.gameScreen).setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        getFragmentManager().popBackStackImmediate(DirectionPickerFragment.class.getName(),
+            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      }
+    });
 
     /**
      * Sets the New Game Button to work
@@ -150,8 +159,10 @@ public class TicTacGoGame extends Activity implements DirectionPickerFragment.On
   }
 
   @Override
-  public void onDirectionPicked(int dirx, int diry) {
+  public void onDirectionPicked(int dirx, int diry, int gravity) {
     getFragmentManager().popBackStack();
+
+    board.makePiece(gravity);
     fl.addView(board.newPiece(dirx, diry));
 
     notifyWinners(board.getWinners());

@@ -15,10 +15,9 @@ public class DirectionPickerFragment extends DialogFragment {
   public static final String playerArgumentKey = "player";
   public static final String gravityArgumentKey = "gravity";
   public static final String heightArgumentKey = "height";
+
   private Player player;
-
   private int gravity;
-
   private int height;
 
   private View.OnClickListener directionClicked;
@@ -27,7 +26,7 @@ public class DirectionPickerFragment extends DialogFragment {
 
   // Container Activity must implement this interface
   public interface OnDirectionPickedListener {
-    public void onDirectionPicked(int dirx, int diry);
+    public void onDirectionPicked(int dirx, int diry, int gravity);
   }
 
   /**
@@ -66,28 +65,28 @@ public class DirectionPickerFragment extends DialogFragment {
       public void onClick(View v) {
        switch (v.getId()) { //Which direction was picked
           case R.id.directionTopLeft:
-            listener.onDirectionPicked(-1, -1);
+            listener.onDirectionPicked(-1, -1, gravity);
             break;
           case R.id.directionTopMiddle:
-            listener.onDirectionPicked(-1, 0);
+            listener.onDirectionPicked(-1, 0, gravity);
             break;
           case R.id.directionTopRight:
-            listener.onDirectionPicked(-1, 1);
+            listener.onDirectionPicked(-1, 1, gravity);
             break;
           case R.id.directionMiddleLeft:
-            listener.onDirectionPicked(0, -1);
+            listener.onDirectionPicked(0, -1, gravity);
             break;
           case R.id.directionMiddleRight:
-            listener.onDirectionPicked(0, 1);
+            listener.onDirectionPicked(0, 1, gravity);
             break;
           case R.id.directionBottomLeft:
-            listener.onDirectionPicked(1, -1);
+            listener.onDirectionPicked(1, -1, gravity);
             break;
           case R.id.directionBottomMiddle:
-            listener.onDirectionPicked(1, 0);
+            listener.onDirectionPicked(1, 0, gravity);
             break;
           case R.id.directionBottomRight:
-            listener.onDirectionPicked(1, 1);
+            listener.onDirectionPicked(1, 1, gravity);
             break;
           default:
             getFragmentManager().popBackStack();
@@ -99,6 +98,7 @@ public class DirectionPickerFragment extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    // Create and locate view properly
     View view = inflater.inflate(R.layout.fragment_direction_picker, container, false);
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
         gravity);
@@ -118,12 +118,6 @@ public class DirectionPickerFragment extends DialogFragment {
 
     id = player == Player.X ? R.drawable.piecex : R.drawable.pieceo;
     setDirectionButton((ImageView) view.findViewById(R.id.directionClear), id, 0);
-
-    if (this.getDialog() == null) {
-      System.out.println("NULL");
-    } else {
-      System.out.println("NOT NULL");
-    }
 
     return view;
   }
