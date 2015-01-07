@@ -7,13 +7,19 @@
     <supports-screens android:smallScreens="true" android:anyDensity="true" android:largeScreens="true" android:resizeable="true" android:normalScreens="true" android:xlargeScreens="true"></supports-screens>
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".TicTacGo"
+        <activity android:name=".TicTacGoMenuActivity"
                   android:label="@string/app_name"
-                  android:screenOrientation="landscape">
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".TicTacGoGameActivity"
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
 
     </application>

@@ -90,7 +90,7 @@ public class Board {
       for (int j = 0; j < SIDE_LENGTH; j++) {
       	row.add(new Space());
       }
-      
+
       spaces.add(row);
     }
 
@@ -410,7 +410,7 @@ public class Board {
 	
 	/**
 	 * Removes a Piece from the pieces ArrayList.
-	 * Called from the collision resolution in TicTacGo.java
+	 * Called from the collision resolution in TicTacGoMenu.java
 	 * 
 	 * @param piece The Piece to be removed
 	 */
