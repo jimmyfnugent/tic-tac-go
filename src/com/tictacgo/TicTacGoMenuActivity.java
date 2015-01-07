@@ -9,17 +9,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
-public class TicTacGoMenu extends Activity {
+public class TicTacGoMenuActivity extends Activity {
 	
 	/** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.menu);
+    setContentView(R.layout.activity_tic_tac_go_menu);
 
     findViewById(R.id.playButton).setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
-        Intent playGame = new Intent(v.getContext(), TicTacGoGame.class);
+        Intent playGame = new Intent(v.getContext(), TicTacGoGameActivity.class);
 
         String p1Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerOneName));
         playGame.putExtra("p1Name", p1Name);

@@ -13,12 +13,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.tictacgo.data.Board;
+import com.tictacgo.data.Board.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TicTacGoGame extends Activity {
+public class TicTacGoGameActivity extends Activity {
   /**
    * The Board of the game
    */
@@ -62,20 +63,20 @@ public class TicTacGoGame extends Activity {
   /**
    * The initial turn selection. Used for the New Game Button
    */
-  private Board.Player turn;
+  private Player turn;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.game);
+    setContentView(R.layout.activity_tic_tac_go_game);
 
     Intent intent = getIntent();
 
     int first = intent.getIntExtra("first", R.id.localTurnSelectX);
     if (first == R.id.localTurnSelectX) {
-      turn = Board.Player.X;
+      turn = Player.X;
     } else if (first == R.id.localTurnSelectO) {
-      turn = Board.Player.O;
+      turn = Player.O;
     } else {
       turn = null;
     }
@@ -139,7 +140,7 @@ public class TicTacGoGame extends Activity {
         }
         directions.showAtLocation(fl, Gravity.NO_GRAVITY, xOffset, yOffset); //Make popup visible
         int id = R.drawable.pieceodirection; //Which picture to use for directions (O)
-        if (board.getTurn() == Board.Player.X) //X's turn
+        if (board.getTurn() == Player.X) //X's turn
           id = R.drawable.piecexdirection;
         /**
          * Set the Button images for the Popup Window
@@ -153,7 +154,7 @@ public class TicTacGoGame extends Activity {
         setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomRight), id, 45);
         setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleRight), id, 0);
         id = R.drawable.pieceo; //What picture to use for center (O)
-        if (board.getTurn() == Board.Player.X) //X's turn
+        if (board.getTurn() == Player.X) //X's turn
           id = R.drawable.piecex;
         setDirectionButton((ImageView) grid.findViewById(R.id.directionClear), id, 0); //Set center button image
       }
@@ -303,7 +304,7 @@ public class TicTacGoGame extends Activity {
    * Should be called in between every turn
    */
   private void updateTurnIndicator() {
-    if (board.getTurn() == Board.Player.X)
+    if (board.getTurn() == Player.X)
       ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.piecex);
     else
       ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.pieceo);
@@ -358,12 +359,12 @@ public class TicTacGoGame extends Activity {
    *
    * @param winners The ArrayList<Piece> returned from getWinners
    */
-  private void notifyWinners(Map<Board.Player, Integer> winners) {
+  private void notifyWinners(Map<Player, Integer> winners) {
     if (winners == null) { //Cat's Game
 
     }
-    int winnersX = winners.get(Board.Player.X);
-    int winnersO = winners.get(Board.Player.O);
+    int winnersX = winners.get(Player.X);
+    int winnersO = winners.get(Player.O);
     if (winnersX == 0 && winnersO == 0) { // No winners yet
       return;
     }
