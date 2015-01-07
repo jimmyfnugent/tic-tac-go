@@ -1,6 +1,6 @@
 package com.tictacgo;
 
-import android.app.DialogFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,7 @@ import android.widget.TableRow;
 
 import com.tictacgo.data.Board.Player;
 
-public class DirectionPickerFragment extends DialogFragment {
+public class DirectionPickerFragment extends Fragment {
   public static final String playerArgumentKey = "player";
   public static final String gravityArgumentKey = "gravity";
   public static final String heightArgumentKey = "height";
