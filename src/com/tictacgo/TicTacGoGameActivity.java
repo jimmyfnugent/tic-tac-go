@@ -6,6 +6,10 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -218,6 +222,18 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
       ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.piecex);
     else
       ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.pieceo);
+
+    ImageView view = (ImageView) findViewById(R.id.turnIndicator);
+
+    RotateAnimation rotation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF,
+        0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    rotation.setDuration(5000);
+    rotation.setRepeatMode(Animation.RESTART);
+    rotation.setRepeatCount(Animation.INFINITE);
+    rotation.setInterpolator(new LinearInterpolator());
+
+    view.setAnimation(rotation);
+    view.animate();
   }
 
   /**
