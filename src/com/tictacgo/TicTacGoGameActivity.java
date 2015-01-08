@@ -61,20 +61,20 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
     Intent intent = getIntent();
 
-    turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.playerKey);
+    turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
 
     // Undo/redo initialization
     undoHistory = new ArrayList<>();
     historyIndex = 0;
 
-    height = intent.getIntExtra(TicTacGoMenuActivity.heightKey, 300);
+    height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
     board = new Board(turn, height, getBaseContext());
 
     // Set up the screen
     ((TextView) findViewById(R.id.gamePlayerOneName))
-        .setText(intent.getStringExtra(TicTacGoMenuActivity.p1NameKey));
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.P1_NAME_KEY));
     ((TextView) findViewById(R.id.gamePlayerTwoName))
-        .setText(intent.getStringExtra(TicTacGoMenuActivity.p2NameKey));
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
     fl = (FrameLayout) findViewById(R.id.gameBoard);
 
     // What to do when an empty space is clicked
@@ -87,7 +87,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         // Make the new DirectionPicker
-        DirectionPickerFragment directionPicker = DirectionPickerFragment.getInstance(
+        DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
             board.getTurn(), ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity, height);
 
         // Add the new DirectionPicker

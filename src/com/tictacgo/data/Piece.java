@@ -5,6 +5,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
+import com.tictacgo.Angles;
 import com.tictacgo.R;
 import com.tictacgo.data.Board.Player;
 
@@ -84,27 +85,27 @@ public class Piece extends ImageView {
 		case -1: //top row
 			switch (direction[1]) {
 			case -1: //left column
-				return 225;
+				return Angles.TOP_LEFT;
 			case 1: //right column
-				return 315;
+				return Angles.TOP_RIGHT;
 			default: //middle column
-				return 270;
+				return Angles.RIGHT;
 			}
 		case 1: //bottom row
 			switch (direction[1]) {
 			case -1: //left column
-				return 135;
+				return Angles.BOTTOM_LEFT;
 			case 1: //right column
-				return 45;
+				return Angles.BOTTOM_RIGHT;
 			default: //middle column
-				return 90;
+				return Angles.BOTTOM;
 			}
 		default: //middle row
 			switch (direction[1]) {
 			case -1: //left column
-				return 180;
+				return Angles.LEFT;
 			default: //right column
-				return 0;
+				return Angles.RIGHT;
 				//Don't need a middle column because that would be no movement
 			}
 		}

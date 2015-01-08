@@ -12,13 +12,13 @@ import android.widget.TableRow;
 import com.tictacgo.data.Board.Player;
 
 public class DirectionPickerFragment extends Fragment {
-  public static final String playerArgumentKey = "player";
-  public static final String gravityArgumentKey = "gravity";
-  public static final String heightArgumentKey = "height";
+  public static final String PLAYER_ARGUMENT_KEY = "player";
+  public static final String GRAVITY_ARGUMENT_KEY = "gravity";
+  public static final String HEIGHT_ARGUMENT_KEY = "boardHeight";
 
   private Player player;
   private int gravity;
-  private int height;
+  private int boardHeight;
 
   private View.OnClickListener directionClicked;
 
@@ -34,14 +34,14 @@ public class DirectionPickerFragment extends Fragment {
    *
    * @param player The player whose turn it is.
    * @param gravity The gravity of the location that was just pressed.
-   * @param height The height of the board.
+   * @param boardHeight The height of the board.
    * @return A new DirectionPicker object with the given parameters.
    */
-  public static DirectionPickerFragment getInstance(Player player, int gravity, int height) {
+  public static DirectionPickerFragment newInstance(Player player, int gravity, int boardHeight) {
     Bundle arguments = new Bundle();
-    arguments.putSerializable(playerArgumentKey, player);
-    arguments.putInt(gravityArgumentKey, gravity);
-    arguments.putInt(heightArgumentKey, height);
+    arguments.putSerializable(PLAYER_ARGUMENT_KEY, player);
+    arguments.putInt(GRAVITY_ARGUMENT_KEY, gravity);
+    arguments.putInt(HEIGHT_ARGUMENT_KEY, boardHeight);
 
     DirectionPickerFragment directionPicker = new DirectionPickerFragment();
     directionPicker.setArguments(arguments);
@@ -50,9 +50,9 @@ public class DirectionPickerFragment extends Fragment {
 
   @Override
   public void setArguments(Bundle arguments) {
-    player = (Player) arguments.getSerializable(playerArgumentKey);
-    height = arguments.getInt(heightArgumentKey);
-    gravity = arguments.getInt(gravityArgumentKey);
+    player = (Player) arguments.getSerializable(PLAYER_ARGUMENT_KEY);
+    boardHeight = arguments.getInt(HEIGHT_ARGUMENT_KEY);
+    gravity = arguments.getInt(GRAVITY_ARGUMENT_KEY);
   }
 
   @Override
@@ -107,14 +107,14 @@ public class DirectionPickerFragment extends Fragment {
     int id = player == Player.X ? R.drawable.piecexdirection : R.drawable.pieceodirection;
 
     // Set direction buttons
-    setDirectionButton((ImageView) view.findViewById(R.id.directionTopRight), id, 315);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionTopMiddle), id, 270);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionTopLeft), id, 225);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleLeft), id, 180);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomLeft), id, 135);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomMiddle), id, 90);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomRight), id, 45);
-    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleRight), id, 0);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopRight), id, Angles.TOP_RIGHT);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopMiddle), id, Angles.TOP);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionTopLeft), id, Angles.TOP_LEFT);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleLeft), id, Angles.LEFT);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomLeft), id, Angles.BOTTOM_LEFT);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomMiddle), id, Angles.BOTTOM);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionBottomRight), id, Angles.BOTTOM_RIGHT);
+    setDirectionButton((ImageView) view.findViewById(R.id.directionMiddleRight), id, Angles.RIGHT);
 
     id = player == Player.X ? R.drawable.piecex : R.drawable.pieceo;
     setDirectionButton((ImageView) view.findViewById(R.id.directionClear), id, 0);
@@ -130,12 +130,12 @@ public class DirectionPickerFragment extends Fragment {
    * @param rotation the rotation of the image
    */
   private void setDirectionButton(ImageView imageView, int id, int rotation) {
-    TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
+    TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(boardHeight / 6, boardHeight / 6);
     imageView.setLayoutParams(pieceLayout);
     imageView.setOnClickListener(directionClicked);
     imageView.setImageResource(id);
-    imageView.setPivotX(height / 12);
-    imageView.setPivotY(height / 12);
+    imageView.setPivotX(boardHeight / 12);
+    imageView.setPivotY(boardHeight / 12);
     imageView.setRotation(rotation);
   }
 }
