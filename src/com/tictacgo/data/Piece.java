@@ -4,8 +4,10 @@ import android.content.Context;
 import android.opengl.Visibility;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -54,6 +56,10 @@ public class Piece extends ImageView {
 	public void setHalfwayAction(Action action) {
 	  halfwayAction = action;
 	}
+
+  public Action getHalfwayAction() { return halfwayAction;}
+
+  public Action getFullAction() { return fullAction;}
 	
 	public void setFullAction(Action action) {
 	  fullAction = action;
@@ -93,11 +99,20 @@ public class Piece extends ImageView {
 	  animation.setAnimationListener(new PieceHalfwayAnimationListener(this));
 	  return animation;
 	}
+
+  public Animation generateFullAnimation() {
+    Animation animation = generateAnimation();
+    animation.setAnimationListener(new PieceFullAnimationListener(this));
+    return animation;
+  }
 	
-	public Animation generateFullAnimation() {
-	  Animation animation = generateAnimation();
-	  animation.setAnimationListener(new PieceFullAnimationListener(this));
-	  return animation;
+	public AnimationSet generateAnimationSet() {
+	  AnimationSet set = new AnimationSet(true);
+    set.addAnimation(generateHalfwayAnimation());
+    set.addAnimation(generateFullAnimation());
+    setAnimation(set);
+
+	  return set;
 	}
 
   public class PieceHalfwayAnimationListener implements AnimationListener {
@@ -174,6 +189,9 @@ public class Piece extends ImageView {
         Animation.RELATIVE_TO_SELF, toX,
         Animation.RELATIVE_TO_SELF, 0f,
         Animation.RELATIVE_TO_SELF, toY);
+    animation.setDuration(1000);
+
+    System.out.println(toX + " " + toY);
 
     return (Animation) animation;
 	}
@@ -207,6 +225,7 @@ public class Piece extends ImageView {
 		this.sideLength = sideLength;
 		updateImageResourceFullPiece();
 		setLayoutParams(new LayoutParams(sideLength, sideLength, Board.getGravity(posx + 1, posy + 1)));
+    clearActions();
 		
 		/**
 		 * Set the Piece to rotate around its center, to face the correct direction.

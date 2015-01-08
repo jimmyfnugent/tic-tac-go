@@ -11,6 +11,9 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LinearInterpolator;
 
 public class Board {
 
@@ -327,7 +330,7 @@ public class Board {
     for (List<Space> row : spaces) {
       for (Space space : row) {
         if (space.collisionOccurred()) {
-          resolveCollision(space.getPieces());
+          resolveCollision(space.getPieces(), false);
         }
       }
     }
@@ -343,9 +346,16 @@ public class Board {
 	 */
 	private void resolveHalfwayCollisions() {
 		for (int i = 0; i < pieces.size() - 1; i++) {
+      if (pieces.get(i).getHalfwayAction() == Piece.Action.EXPLODE) {
+        continue;
+      }
       List<Piece> collision = new ArrayList<>(4);
 			collision.add(pieces.get(i));
 			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after the current one.
+
+        if (pieces.get(j).getHalfwayAction() == Piece.Action.EXPLODE) {
+          continue;
+        }
 				/**
 				 * X values are the same.
 				 * Y values cross.
@@ -378,9 +388,7 @@ public class Board {
 			}
 
 			if (collision.size() > 1) { // Collision occurred
-        if (resolveCollision(collision)) {
-          i--;
-        }
+        resolveCollision(collision, true);
       }
 		}
 	}
@@ -390,22 +398,28 @@ public class Board {
    * If 3 or more Pieces collide, they should explode and be removed.
    *
    * @param collision A List of the Pieces which caused a single collision.
-   *
-   * @return True if we had to remove any Pieces. False otherwise.
    */
-  private boolean resolveCollision(List<Piece> collision) {
-    if (collision.size() == 2) {
-      Player temp = collision.get(0).getPlayer();
-      collision.get(0).setPlayer(collision.get(1).getPlayer());
-      collision.get(1).setPlayer(temp);
+  private void resolveCollision(List<Piece> collision, boolean isHalfway) {
+    if (collision.size() == 2 && collision.get(0).getPlayer() != collision.get(1).getPlayer()) {
+      if (isHalfway) {
+        collision.get(0).setHalfwayAction(Piece.Action.SWAP);
+        collision.get(1).setHalfwayAction(Piece.Action.SWAP);
+      } else {
+        collision.get(0).setFullAction(Piece.Action.SWAP);
+        collision.get(1).setFullAction(Piece.Action.SWAP);
+      }
 
     } else if (collision.size() > 2) {
       for (int i = collision.size() - 1; i >= 0; i--) { // Foreach here creates concurrent mod exception.
-        removePiece(collision.get(i));
+        if (isHalfway) {
+          collision.get(i).setHalfwayAction(Piece.Action.EXPLODE);
+          spaces.get(collision.get(i).getRow()).get(collision.get(i).getColumn()).removePiece(collision.get(i));
+        } else {
+          collision.get(i).setFullAction(Piece.Action.EXPLODE);
+          spaces.get(collision.get(i).getRow()).get(collision.get(i).getColumn()).removePiece(collision.get(i));
+        }
       }
-      return true;
     }
-    return false;
   }
 	
 	/**
@@ -422,12 +436,35 @@ public class Board {
 	}
 
 	public void updateUiPositions() {
+
+    final AnimationSet fullSet = new AnimationSet(true);
+    fullSet.setInterpolator(new LinearInterpolator());
+    for (Piece piece : pieces) {
+      fullSet.addAnimation(piece.generateAnimationSet());
+    }
+
+    fullSet.setAnimationListener(new Animation.AnimationListener() {
+      @Override
+      public void onAnimationStart(Animation animation) {
+      }
+
+      @Override
+      public void onAnimationRepeat(Animation animation) {
+      }
+
+      @Override
+      public void onAnimationEnd(Animation animation) {
         // Iterate through the board and update each piece's UI position.
-		for (List<Space> row : spaces) {
-			for (Space space : row) {
-        space.updateUiPosition();
-			}
-		}
+        for (List<Space> row : spaces) {
+          for (Space space : row) {
+            space.updateUiPosition();
+          }
+        }
+      }
+    });
+
+    fullSet.start();
+    System.out.println("Should be animating...");
 	}
 
 	/**
