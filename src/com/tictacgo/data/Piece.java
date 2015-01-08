@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
@@ -135,35 +136,46 @@ public class Piece extends ImageView {
   }
 	
 	private Animation generateAnimation() {
-	  int animationResource = 0;
-	  switch (getRotation()) {
+    float toX = 0f;
+    float toY = 0f;
+	  switch ((int)getRotation()) {
 	    case 0:
-	      animationResource = R.anim.translate_right_animation;
+	      toX = 0.5f;
 	      break;
       case 45:
-        animationResource = R.anim.translate_bottom_right_animation;
+        toX = 0.5f;
+        toY = 0.5f;
         break;
       case 90:
-        animationResource = R.anim.translate_bottom_animation;
+        toY = 0.5f;
         break;
       case 135:
-        animationResource = R.anim.translate_bottom_left_animation;
+        toX = -0.5f;
+        toY = 0.5f;
         break;
       case 180:
-        animationResource = R.anim.translate_left_animation;
+        toX = -0.5f;
         break;
       case 225:
-        animationResource = R.anim.translate_top_left_animation;
+        toX = -0.5f;
+        toY = -0.5f;
         break;
       case 270:
-        animationResource = R.anim.translate_top_animation;
+        toY = -0.5f;
         break;
       case 315:
-        animationResource = R.anim.translate_top_right_animation;
+        toX = 0.5f;
+        toY = -0.5f;
         break;
     }
-      
-    return AnimationUtils.loadAnimation(getContext(), animationResource);
+
+    TranslateAnimation animation = new TranslateAnimation(
+        Animation.RELATIVE_TO_SELF, 0f,
+        Animation.RELATIVE_TO_SELF, toX,
+        Animation.RELATIVE_TO_SELF, 0f,
+        Animation.RELATIVE_TO_SELF, toY);
+
+    return (Animation) animation;
 	}
 
 	/**
