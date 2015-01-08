@@ -1,6 +1,11 @@
 package com.tictacgo.data;
 
 import android.content.Context;
+import android.opengl.Visibility;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
@@ -35,6 +40,131 @@ public class Piece extends ImageView {
 	 * The length of each side of the Piece, in pixels.
 	 */
 	private int sideLength;
+	
+	public enum Action {
+	  SWAP,
+	  EXPLODE,
+	  NONE
+	}
+	
+	private Action halfwayAction;
+	private Action fullAction;
+	
+	public void setHalfwayAction(Action action) {
+	  halfwayAction = action;
+	}
+	
+	public void setFullAction(Action action) {
+	  fullAction = action;
+	}
+	
+	public void clearActions() {
+	  halfwayAction = Action.NONE;
+	  fullAction = Action.NONE;
+	}
+	
+	public void performHalfwayAction() {
+	  performAction(halfwayAction);
+	}
+	
+	public void performFullAction() {
+	  performAction(fullAction);
+	}
+	
+	private void performAction(Action action) {
+	  switch (action) {
+	    case SWAP:
+	      swapResourceFullPiece();
+	      break; 
+	    case EXPLODE:
+	      setVisibility(View.GONE);
+	      break;
+	    default:
+	  }
+	}
+
+  private void swapResourceFullPiece() {
+    setImageResource(player == Player.X ? R.drawable.pieceodirection : R.drawable.piecexdirection);
+  }
+	
+	public Animation generateHalfwayAnimation() {
+	  Animation animation = generateAnimation();
+	  animation.setAnimationListener(new PieceHalfwayAnimationListener(this));
+	  return animation;
+	}
+	
+	public Animation generateFullAnimation() {
+	  Animation animation = generateAnimation();
+	  animation.setAnimationListener(new PieceFullAnimationListener(this));
+	  return animation;
+	}
+
+  public class PieceHalfwayAnimationListener implements AnimationListener {
+    private Piece piece;
+
+    public PieceHalfwayAnimationListener(Piece p) {
+      piece = p;
+    }
+
+    public void onAnimationEnd(Animation animation) {
+      piece.performHalfwayAction();
+    }
+
+    public void onAnimationRepeat(Animation animation) {}
+
+    public void onAnimationStart(Animation animation) {
+      piece.updateImageResourceFullPiece();
+    }
+  }
+
+  public class PieceFullAnimationListener implements AnimationListener {
+    private Piece piece;
+
+    public PieceFullAnimationListener(Piece p) {
+      piece = p;
+    }
+
+    public void onAnimationEnd(Animation animation) {
+      piece.performFullAction();
+    }
+
+    public void onAnimationRepeat(Animation animation) {}
+
+    public void onAnimationStart(Animation animation) {
+    }
+  }
+	
+	private Animation generateAnimation() {
+	  int animationResource = 0;
+	  switch (getRotation()) {
+	    case 0:
+	      animationResource = R.anim.translate_right_animation;
+	      break;
+      case 45:
+        animationResource = R.anim.translate_bottom_right_animation;
+        break;
+      case 90:
+        animationResource = R.anim.translate_bottom_animation;
+        break;
+      case 135:
+        animationResource = R.anim.translate_bottom_left_animation;
+        break;
+      case 180:
+        animationResource = R.anim.translate_left_animation;
+        break;
+      case 225:
+        animationResource = R.anim.translate_top_left_animation;
+        break;
+      case 270:
+        animationResource = R.anim.translate_top_animation;
+        break;
+      case 315:
+        animationResource = R.anim.translate_top_right_animation;
+        break;
+    }
+      
+    return AnimationUtils.loadAnimation(getContext(), animationResource);
+	}
 
 	/**
 	 * Constructor
