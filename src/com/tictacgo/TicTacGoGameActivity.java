@@ -54,10 +54,14 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
    */
   private Player turn;
 
+  private FragmentManager fragmentManager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_tic_tac_go_game);
+
+    fragmentManager = getFragmentManager();
 
     Intent intent = getIntent();
 
@@ -81,7 +85,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     pieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
         // Create new Fragment Transaction and remove all previous DirectionPickers
-        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
             FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
