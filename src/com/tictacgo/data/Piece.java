@@ -89,7 +89,7 @@ public class Piece extends ImageView {
 			case 1: //right column
 				return Angles.TOP_RIGHT;
 			default: //middle column
-				return Angles.RIGHT;
+				return Angles.TOP;
 			}
 		case 1: //bottom row
 			switch (direction[1]) {
