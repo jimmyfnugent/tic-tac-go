@@ -11,6 +11,10 @@ import android.widget.TableRow;
 
 import com.tictacgo.data.Board.Player;
 
+/**
+ * The DirectionPickerFragment contains all of the code for choosing the direction of a new Piece.
+ * An Activity instantiating this Fragment must implement OnDirectionPickedListener.
+ */
 public class DirectionPickerFragment extends Fragment {
   public static final String PLAYER_ARGUMENT_KEY = "player";
   public static final String GRAVITY_ARGUMENT_KEY = "gravity";

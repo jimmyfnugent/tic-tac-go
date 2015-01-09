@@ -1,5 +1,8 @@
 package com.tictacgo;
 
+/**
+ * Angles contain integers for representing directions by degrees of rotation.
+ */
 public class Angles {
   public static final int RIGHT = 0;
   public static final int BOTTOM_RIGHT = 45;
