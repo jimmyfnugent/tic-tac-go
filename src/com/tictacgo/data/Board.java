@@ -12,6 +12,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewManager;
 
+/**
+ * The Board class represents a single instance of a game of TicTacGo. It contains information
+ * pertaining to a specific game instance, such as a list of the Pieces in play and whose turn
+ * it is.
+ */
 public class Board {
 
     public enum Player {

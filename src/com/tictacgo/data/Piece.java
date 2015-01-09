@@ -8,6 +8,10 @@ import android.widget.FrameLayout.LayoutParams;
 import com.tictacgo.R;
 import com.tictacgo.data.Board.Player;
 
+/**
+ * A Piece represents a single game piece (X or O), and information about its location, direction,
+ * as well as graphical information from the ImageView class.
+ */
 public class Piece extends ImageView {
 
 	/**

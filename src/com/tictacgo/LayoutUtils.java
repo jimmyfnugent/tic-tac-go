@@ -2,6 +2,9 @@ package com.tictacgo;
 
 import android.widget.TextView;
 
+/**
+ * LayoutUtils contain static methods for grabbing information from UI elements.
+ */
 public class LayoutUtils {
   /**
    * Gets the entered text from the given TextView, if any has been entered, or the hint from that

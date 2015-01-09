@@ -4,6 +4,9 @@ import android.content.Context;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
+/**
+ * The Background class controls drawing the TicTacGo board background image.
+ */
 public class Background extends ImageView {
 	
 	/**

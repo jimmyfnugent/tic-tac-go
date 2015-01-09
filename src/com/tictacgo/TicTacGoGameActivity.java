@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The TicTacGoGameActivity class represents the Activity for when the game board is visible, ie.
+ * while the game is actually being played.
+ */
 public class TicTacGoGameActivity extends Activity {
   /**
    * The Board of the game

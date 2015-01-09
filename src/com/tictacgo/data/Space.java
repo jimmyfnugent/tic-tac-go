@@ -10,6 +10,10 @@ import com.tictacgo.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A Space represents a single square on the TicTacGo board. It's main function is to keep track
+ * of the Pieces which are at that location.
+ */
 public class Space {
   /**
    * A List of the Pieces which are in this Space.

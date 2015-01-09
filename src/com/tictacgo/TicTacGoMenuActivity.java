@@ -10,7 +10,10 @@ import android.widget.TextView;
 
 import com.tictacgo.data.Board.Player;
 
-
+/**
+ * The TicTacGoMenuActivity class is the Activity associated with starting a local game. It contains
+ * code for choosing player names and deciding which player will go first.
+ */
 public class TicTacGoMenuActivity extends Activity {
 
   public static final String p1NameKey = "com.tictacgo.p1Name";
