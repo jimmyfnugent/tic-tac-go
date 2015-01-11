@@ -24,7 +24,7 @@ public class DirectionPickerFragment extends Fragment {
   private int gravity;
   private int boardHeight;
 
-  private View.OnClickListener directionClicked;
+  private View.OnClickListener onDirectionClicked;
 
   private OnDirectionPickedListener listener;
 
@@ -65,7 +65,7 @@ public class DirectionPickerFragment extends Fragment {
 
     listener = (OnDirectionPickedListener) getActivity();
 
-    directionClicked = new View.OnClickListener() {
+    onDirectionClicked = new View.OnClickListener() {
       public void onClick(View v) {
        switch (v.getId()) { //Which direction was picked
           case R.id.directionTopLeft:
@@ -136,7 +136,7 @@ public class DirectionPickerFragment extends Fragment {
   private void setDirectionButton(ImageView imageView, int id, int rotation) {
     TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(boardHeight / 6, boardHeight / 6);
     imageView.setLayoutParams(pieceLayout);
-    imageView.setOnClickListener(directionClicked);
+    imageView.setOnClickListener(onDirectionClicked);
     imageView.setImageResource(id);
     imageView.setPivotX(boardHeight / 12);
     imageView.setPivotY(boardHeight / 12);
