@@ -37,12 +37,12 @@ public class TicTacGoGameActivity extends Activity {
   /**
    * OnClickListener to use for each piece
    */
-  private View.OnClickListener pieceClicked;
+  private View.OnClickListener onPieceClicked;
 
   /**
    * OnClickListener to use to pick direction
    */
-  private View.OnClickListener directionClicked;
+  private View.OnClickListener onDirectionClicked;
 
   /**
    * PopupWindow with direction Buttons
@@ -93,7 +93,7 @@ public class TicTacGoGameActivity extends Activity {
     fl = (FrameLayout) findViewById(R.id.gameBoard);
 
     // What to do when an empty space is clicked
-    pieceClicked = new View.OnClickListener() {
+    onPieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
         if (directions != null) //Popup already active
           directions.dismiss(); //Dismiss old popup
@@ -162,7 +162,7 @@ public class TicTacGoGameActivity extends Activity {
     /**
      * What to do when a direction is clicked
      */
-    directionClicked = new View.OnClickListener() {
+    onDirectionClicked = new View.OnClickListener() {
       public void onClick(View v) {
         switch (v.getId()) { //Which direction was picked
           case R.id.directionTopLeft:
@@ -279,7 +279,7 @@ public class TicTacGoGameActivity extends Activity {
         board.getSpace(i, j).updateImageResources();
         if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
           board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
-              pieceClicked);
+              onPieceClicked);
         }
       }
     }
@@ -320,7 +320,7 @@ public class TicTacGoGameActivity extends Activity {
       for (int j = 0; j < Board.SIDE_LENGTH; j++) {
         board.getSpace(i, j).updateImageResources();
         board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
-            pieceClicked);
+            onPieceClicked);
       }
     }
   }
@@ -393,7 +393,7 @@ public class TicTacGoGameActivity extends Activity {
   private void setDirectionButton(ImageView imageView, int id, int rotation) {
     TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
     imageView.setLayoutParams(pieceLayout);
-    imageView.setOnClickListener(directionClicked);
+    imageView.setOnClickListener(onDirectionClicked);
     imageView.setImageResource(id);
     imageView.setPivotX(height / 12);
     imageView.setPivotY(height / 12);
