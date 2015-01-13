@@ -91,11 +91,15 @@ public class Board {
 
     for (int i = 0; i < SIDE_LENGTH; i++) {
       List<Space> row = new ArrayList<>(SIDE_LENGTH);
-      
+
       for (int j = 0; j < SIDE_LENGTH; j++) {
       	row.add(new Space());
       }
       
+      for (int j = 0; j < SIDE_LENGTH; j++) {
+        row.add(new Space());
+      }
+
       spaces.add(row);
     }
 
