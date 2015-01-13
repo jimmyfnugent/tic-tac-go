@@ -27,11 +27,6 @@
     			android:layout_width="wrap_content"
 	    		android:layout_height="wrap_content"
 	    		android:text="New Game"/>
-    		<Button
-	    		android:id="@+id/mainScreenButton"
-	    		android:layout_width="wrap_content"
-    			android:layout_height="wrap_content"
-    			android:text="Main Screen"/>
     	</LinearLayout>
     	<LinearLayout
     		android:orientation="horizontal"
