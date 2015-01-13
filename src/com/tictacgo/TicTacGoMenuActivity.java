@@ -16,10 +16,10 @@ import com.tictacgo.data.Board.Player;
  */
 public class TicTacGoMenuActivity extends Activity {
 
-  public static final String p1NameKey = "com.tictacgo.p1Name";
-  public static final String p2NameKey = "com.tictacgo.p2Name";
-  public static final String playerKey = "com.tictacgo.player";
-  public static final String heightKey = "com.tictacgo.height";
+  public static final String P1_NAME_KEY = "com.tictacgo.p1Name";
+  public static final String P2_NAME_KEY = "com.tictacgo.p2Name";
+  public static final String PLAYER_KEY = "com.tictacgo.player";
+  public static final String HEIGHT_KEY = "com.tictacgo.height";
 	
 	/** Called when the activity is first created. */
   @Override
@@ -32,10 +32,10 @@ public class TicTacGoMenuActivity extends Activity {
         Intent playGame = new Intent(v.getContext(), TicTacGoGameActivity.class);
 
         String p1Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerOneName));
-        playGame.putExtra(p1NameKey, p1Name);
+        playGame.putExtra(P1_NAME_KEY, p1Name);
 
         String p2Name = LayoutUtils.getTextOrHint((TextView) findViewById(R.id.localPlayerTwoName));
-        playGame.putExtra(p2NameKey, p2Name);
+        playGame.putExtra(P2_NAME_KEY, p2Name);
 
         int first = ((RadioGroup) findViewById(R.id.localTurnSelect)).getCheckedRadioButtonId();
         Player turn = null;
@@ -44,10 +44,10 @@ public class TicTacGoMenuActivity extends Activity {
         } else if (first == R.id.localTurnSelectO) {
           turn = Player.O;
         }
-        playGame.putExtra(playerKey, turn);
+        playGame.putExtra(PLAYER_KEY, turn);
 
         int height = findViewById(R.id.gameSelectScreen).getBottom();
-        playGame.putExtra(heightKey, height);
+        playGame.putExtra(HEIGHT_KEY, height);
 
         v.getContext().startActivity(playGame);
       }

@@ -1,17 +1,17 @@
 package com.tictacgo;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
 
@@ -23,7 +23,7 @@ import java.util.Map;
  * The TicTacGoGameActivity class represents the Activity for when the game board is visible, ie.
  * while the game is actually being played.
  */
-public class TicTacGoGameActivity extends Activity {
+public class TicTacGoGameActivity extends Activity implements OnDirectionPickedListener {
   /**
    * The Board of the game
    */
@@ -38,16 +38,6 @@ public class TicTacGoGameActivity extends Activity {
    * OnClickListener to use for each piece
    */
   private View.OnClickListener onPieceClicked;
-
-  /**
-   * OnClickListener to use to pick direction
-   */
-  private View.OnClickListener onDirectionClicked;
-
-  /**
-   * PopupWindow with direction Buttons
-   */
-  private PopupWindow directions;
 
   /**
    * The height of the usable screen area
@@ -69,149 +59,59 @@ public class TicTacGoGameActivity extends Activity {
    */
   private Player turn;
 
+  private FragmentManager fragmentManager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_tic_tac_go_game);
 
+    fragmentManager = getFragmentManager();
+
     Intent intent = getIntent();
 
-    turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.playerKey);
+    turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
 
     // Undo/redo initialization
     undoHistory = new ArrayList<>();
     historyIndex = 0;
 
-    height = intent.getIntExtra(TicTacGoMenuActivity.heightKey, 300);
+    height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
     board = new Board(turn, height, getBaseContext());
 
     // Set up the screen
     ((TextView) findViewById(R.id.gamePlayerOneName))
-        .setText(intent.getStringExtra(TicTacGoMenuActivity.p1NameKey));
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.P1_NAME_KEY));
     ((TextView) findViewById(R.id.gamePlayerTwoName))
-        .setText(intent.getStringExtra(TicTacGoMenuActivity.p2NameKey));
+        .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
     fl = (FrameLayout) findViewById(R.id.gameBoard);
 
     // What to do when an empty space is clicked
     onPieceClicked = new View.OnClickListener() {
       public void onClick(View v) {
-        if (directions != null) //Popup already active
-          directions.dismiss(); //Dismiss old popup
-        board.makePiece(((FrameLayout.LayoutParams) v.getLayoutParams()).gravity); //Set the location for the new Piece
-        LayoutInflater inflater = getLayoutInflater();
-        View grid = inflater.inflate(R.layout.direction, null); //Show popup
-        directions = new PopupWindow(grid, -2, -2); //Show  popup
-        /**
-         * Offset is used so that the correct edge of the popup window will
-         * line up with the edge of the Board
-         */
-        int xOffset = 0, yOffset = 0; //No offset
-        switch (((FrameLayout.LayoutParams) v.getLayoutParams()).gravity) {
-          case Gravity.TOP | Gravity.LEFT:
-            break;
-          case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-            xOffset = height / 4;
-            break;
-          case Gravity.TOP | Gravity.RIGHT:
-            xOffset = height / 2;
-            break;
-          case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-            yOffset = height / 4;
-            break;
-          case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-            xOffset = height / 2;
-            yOffset = height / 4;
-            break;
-          case Gravity.BOTTOM | Gravity.LEFT:
-            yOffset = height / 2;
-            break;
-          case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-            xOffset = height / 4;
-            yOffset = height / 2;
-            break;
-          case Gravity.BOTTOM | Gravity.RIGHT:
-            xOffset = height / 2;
-            yOffset = height / 2;
-            break;
-          default:
-            xOffset = height / 4;
-            yOffset = height / 4;
-        }
-        directions.showAtLocation(fl, Gravity.NO_GRAVITY, xOffset, yOffset); //Make popup visible
-        int id = R.drawable.pieceodirection; //Which picture to use for directions (O)
-        if (board.getTurn() == Player.X) //X's turn
-          id = R.drawable.piecexdirection;
-        /**
-         * Set the Button images for the Popup Window
-         */
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopRight), id, 315);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopMiddle), id, 270);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionTopLeft), id, 225);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleLeft), id, 180);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomLeft), id, 135);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomMiddle), id, 90);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionBottomRight), id, 45);
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionMiddleRight), id, 0);
-        id = R.drawable.pieceo; //What picture to use for center (O)
-        if (board.getTurn() == Player.X) //X's turn
-          id = R.drawable.piecex;
-        setDirectionButton((ImageView) grid.findViewById(R.id.directionClear), id, 0); //Set center button image
+        // Create new Fragment Transaction and remove all previous DirectionPickers
+        fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
+            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Make the new DirectionPicker
+        DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
+            board.getTurn(), ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity, height);
+
+        // Add the new DirectionPicker
+        fragmentTransaction.add(R.id.gameBoard, directionPicker);
+        fragmentTransaction.addToBackStack(DirectionPickerFragment.class.getName());
+        fragmentTransaction.commit();
       }
     };
 
-    /**
-     * What to do when a direction is clicked
-     */
-    onDirectionClicked = new View.OnClickListener() {
+    // Remove and active Direction Pickers whenever we click anywhere
+    findViewById(R.id.gameScreen).setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        switch (v.getId()) { //Which direction was picked
-          case R.id.directionTopLeft:
-            fl.addView(board.newPiece(-1, -1));
-            break;
-          case R.id.directionTopMiddle:
-            fl.addView(board.newPiece(-1, 0));
-            break;
-          case R.id.directionTopRight:
-            fl.addView(board.newPiece(-1, 1));
-            break;
-          case R.id.directionMiddleLeft:
-            fl.addView(board.newPiece(0, -1));
-            break;
-          case R.id.directionMiddleRight:
-            fl.addView(board.newPiece(0, 1));
-            break;
-          case R.id.directionBottomLeft:
-            fl.addView(board.newPiece(1, -1));
-            break;
-          case R.id.directionBottomMiddle:
-            fl.addView(board.newPiece(1, 0));
-            break;
-          case R.id.directionBottomRight:
-            fl.addView(board.newPiece(1, 1));
-            break;
-          default: //Center Button
-            directions.dismiss();
-            return; //Only reason we need this case
-        }
-        directions.dismiss();
-
-        /**
-         * Game loop
-         */
-        notifyWinners(board.getWinners());
-        if (board.willMove()) {
-          // Only move the pieces after both players have moved.
-          board.updatePositions();
-          board.updateUiPositions();
-        }
-        board.nextTurn();
-        updateTurnIndicator();
-        updateClearPieces();
-        play();
+        getFragmentManager().popBackStackImmediate(DirectionPickerFragment.class.getName(),
+            FragmentManager.POP_BACK_STACK_INCLUSIVE);
       }
-    };
-    updateBoard();
-    updateTurnIndicator();
+    });
 
     /**
      * Sets the New Game Button to work
@@ -259,9 +159,28 @@ public class TicTacGoGameActivity extends Activity {
      * Step 5: Play the game
      */
     play();
+    updateBoard();
+    updateTurnIndicator();
   }
 
+  @Override
+  public void onDirectionPicked(int dirx, int diry, int gravity) {
+    getFragmentManager().popBackStack();
 
+    board.makePiece(gravity);
+    fl.addView(board.newPiece(dirx, diry));
+
+    notifyWinners(board.getWinners());
+    if (board.willMove()) {
+      // Only move the pieces after both players have moved.
+      board.updatePositions();
+      board.updateUiPositions();
+    }
+    board.nextTurn();
+    updateTurnIndicator();
+    updateClearPieces();
+    play();
+  }
 
   /**
    * Updates the clear Pieces on the FrameLayout
@@ -337,23 +256,6 @@ public class TicTacGoGameActivity extends Activity {
   }
 
   /**
-   * The CPU's turn
-   */
-  private void CPUMove() {
-    // TODO Make a move
-
-    // TODO Draw the piece
-    if (board.willMove()) {
-      notifyWinners(board.getWinners());
-    } else {
-      board.nextTurn();
-      notifyWinners(board.getWinners());
-      updateTurnIndicator();
-      updateClearPieces();
-    }
-  }
-
-  /**
    * Notifies the winners of the game
    *
    * @param winners The ArrayList<Piece> returned from getWinners
@@ -381,22 +283,5 @@ public class TicTacGoGameActivity extends Activity {
     for (int i = 0; i < fl.getChildCount(); i++) {
       fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
     }
-  }
-
-  /**
-   * Helper method for creating the direction picker PopupWindow
-   *
-   * @param imageView the ImageView to edit
-   * @param id the image to use
-   * @param rotation the rotation of the image
-   */
-  private void setDirectionButton(ImageView imageView, int id, int rotation) {
-    TableRow.LayoutParams pieceLayout = new TableRow.LayoutParams(height / 6, height / 6);
-    imageView.setLayoutParams(pieceLayout);
-    imageView.setOnClickListener(onDirectionClicked);
-    imageView.setImageResource(id);
-    imageView.setPivotX(height / 12);
-    imageView.setPivotY(height / 12);
-    imageView.setRotation(rotation);
   }
 }
