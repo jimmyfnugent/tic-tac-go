@@ -69,7 +69,8 @@ public class Piece extends ImageView {
         this.player = player;
 		this.sideLength = sideLength;
 		updateImageResourceFullPiece();
-		setLayoutParams(new LayoutParams(sideLength, sideLength, Board.getGravity(posx + 1, posy + 1)));
+		setLayoutParams(new LayoutParams(sideLength, sideLength,
+                Board.getGravity(posx + 1, posy + 1)));
 		
 		/**
 		 * Set the Piece to rotate around its center, to face the correct direction.
@@ -86,32 +87,32 @@ public class Piece extends ImageView {
 	 */
 	private float getPieceRotation() {
 		switch (direction[0]) {
-		case -1: //top row
-			switch (direction[1]) {
-			case -1: //left column
-				return Angles.TOP_LEFT;
-			case 1: //right column
-				return Angles.TOP_RIGHT;
-			default: //middle column
-				return Angles.TOP;
-			}
-		case 1: //bottom row
-			switch (direction[1]) {
-			case -1: //left column
-				return Angles.BOTTOM_LEFT;
-			case 1: //right column
-				return Angles.BOTTOM_RIGHT;
-			default: //middle column
-				return Angles.BOTTOM;
-			}
-		default: //middle row
-			switch (direction[1]) {
-			case -1: //left column
-				return Angles.LEFT;
-			default: //right column
-				return Angles.RIGHT;
-				//Don't need a middle column because that would be no movement
-			}
+            case -1: //top row
+                switch (direction[1]) {
+                    case -1: //left column
+                        return Angles.TOP_LEFT;
+                    case 1: //right column
+                        return Angles.TOP_RIGHT;
+                    default: //middle column
+                        return Angles.TOP;
+                }
+            case 1: //bottom row
+                switch (direction[1]) {
+                    case -1: //left column
+                        return Angles.BOTTOM_LEFT;
+                    case 1: //right column
+                        return Angles.BOTTOM_RIGHT;
+                    default: //middle column
+                        return Angles.BOTTOM;
+                }
+            default: //middle row
+                switch (direction[1]) {
+                    case -1: //left column
+                        return Angles.LEFT;
+                    default: //right column
+                        return Angles.RIGHT;
+                        //Don't need a middle column because that would be no movement
+                }
 		}
 	}
 
@@ -121,7 +122,8 @@ public class Piece extends ImageView {
 	 * @return A deep copy of this Piece object
 	 */
 	public Piece copy() {
-		return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1], getPlayer(), sideLength, getContext());
+		return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1],
+                getPlayer(), sideLength, getContext());
 	}
 
 	/**
@@ -145,13 +147,13 @@ public class Piece extends ImageView {
 		return position[0];
 	}
 
-  public int getRow() {
-    return position[0] + 1;
-  }
+    public int getRow() {
+        return position[0] + 1;
+    }
 
-  public int getColumn() {
-    return position[1] + 1;
-  }
+    public int getColumn() {
+        return position[1] + 1;
+    }
 
 	/**
 	 * Returns the y position of the Piece.
@@ -192,7 +194,8 @@ public class Piece extends ImageView {
 
 	public void updateUiPosition() {
         // Board expects positions in the [0, 2] range.
-		((FrameLayout.LayoutParams) getLayoutParams()).gravity = Board.getGravity(position[0] + 1, position[1] + 1);
+		((FrameLayout.LayoutParams) getLayoutParams()).gravity =
+                Board.getGravity(position[0] + 1, position[1] + 1);
 	}
 
 	/**
@@ -220,23 +223,22 @@ public class Piece extends ImageView {
 		return player == Player.X;
 	}
 
-  /**
-   * Returns true if this piece belongs to player O; false otherwise.
-   */
-  public boolean isO() {
-    return player == Player.O;
-  }
+    /**
+     * Returns true if this piece belongs to player O; false otherwise.
+    */
+    public boolean isO() {
+        return player == Player.O;
+    }
 
 	/**
 	 * Sets the drawable resource for this Piece to be the full piece with direction.
 	 */
 	public void updateImageResourceFullPiece() {
 		if (isX()) {
-      setImageResource(R.drawable.piecex);
-
-    } else { //Piece is an o
-      setImageResource(R.drawable.pieceo);
-    }
+            setImageResource(R.drawable.piece_x);
+        } else { //Piece is an o
+            setImageResource(R.drawable.piece_o);
+        }
 	}
 
   /**
@@ -244,10 +246,9 @@ public class Piece extends ImageView {
    */
   public void updateImageResourceDirectionOnly() {
     if (isX()) {
-      setImageResource(R.drawable.piecexdirection);
-
+      setImageResource(R.drawable.piece_x_direction);
     } else { //Piece is an o
-      setImageResource(R.drawable.pieceodirection);
+      setImageResource(R.drawable.piece_o_direction);
     }
   }
 }

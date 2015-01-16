@@ -21,7 +21,7 @@
 				<ImageView
 					android:id="@+id/localPlayerOnePiece"
 					android:layout_height="50dip"
-					android:background="@drawable/piecex"
+					android:background="@drawable/piece_x"
 					android:padding="2dip"
 					android:layout_width="50dip"/>
 				<EditText
@@ -39,7 +39,7 @@
 				<ImageView
 					android:id="@+id/localPlayerTwoPiece"
 					android:layout_height="50dip"
-					android:background="@drawable/pieceo"
+					android:background="@drawable/piece_o"
 					android:padding="2dip"
 					android:layout_width="50dip"/>
 				<EditText

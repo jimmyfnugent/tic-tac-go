@@ -39,10 +39,10 @@ public class Board {
 	 */
 	private List<List<Space>> spaces;
 
-  /**
-   * A List of the Pieces currently on the board.
-   */
-  private List<Piece> pieces;
+    /**
+     * A List of the Pieces currently on the board.
+     */
+    private List<Piece> pieces;
 
 	/**
 	 * The player who goes first.
@@ -87,21 +87,21 @@ public class Board {
 		 * Initializes the spaces ArrayList to all empty Spaces
 		 */
 		spaces = new ArrayList<>(SIDE_LENGTH);
-    pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
+        pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
 
-    for (int i = 0; i < SIDE_LENGTH; i++) {
-      List<Space> row = new ArrayList<>(SIDE_LENGTH);
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            List<Space> row = new ArrayList<>(SIDE_LENGTH);
 
-      for (int j = 0; j < SIDE_LENGTH; j++) {
-      	row.add(new Space());
-      }
-      
-      for (int j = 0; j < SIDE_LENGTH; j++) {
-        row.add(new Space());
-      }
+            for (int j = 0; j < SIDE_LENGTH; j++) {
+                row.add(new Space());
+            }
 
-      spaces.add(row);
-    }
+            for (int j = 0; j < SIDE_LENGTH; j++) {
+                row.add(new Space());
+            }
+
+            spaces.add(row);
+        }
 
 		/**
 		 * Sets up turn
@@ -129,12 +129,12 @@ public class Board {
 
 		// Clones the spaces and pieces lists
 		spaces = new ArrayList<>(SIDE_LENGTH);
-    pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
+        pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
 		for (int i = 0; i < SIDE_LENGTH; i++) {
 			spaces.add(new ArrayList<Space>(SIDE_LENGTH));
 			for (int j = 0; j < SIDE_LENGTH; j++) {
 				spaces.get(i).add(b.getSpace(i, j).copy());
-        pieces.addAll(spaces.get(i).get(j).getPieces());
+                pieces.addAll(spaces.get(i).get(j).getPieces());
 			}
 		}
 	}
@@ -154,7 +154,7 @@ public class Board {
 	 * @return True if the board is full, false otherwise
 	 */
 	public boolean isFull() {
-		for (int i = 0; i < SIDE_LENGTH; i++) {
+        for (int i = 0; i < SIDE_LENGTH; i++) {
 			for (int j = 0; j < SIDE_LENGTH; j++) {
 				if (spaces.get(i).get(j).isEmpty()) { //There is an empty slot
                     return false;
@@ -174,113 +174,113 @@ public class Board {
 		 * A map of Players to the count of their winning combinations.
 		 */
 		Map<Player, Integer> winners = new HashMap<>();
-    winners.put(Player.X, 0);
-    winners.put(Player.O, 0);
+        winners.put(Player.X, 0);
+        winners.put(Player.O, 0);
 
-    // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
-    // Rows
-    for (List<Space> row : spaces) {
-      mergeWinners(getWinners(row), winners);
-    }
+        // Sum all rows, columns, and diagonals, looking for all Xs or all Os.
+        // Rows
+        for (List<Space> row : spaces) {
+            mergeWinners(getWinners(row), winners);
+        }
 
-    // Columns
-    for (int col = 0; col < SIDE_LENGTH; col++) {
-      ArrayList<Space> columnSpaces = new ArrayList<>(SIDE_LENGTH);
+        // Columns
+        for (int col = 0; col < SIDE_LENGTH; col++) {
+            ArrayList<Space> columnSpaces = new ArrayList<>(SIDE_LENGTH);
 
-      for (List<Space> row : spaces) {
-        columnSpaces.add(row.get(col));
-      }
+            for (List<Space> row : spaces) {
+              columnSpaces.add(row.get(col));
+            }
 
-      mergeWinners(getWinners(columnSpaces), winners);
-    }
+            mergeWinners(getWinners(columnSpaces), winners);
+        }
 
-    // Top left to bottom right diagonal
-    int row = 0;
-    int col = 0;
-    ArrayList<Space> diagSpaces = new ArrayList<>(SIDE_LENGTH);
-    while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
-        diagSpaces.add(spaces.get(row).get(col));
-        row++;
-        col++;
-    }
+        // Top left to bottom right diagonal
+        int row = 0;
+        int col = 0;
+        ArrayList<Space> diagSpaces = new ArrayList<>(SIDE_LENGTH);
+        while (row < SIDE_LENGTH && col < SIDE_LENGTH) {
+            diagSpaces.add(spaces.get(row).get(col));
+            row++;
+            col++;
+        }
 
-    mergeWinners(getWinners(diagSpaces), winners);
+        mergeWinners(getWinners(diagSpaces), winners);
 
-    // Top right to bottom left diagonal
-    diagSpaces.clear();
-    row = 0;
-    col = SIDE_LENGTH - 1;
-    while (row < SIDE_LENGTH && col >= 0) {
-        diagSpaces.add(spaces.get(row).get(col));
-        row++;
-        col--;
-    }
+        // Top right to bottom left diagonal
+        diagSpaces.clear();
+        row = 0;
+        col = SIDE_LENGTH - 1;
+        while (row < SIDE_LENGTH && col >= 0) {
+            diagSpaces.add(spaces.get(row).get(col));
+            row++;
+            col--;
+        }
 
-    mergeWinners(getWinners(diagSpaces), winners);
+        mergeWinners(getWinners(diagSpaces), winners);
 
-		return winners;
-	}
-
-  /**
-   * Figures out if there is a winner in the given Spaces. A winner must be in every single Space
-   * to win.
-   *
-   * @param toCheck A List of the Spaces to check for a winner. This should be an entire row,
-   *                column, or diagonal of Spaces.
-   * @return A Set of the Players who won in this List of Spaces.
-   */
-  private Set<Player> getWinners(List<Space> toCheck) {
-    //TODO: This allows spaces with multiple Pieces in them to still contribute to a win.
-    // We don't need to map to a count here because a Player may only win once per row, column, or
-    // diagonal.
-    Set<Player> winners = new HashSet<>(2);
-
-    boolean xWins = true;
-    boolean oWins = true;
-
-    for (Space space : toCheck) {
-      if (!space.hasX()) {
-        xWins = false;
-      }
-
-      if (!space.hasO()) {
-        oWins = false;
-      }
-
-      if (!xWins && !oWins) {
         return winners;
-      }
     }
 
-    if (xWins) {
-      winners.add(Player.X);
+    /**
+     * Figures out if there is a winner in the given Spaces. A winner must be in every single Space
+     * to win.
+     *
+     * @param toCheck A List of the Spaces to check for a winner. This should be an entire row,
+     *                column, or diagonal of Spaces.
+     * @return A Set of the Players who won in this List of Spaces.
+     */
+    private Set<Player> getWinners(List<Space> toCheck) {
+        // TODO: This allows spaces with multiple Pieces in them to still contribute to a win.
+        // We don't need to map to a count here because a Player may only win once per row, column,
+        // or diagonal.
+        Set<Player> winners = new HashSet<>(2);
+
+        boolean xWins = true;
+        boolean oWins = true;
+
+        for (Space space : toCheck) {
+          if (!space.hasX()) {
+            xWins = false;
+          }
+
+          if (!space.hasO()) {
+            oWins = false;
+          }
+
+          if (!xWins && !oWins) {
+            return winners;
+          }
+        }
+
+        if (xWins) {
+          winners.add(Player.X);
+        }
+
+        if (oWins) {
+          winners.add(Player.O);
+        }
+
+        return winners;
     }
 
-    if (oWins) {
-      winners.add(Player.O);
-    }
+    /**
+     * Merges the winners from an individual row, column, or diagonal with the running sum of
+     * overall winners.
+     *
+     * This method modifies its input parameter sum.
+     *
+     * @param winners The set of winners from an individual row, column, or diagonal.
+     * @param sum The running total of wins for each Player.
+     */
+    private void mergeWinners(Set<Player> winners, Map<Player, Integer> sum) {
+        if (winners.contains(Player.X)) {
+            sum.put(Player.X, sum.get(Player.X) + 1);
+        }
 
-    return winners;
-  }
-
-  /**
-   * Merges the winners from an individual row, column, or diagonal with the running sum of overall
-   * winners.
-   * 
-   * This method modifies its input parameter sum.
-   *
-   * @param winners The set of winners from an individual row, column, or diagonal.
-   * @param sum The running total of wins for each Player.
-   */
-  private void mergeWinners(Set<Player> winners, Map<Player, Integer> sum) {
-    if (winners.contains(Player.X)) {
-      sum.put(Player.X, sum.get(Player.X) + 1);
+        if (winners.contains(Player.O)) {
+            sum.put(Player.O, sum.get(Player.O) + 1);
+        }
     }
-
-    if (winners.contains(Player.O)) {
-      sum.put(Player.O, sum.get(Player.O) + 1);
-    }
-  }
 
 	/**
 	 * Method newPiece Adds a new Piece to the Board
@@ -292,7 +292,7 @@ public class Board {
 	public View newPiece(int dirx, int diry) {
 		Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
 		spaces.get(posx + 1).get(posy + 1).addPiece(p);
-    pieces.add(p);
+        pieces.add(p);
 		return p;
 	}
 
@@ -319,27 +319,27 @@ public class Board {
 
 	/**
 	 * Updates the positions of the Pieces and wraps around out of bounds Pieces.
-   *
-   * This method handles collisions as well.
+     *
+     * This method handles collisions as well.
 	 */
 	public void updatePositions() {
-    for (Piece piece : pieces) {
-      spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
-      piece.updatePositionNoCollision();
-      spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
-    }
-
-    // halfway collisions
-    resolveHalfwayCollisions();
-
-    // Full collisions
-    for (List<Space> row : spaces) {
-      for (Space space : row) {
-        if (space.collisionOccurred()) {
-          resolveCollision(space.getPieces());
+        for (Piece piece : pieces) {
+            spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
+            piece.updatePositionNoCollision();
+            spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
         }
-      }
-    }
+
+        // halfway collisions
+        resolveHalfwayCollisions();
+
+        // Full collisions
+        for (List<Space> row : spaces) {
+            for (Space space : row) {
+                if (space.collisionOccurred()) {
+                    resolveCollision(space.getPieces());
+                }
+            }
+        }
 	}
 	
 	/**
@@ -352,7 +352,7 @@ public class Board {
 	 */
 	private void resolveHalfwayCollisions() {
 		for (int i = 0; i < pieces.size() - 1; i++) {
-      List<Piece> collision = new ArrayList<>(4);
+            List<Piece> collision = new ArrayList<>(4);
 			collision.add(pieces.get(i));
 			for (int j = i + 1; j < pieces.size(); j++) { //For every Piece after the current one.
 				/**
@@ -381,41 +381,40 @@ public class Board {
 					 pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
 					 pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
 					 pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
-
 						collision.add(pieces.get(j)); //A collision occurred
 				}
 			}
 
 			if (collision.size() > 1) { // Collision occurred
-        if (resolveCollision(collision)) {
-          i--;
-        }
-      }
+                if (resolveCollision(collision)) {
+                    i--;
+                }
+            }
 		}
 	}
 
-  /**
-   * Resolve the given collision. If 2 Pieces collide, this requires swapping their Player value.
-   * If 3 or more Pieces collide, they should explode and be removed.
-   *
-   * @param collision A List of the Pieces which caused a single collision.
-   *
-   * @return True if we had to remove any Pieces. False otherwise.
-   */
-  private boolean resolveCollision(List<Piece> collision) {
-    if (collision.size() == 2) {
-      Player temp = collision.get(0).getPlayer();
-      collision.get(0).setPlayer(collision.get(1).getPlayer());
-      collision.get(1).setPlayer(temp);
-
-    } else if (collision.size() > 2) {
-      for (int i = collision.size() - 1; i >= 0; i--) { // Foreach here creates concurrent mod exception.
-        removePiece(collision.get(i));
-      }
-      return true;
+    /**
+     * Resolve the given collision. If 2 Pieces collide, this requires swapping their Player value.
+     * If 3 or more Pieces collide, they should explode and be removed.
+     *
+     * @param collision A List of the Pieces which caused a single collision.
+     *
+     * @return True if we had to remove any Pieces. False otherwise.
+     */
+    private boolean resolveCollision(List<Piece> collision) {
+        if (collision.size() == 2) {
+            Player temp = collision.get(0).getPlayer();
+            collision.get(0).setPlayer(collision.get(1).getPlayer());
+            collision.get(1).setPlayer(temp);
+        } else if (collision.size() > 2) {
+            // Foreach here creates concurrent mod exception.
+            for (int i = collision.size() - 1; i >= 0; i--) {
+                removePiece(collision.get(i));
+            }
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 	
 	/**
 	 * Removes a Piece from the pieces ArrayList.
@@ -426,15 +425,15 @@ public class Board {
 	public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
 										   //And the Array goes from 0 to 2
 		spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
-    pieces.remove(piece);
-    ((ViewManager)piece.getParent()).removeView(piece);
+        pieces.remove(piece);
+        ((ViewManager)piece.getParent()).removeView(piece);
 	}
 
 	public void updateUiPositions() {
         // Iterate through the board and update each piece's UI position.
 		for (List<Space> row : spaces) {
 			for (Space space : row) {
-        space.updateUiPosition();
+                space.updateUiPosition();
 			}
 		}
 	}
@@ -448,41 +447,41 @@ public class Board {
 	 */
 	public void makePiece(int gravity) {
 		switch (gravity) {
-		case Gravity.TOP | Gravity.LEFT:
-			posx = -1;
-			posy = -1;
-			break;
-		case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-			posx = -1;
-			posy = 0;
-			break;
-		case Gravity.TOP | Gravity.RIGHT:
-			posx = -1;
-			posy = 1;
-			break;
-		case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-			posx = 0;
-			posy = -1;
-			break;
-		case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-			posx = 0;
-			posy = 1;
-			break;
-		case Gravity.BOTTOM | Gravity.LEFT:
-			posx = 1;
-			posy = -1;
-			break;
-		case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-			posx = 1;
-			posy = 0;
-			break;
-		case Gravity.BOTTOM | Gravity.RIGHT:
-			posx = 1;
-			posy = 1;
-			break;
-		default: //Center
-			posx = 0;
-			posy = 0;
+            case Gravity.TOP | Gravity.LEFT:
+                posx = -1;
+                posy = -1;
+                break;
+            case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
+                posx = -1;
+                posy = 0;
+                break;
+            case Gravity.TOP | Gravity.RIGHT:
+                posx = -1;
+                posy = 1;
+                break;
+            case Gravity.CENTER_VERTICAL | Gravity.LEFT:
+                posx = 0;
+                posy = -1;
+                break;
+            case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
+                posx = 0;
+                posy = 1;
+                break;
+            case Gravity.BOTTOM | Gravity.LEFT:
+                posx = 1;
+                posy = -1;
+                break;
+            case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
+                posx = 1;
+                posy = 0;
+                break;
+            case Gravity.BOTTOM | Gravity.RIGHT:
+                posx = 1;
+                posy = 1;
+                break;
+            default: //Center
+                posx = 0;
+                posy = 0;
 		}
 	}
 	
