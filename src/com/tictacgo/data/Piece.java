@@ -239,7 +239,7 @@ public class Piece extends ImageView {
         } else { //Piece is an o
             setImageResource(R.drawable.piece_o);
         }
-	}
+    }
 
   /**
    * Sets the drawable resource for this Piece to be the direction only.
