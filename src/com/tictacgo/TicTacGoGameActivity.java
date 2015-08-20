@@ -1,5 +1,7 @@
 package com.tictacgo;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
+import com.tictacgo.data.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,6 +183,16 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         updateTurnIndicator();
         updateClearPieces();
         play();
+        for (int i = 0; i < Board.SIDE_LENGTH; i++) {
+            for (int j = 0; j < Board.SIDE_LENGTH; j++) {
+                Space currentSpace = board.getSpace(i, j);
+                if (!currentSpace.getPieces().isEmpty()) {
+                    ValueAnimator anim = ObjectAnimator.ofFloat(
+                            currentSpace.getPieces().get(0), View.TRANSLATION_X, 0f, board.getHeight()/3f);
+                    anim.start();
+                }
+            }
+        }
     }
 
     /**
