@@ -1,7 +1,9 @@
 package com.tictacgo.data;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -40,6 +42,16 @@ public class Piece extends ImageView {
      * The length of each side of the Piece, in pixels.
      */
     private int sideLength;
+
+    /**
+     * The animation along the x-axis. Updated each turn.
+     */
+    private ValueAnimator animationX;
+
+    /**
+     * The animation along the y-axis. Updated each turn.
+     */
+    private ValueAnimator animationY;
 
     /**
      * Constructor
@@ -192,10 +204,11 @@ public class Piece extends ImageView {
         return pos;
     }
 
-    public void updateUiPosition() {
+    public void updateAnimations() {
         // Board expects positions in the [0, 2] range.
-        ((FrameLayout.LayoutParams) getLayoutParams()).gravity =
-                Board.getGravity(position[0] + 1, position[1] + 1);
+        // TODO(Jimmy): Our idea of X and Y is reversed from Android's. Update ours to match.
+        animationX = ObjectAnimator.ofFloat(this, View.X, sideLength * (position[1] + 1));
+        animationY = ObjectAnimator.ofFloat(this, View.Y, sideLength * (position[0] + 1));
     }
 
     /**
@@ -214,6 +227,20 @@ public class Piece extends ImageView {
     public void setPlayer(Player player) {
         this.player = player;
         updateImageResourceFullPiece();
+    }
+
+    /**
+     * Returns the animation along the x-axis.
+     */
+    public ValueAnimator getAnimationX() {
+        return animationX;
+    }
+
+    /**
+     * Returns the animation along the y-axis.
+     */
+    public ValueAnimator getAnimationY() {
+        return animationY;
     }
 
     /**

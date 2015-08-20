@@ -99,12 +99,6 @@ public class Space {
         return newSpace;
     }
 
-    public void updateUiPosition() {
-        for (Piece piece : pieces) {
-            piece.updateUiPosition();
-        }
-    }
-
     public List<Piece> getPieces() {
         return pieces;
     }

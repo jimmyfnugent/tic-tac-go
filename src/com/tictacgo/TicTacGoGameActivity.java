@@ -126,7 +126,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 updateTurnIndicator();
                 undoHistory = new ArrayList<>();
                 historyIndex = 0;
-                play();
+                updateHistory();
             }
         });
 
@@ -161,7 +161,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         /**
          * Step 5: Play the game
          */
-        play();
+        updateHistory();
         updateBoard();
         updateTurnIndicator();
     }
@@ -182,17 +182,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         board.nextTurn();
         updateTurnIndicator();
         updateClearPieces();
-        play();
-        for (int i = 0; i < Board.SIDE_LENGTH; i++) {
-            for (int j = 0; j < Board.SIDE_LENGTH; j++) {
-                Space currentSpace = board.getSpace(i, j);
-                if (!currentSpace.getPieces().isEmpty()) {
-                    ValueAnimator anim = ObjectAnimator.ofFloat(
-                            currentSpace.getPieces().get(0), View.TRANSLATION_X, 0f, board.getHeight()/3f);
-                    anim.start();
-                }
-            }
-        }
+        updateHistory();
     }
 
     /**
@@ -260,7 +250,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     /**
      * Run at the beginning of the game and the end of each turn
      */
-    private void play(){
+    private void updateHistory(){
         while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
             undoHistory.remove(historyIndex + 1);
         }

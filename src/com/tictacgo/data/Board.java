@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -28,6 +30,11 @@ public class Board {
      * The number of spaces per side of the game board.
      */
     public static final int SIDE_LENGTH = 3;
+
+    /**
+     * A no-op animation to let us work more efficiently with AnimatorSet.
+     */
+    private static final ValueAnimator DUMMY_ANIMATOR = ValueAnimator.ofFloat(0f);
 
     /**
      * The player who currently has their turn.
@@ -69,6 +76,8 @@ public class Board {
      * The Context of the board. Used to create Pieces.
      */
     private Context context;
+
+    private AnimatorSet animator;
 
     /**
      * Constructor
@@ -321,6 +330,8 @@ public class Board {
      * Updates the positions of the Pieces and wraps around out of bounds Pieces.
      *
      * This method handles collisions as well.
+     *
+     * TODO(Jimmy): Move all game logic into a controller class
      */
     public void updatePositions() {
         for (Piece piece : pieces) {
@@ -430,12 +441,18 @@ public class Board {
     }
 
     public void updateUiPositions() {
+        animator = new AnimatorSet();
         // Iterate through the board and update each piece's UI position.
         for (List<Space> row : spaces) {
             for (Space space : row) {
-                space.updateUiPosition();
+                for (Piece piece : space.getPieces()) {
+                    piece.updateAnimations();
+                    animator.play(piece.getAnimationX()).with(DUMMY_ANIMATOR);
+                    animator.play(piece.getAnimationY()).with(DUMMY_ANIMATOR);
+                }
             }
         }
+        animator.start();
     }
 
     /**
