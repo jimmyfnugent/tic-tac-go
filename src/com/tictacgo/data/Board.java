@@ -77,8 +77,14 @@ public class Board {
      */
     private Context context;
 
+    /**
+     * The controller for all piece animations, in order.
+     */
     private AnimatorSet animator;
 
+    /**
+     * Whether we're waiting for a layout event to play an animation.
+     */
     private boolean animationRequested;
 
     /**
@@ -462,8 +468,7 @@ public class Board {
             for (Space space : row) {
                 for (Piece piece : space.getPieces()) {
                     piece.updateAnimations();
-                    animator.play(piece.getAnimationX()).with(DUMMY_ANIMATOR);
-                    animator.play(piece.getAnimationY()).with(DUMMY_ANIMATOR);
+                    animator.play(piece.getMoveAnimation()).with(DUMMY_ANIMATOR);
                 }
             }
         }
