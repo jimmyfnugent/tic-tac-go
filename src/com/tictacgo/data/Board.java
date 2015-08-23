@@ -341,6 +341,9 @@ public class Board {
         }
     }
 
+    public void requestAnimation() {
+        animationRequested = true;
+    }
 
     /**
      * Updates the positions of the Pieces and wraps around out of bounds Pieces.
@@ -455,10 +458,6 @@ public class Board {
         spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
         pieces.remove(piece);
         ((ViewManager)piece.getParent()).removeView(piece);
-    }
-
-    public void requestAnimation() {
-        animationRequested = true;
     }
 
     public void playAnimation() {

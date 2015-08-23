@@ -21,6 +21,9 @@ import java.util.List;
  */
 public class Piece extends ImageView {
 
+    /**
+     * A listener to be notified of when a layout event occurs.
+     */
     public interface LayoutListener {
         public void onLayout(boolean changed, int l, int t, int r, int b);
     }
