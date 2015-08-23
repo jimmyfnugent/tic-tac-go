@@ -79,6 +79,8 @@ public class Board {
 
     private AnimatorSet animator;
 
+    private boolean animationRequested;
+
     /**
      * Constructor
      *
@@ -302,6 +304,14 @@ public class Board {
         Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
         spaces.get(posx + 1).get(posy + 1).addPiece(p);
         pieces.add(p);
+        p.addLayoutListener(new Piece.LayoutListener() {
+            @Override
+            public void onLayout(boolean changed, int l, int t, int r, int b) {
+                if (animationRequested) {
+                    playAnimation();
+                }
+            }
+        });
         return p;
     }
 
@@ -414,6 +424,7 @@ public class Board {
      */
     private boolean resolveCollision(List<Piece> collision) {
         if (collision.size() == 2) {
+            // TODO(Jimmy): Implement collision animations.
             Player temp = collision.get(0).getPlayer();
             collision.get(0).setPlayer(collision.get(1).getPlayer());
             collision.get(1).setPlayer(temp);
@@ -440,7 +451,11 @@ public class Board {
         ((ViewManager)piece.getParent()).removeView(piece);
     }
 
-    public void updateUiPositions() {
+    public void requestAnimation() {
+        animationRequested = true;
+    }
+
+    public void playAnimation() {
         animator = new AnimatorSet();
         // Iterate through the board and update each piece's UI position.
         for (List<Space> row : spaces) {
@@ -453,6 +468,7 @@ public class Board {
             }
         }
         animator.start();
+        animationRequested = false;
     }
 
     /**

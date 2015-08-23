@@ -1,9 +1,15 @@
 package com.tictacgo.data;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.renderscript.Sampler;
+import android.text.Layout;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -11,11 +17,18 @@ import com.tictacgo.Angles;
 import com.tictacgo.R;
 import com.tictacgo.data.Board.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A Piece represents a single game piece (X or O), and information about its location, direction,
  * as well as graphical information from the ImageView class.
  */
 public class Piece extends ImageView {
+
+    public interface LayoutListener {
+        public void onLayout(boolean changed, int l, int t, int r, int b);
+    }
 
     /**
      * An Integer Array representing the position of the Piece.
@@ -52,6 +65,8 @@ public class Piece extends ImageView {
      * The animation along the y-axis. Updated each turn.
      */
     private ValueAnimator animationY;
+
+    private List<LayoutListener> layoutListeners;
 
     /**
      * Constructor
@@ -90,6 +105,7 @@ public class Piece extends ImageView {
         setPivotX(sideLength / 2);
         setPivotY(sideLength / 2);
         setRotation(getPieceRotation());
+        layoutListeners = new ArrayList<>();
     }
 
     /**
@@ -176,6 +192,14 @@ public class Piece extends ImageView {
         return position[1];
     }
 
+    public void addLayoutListener(LayoutListener listener) {
+        layoutListeners.add(listener);
+    }
+
+    public void removeLayoutListener(LayoutListener listener) {
+        layoutListeners.remove(listener);
+    }
+
     /**
      * Returns the x value of the Piece's last position
      *
@@ -209,6 +233,30 @@ public class Piece extends ImageView {
         // TODO(Jimmy): Our idea of X and Y is reversed from Android's. Update ours to match.
         animationX = ObjectAnimator.ofFloat(this, View.X, sideLength * (position[1] + 1));
         animationY = ObjectAnimator.ofFloat(this, View.Y, sideLength * (position[0] + 1));
+        // TODO: use PropertyValuesHolder
+        /*
+        PropertyValuesHolder xHolder =
+                PropertyValuesHolder.ofFloat(View.X, sideLength * (position[1] + 1));
+        PropertyValuesHolder yHolder =
+                PropertyValuesHolder.ofFloat(View.Y, sideLength * (position[0] + 1));
+        animationY = ObjectAnimator.ofPropertyValuesHolder(this, xHolder, yHolder);
+        */
+        /*
+        animationY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                Float value = (Float) valueAnimator.getAnimatedValue();
+                value.byteValue();
+            }
+        });
+        animationY.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                Float value = (Float) ((ObjectAnimator) animator).getAnimatedValue();
+                value.byteValue();
+            }
+        });
+        */
     }
 
     /**
@@ -236,11 +284,19 @@ public class Piece extends ImageView {
         return animationX;
     }
 
+    public void setAnimationX(ValueAnimator animation) {
+        animationX = animation;
+    }
+
     /**
      * Returns the animation along the y-axis.
      */
     public ValueAnimator getAnimationY() {
         return animationY;
+    }
+
+    public void setAnimationY(ValueAnimator animation) {
+        animationY = animation;
     }
 
     /**
@@ -278,4 +334,12 @@ public class Piece extends ImageView {
       setImageResource(R.drawable.piece_o_direction);
     }
   }
+
+    @Override
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        for (LayoutListener listener : layoutListeners) {
+            listener.onLayout(changed, l, t, r, b);
+        }
+    }
 }

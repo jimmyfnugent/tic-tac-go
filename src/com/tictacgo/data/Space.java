@@ -115,12 +115,12 @@ public class Space {
         if (isEmpty()) { //No Pieces here
             FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3,
                     height / 3, gravity);
-            ImageView piece = new ImageView(context);
-            piece.setImageResource(R.drawable.clear_piece);
-            piece.setLayoutParams(pieceLayout);
-            piece.setOnClickListener(pieceClicked);
-            //piece.setOnDragListener(pieceDragged);
-            fl.addView(piece);
+            ImageView clearSpace = new ImageView(context);
+            clearSpace.setImageResource(R.drawable.clear_space);
+            clearSpace.setLayoutParams(pieceLayout);
+            clearSpace.setOnClickListener(pieceClicked);
+            //clearSpace.setOnDragListener(pieceDragged);
+            fl.addView(clearSpace);
 
         } else { //Pieces here
             for (Piece piece : pieces) {
@@ -140,7 +140,7 @@ public class Space {
             pieces.get(1).updateImageResourceDirectionOnly();
         } else {
             for (Piece piece : pieces) {
-            piece.updateImageResourceFullPiece();
+                piece.updateImageResourceFullPiece();
             }
         }
     }

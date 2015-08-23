@@ -1,7 +1,5 @@
 package com.tictacgo;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,10 +13,7 @@ import android.widget.TextView;
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
-import com.tictacgo.data.Space;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +44,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     /**
      * An ArrayList of the Boards for undo and redo
      */
-    private List<Board> undoHistory;
+    //private List<Board> undoHistory;
 
     /**
      * The index of the current undo/redo history
@@ -75,7 +70,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
 
         // Undo/redo initialization
-        undoHistory = new ArrayList<>();
+        //undoHistory = new ArrayList<>();
         historyIndex = 0;
 
         height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
@@ -124,7 +119,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 board = new Board(turn, height, getBaseContext());
                 updateBoard();
                 updateTurnIndicator();
-                undoHistory = new ArrayList<>();
+                //undoHistory = new ArrayList<>();
                 historyIndex = 0;
                 updateHistory();
             }
@@ -138,7 +133,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 if (historyIndex == 0) //First turn already
                     return;
                 historyIndex--; //Go back one index
-                board = undoHistory.get(historyIndex).copy(); //Go back one Board
+                //board = undoHistory.get(historyIndex).copy(); //Go back one Board
                 updateBoard();
                 updateTurnIndicator();
             }
@@ -149,12 +144,14 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
          */
         findViewById(R.id.redoButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                /*
                 if (historyIndex == undoHistory.size() - 1) //Last turn already
                     return;
                 historyIndex++; //Go forward one index
                 board = undoHistory.get(historyIndex).copy(); //Go forward one Board
                 updateBoard();
                 updateTurnIndicator();
+                */
             }
         });
 
@@ -177,21 +174,21 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
             board.updatePositions();
-            board.updateUiPositions();
+            board.requestAnimation();
         }
         board.nextTurn();
         updateTurnIndicator();
-        updateClearPieces();
+        updateClearSpaces();
         updateHistory();
     }
 
     /**
-     * Updates the clear Pieces on the FrameLayout
+     * Updates the clear spaces on the FrameLayout
      * We must do this after each time the Pieces move
      */
-    private void updateClearPieces() {
+    private void updateClearSpaces() {
         for (int i = 0; i < fl.getChildCount(); i++) {
-            if (fl.getChildAt(i).isClickable()) { //Only clear Pieces are clickable
+            if (fl.getChildAt(i).isClickable()) { //Only clear spaces are clickable
                 fl.removeViewAt(i);
                 i--; //When we remove a View, every other one goes up one index
             }
@@ -199,7 +196,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
             for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
                 board.getSpace(i, j).updateImageResources();
-                if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
+                if (board.getSpace(i, j).isEmpty()) {// We need a clear space here
                     board.getSpace(i, j).render(fl, getBaseContext(), height,
                             Board.getGravity(i, j), onPieceClicked);
                 }
@@ -251,11 +248,13 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Run at the beginning of the game and the end of each turn
      */
     private void updateHistory(){
+        /*
         while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
             undoHistory.remove(historyIndex + 1);
         }
         undoHistory.add(board.copy()); //Add our board to the undo history
         historyIndex++;
+        */
     }
 
     /**
