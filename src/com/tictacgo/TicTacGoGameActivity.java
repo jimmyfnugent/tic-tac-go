@@ -146,14 +146,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
          */
         findViewById(R.id.redoButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                /*
                 if (historyIndex == undoHistory.size() - 1) //Last turn already
                     return;
                 historyIndex++; //Go forward one index
                 board = undoHistory.get(historyIndex).copy(); //Go forward one Board
                 updateBoard();
                 updateTurnIndicator();
-                */
             }
         });
 

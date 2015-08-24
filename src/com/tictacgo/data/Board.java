@@ -314,7 +314,7 @@ public class Board {
             @Override
             public void onLayout(boolean changed, int l, int t, int r, int b) {
                 if (animationRequested) {
-                    playAnimation();
+                    animate();
                 }
             }
         });
@@ -460,7 +460,7 @@ public class Board {
         ((ViewManager)piece.getParent()).removeView(piece);
     }
 
-    public void playAnimation() {
+    public void animate() {
         animator = new AnimatorSet();
         // Iterate through the board and update each piece's UI position.
         for (List<Space> row : spaces) {
