@@ -1,7 +1,10 @@
 package com.tictacgo.data;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -9,11 +12,21 @@ import com.tictacgo.Angles;
 import com.tictacgo.R;
 import com.tictacgo.data.Board.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A Piece represents a single game piece (X or O), and information about its location, direction,
  * as well as graphical information from the ImageView class.
  */
 public class Piece extends ImageView {
+
+    /**
+     * A listener to be notified of when a layout event occurs.
+     */
+    public interface LayoutListener {
+        public void onLayout(boolean changed, int l, int t, int r, int b);
+    }
 
     /**
      * An Integer Array representing the position of the Piece.
@@ -40,6 +53,16 @@ public class Piece extends ImageView {
      * The length of each side of the Piece, in pixels.
      */
     private int sideLength;
+
+    /**
+     * The animation of the piece moving. Updated each turn.
+     */
+    private ValueAnimator moveAnimation;
+
+    /**
+     * Listeners notified when a layout event occurs.
+     */
+    private List<LayoutListener> layoutListeners;
 
     /**
      * Constructor
@@ -78,6 +101,15 @@ public class Piece extends ImageView {
         setPivotX(sideLength / 2);
         setPivotY(sideLength / 2);
         setRotation(getPieceRotation());
+        layoutListeners = new ArrayList<>();
+    }
+
+    @Override
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        for (LayoutListener listener : layoutListeners) {
+            listener.onLayout(changed, l, t, r, b);
+        }
     }
 
     /**
@@ -164,6 +196,14 @@ public class Piece extends ImageView {
         return position[1];
     }
 
+    public void addLayoutListener(LayoutListener listener) {
+        layoutListeners.add(listener);
+    }
+
+    public void removeLayoutListener(LayoutListener listener) {
+        layoutListeners.remove(listener);
+    }
+
     /**
      * Returns the x value of the Piece's last position
      *
@@ -192,10 +232,14 @@ public class Piece extends ImageView {
         return pos;
     }
 
-    public void updateUiPosition() {
+    public void updateAnimations() {
         // Board expects positions in the [0, 2] range.
-        ((FrameLayout.LayoutParams) getLayoutParams()).gravity =
-                Board.getGravity(position[0] + 1, position[1] + 1);
+        // TODO(Jimmy): Our idea of X and Y is reversed from Android's. Update ours to match.
+        PropertyValuesHolder xHolder =
+                PropertyValuesHolder.ofFloat(View.X, sideLength * (position[1] + 1));
+        PropertyValuesHolder yHolder =
+                PropertyValuesHolder.ofFloat(View.Y, sideLength * (position[0] + 1));
+        moveAnimation = ObjectAnimator.ofPropertyValuesHolder(this, xHolder, yHolder);
     }
 
     /**
@@ -214,6 +258,13 @@ public class Piece extends ImageView {
     public void setPlayer(Player player) {
         this.player = player;
         updateImageResourceFullPiece();
+    }
+
+    /**
+     * Returns the animation for the piece moving.
+     */
+    public ValueAnimator getMoveAnimation() {
+        return moveAnimation;
     }
 
     /**

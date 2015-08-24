@@ -123,7 +123,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 updateTurnIndicator();
                 undoHistory = new ArrayList<>();
                 historyIndex = 0;
-                play();
+                updateHistory();
             }
         });
 
@@ -158,7 +158,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         /**
          * Step 5: Play the game
          */
-        play();
+        updateHistory();
         updateBoard();
         updateTurnIndicator();
     }
@@ -174,21 +174,21 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
             board.updatePositions();
-            board.updateUiPositions();
+            board.requestAnimation();
         }
         board.nextTurn();
         updateTurnIndicator();
-        updateClearPieces();
-        play();
+        updateClearSpaces();
+        updateHistory();
     }
 
     /**
-     * Updates the clear Pieces on the FrameLayout
+     * Updates the clear spaces on the FrameLayout
      * We must do this after each time the Pieces move
      */
-    private void updateClearPieces() {
+    private void updateClearSpaces() {
         for (int i = 0; i < fl.getChildCount(); i++) {
-            if (fl.getChildAt(i).isClickable()) { //Only clear Pieces are clickable
+            if (fl.getChildAt(i).isClickable()) { //Only clear spaces are clickable
                 fl.removeViewAt(i);
                 i--; //When we remove a View, every other one goes up one index
             }
@@ -196,7 +196,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
             for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
                 board.getSpace(i, j).updateImageResources();
-                if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
+                if (board.getSpace(i, j).isEmpty()) {// We need a clear space here
                     board.getSpace(i, j).render(fl, getBaseContext(), height,
                             Board.getGravity(i, j), onPieceClicked);
                 }
@@ -247,7 +247,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     /**
      * Run at the beginning of the game and the end of each turn
      */
-    private void play(){
+    private void updateHistory(){
         while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
             undoHistory.remove(historyIndex + 1);
         }
