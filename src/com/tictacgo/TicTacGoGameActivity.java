@@ -83,8 +83,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 // Make the new DirectionPicker
                 LayoutParams params = (LayoutParams) v.getLayoutParams();
                 DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
-                        board.getTurn(), params.topMargin * 6 / height,
-                        params.leftMargin * 6 / height, height);
+                        board.getTurn(), params.topMargin * 3 / height,
+                        params.leftMargin * 3 / height, height);
 
                 // Add the new DirectionPicker
                 fragmentTransaction.add(R.id.gameBoard, directionPicker);

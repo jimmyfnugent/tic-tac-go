@@ -115,7 +115,7 @@ public class DirectionPickerFragment extends Fragment {
                 Gravity.TOP | Gravity.LEFT);
 
         int pieceHeight = boardHeight / 3;
-        params.setMargins(row * pieceHeight / 2, column * pieceHeight / 2, 0, 0);
+        params.setMargins(column * pieceHeight * 3 / 4, row * pieceHeight * 3 / 4, 0, 0);
         view.setLayoutParams(params);
 
         int id = player == Player.X ? R.drawable.piece_x_direction : R.drawable.piece_o_direction;
