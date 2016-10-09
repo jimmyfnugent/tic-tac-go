@@ -45,16 +45,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     private int height;
 
     /**
-     * An ArrayList of the Boards for undo and redo
-     */
-    private List<Board> undoHistory;
-
-    /**
-     * The index of the current undo/redo history
-     */
-    private int historyIndex;
-
-    /**
      * The initial turn selection. Used for the New Game Button
      */
     private Player turn;
@@ -71,10 +61,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         Intent intent = getIntent();
 
         turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
-
-        // Undo/redo initialization
-        undoHistory = new ArrayList<>();
-        historyIndex = 0;
 
         height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
         board = new Board(turn, height, getBaseContext());
@@ -123,37 +109,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 board = new Board(turn, height, getBaseContext());
                 updateBoard();
                 updateTurnIndicator();
-                undoHistory = new ArrayList<>();
-                historyIndex = 0;
                 play();
-            }
-        });
-
-        /**
-        * Sets up the Undo Button
-        */
-        findViewById(R.id.undoButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (historyIndex == 0) //First turn already
-                    return;
-                historyIndex--; //Go back one index
-                board = undoHistory.get(historyIndex).copy(); //Go back one Board
-                updateBoard();
-                updateTurnIndicator();
-            }
-        });
-
-        /**
-         * Sets up the Redo Button
-         */
-        findViewById(R.id.redoButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (historyIndex == undoHistory.size() - 1) //Last turn already
-                    return;
-                historyIndex++; //Go forward one index
-                board = undoHistory.get(historyIndex).copy(); //Go forward one Board
-                updateBoard();
-                updateTurnIndicator();
             }
         });
 
@@ -250,11 +206,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Run at the beginning of the game and the end of each turn
      */
     private void play(){
-        while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
-            undoHistory.remove(historyIndex + 1);
-        }
-        undoHistory.add(board.copy()); //Add our board to the undo history
-        historyIndex++;
+
     }
 
     /**

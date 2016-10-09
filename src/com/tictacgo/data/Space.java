@@ -85,21 +85,6 @@ public class Space {
         return false;
     }
 
-    /**
-     * Creates and returns a deep copy of this Space.
-     *
-     * @return A deep copy of this Space.
-     */
-    public Space copy() {
-        Space newSpace = new Space();
-
-        for (Piece piece : pieces) {
-            newSpace.addPiece(piece.copy());
-        }
-
-        return newSpace;
-    }
-
     public void updateUiPosition() {
         for (Piece piece : pieces) {
             piece.updateUiPosition();
@@ -123,7 +108,7 @@ public class Space {
             int pieceHeight = height / 3;
             FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(pieceHeight,
                     pieceHeight, Gravity.TOP | Gravity.LEFT);
-            pieceLayout.setMargins(row * pieceHeight, row * pieceHeight, 0, 0);
+            pieceLayout.setMargins(row * pieceHeight, column * pieceHeight, 0, 0);
 
             ImageView piece = new ImageView(context);
             piece.setImageResource(R.drawable.clear_piece);

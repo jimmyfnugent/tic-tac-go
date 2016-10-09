@@ -117,38 +117,6 @@ public class Board {
     }
 
     /**
-     * Create a new Board object that is a clone of the Board b
-     *
-     * @param b The Board object to clone
-     */
-    public Board(Board b) {
-        turn = b.getTurn();
-        startTurn = b.getStartTurn();
-        context = b.getContext();
-        height = b.getHeight();
-
-        // Clones the spaces and pieces lists
-        spaces = new ArrayList<>(SIDE_LENGTH);
-        pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
-        for (int row = 0; row < SIDE_LENGTH; row++) {
-            spaces.add(new ArrayList<Space>(SIDE_LENGTH));
-            for (int column = 0; column < SIDE_LENGTH; column++) {
-                spaces.get(row).add(b.getSpace(row, column).copy());
-                pieces.addAll(spaces.get(row).get(column).getPieces());
-            }
-        }
-    }
-
-    /**
-     * Creates a deep copy of the Board Object
-     *
-     * @return A deep copy of this Board object
-     */
-    public Board copy() {
-        return new Board(this);
-    }
-
-    /**
      * Tests if the board is full
      *
      * @return True if the board is full, false otherwise

@@ -119,16 +119,6 @@ public class Piece extends ImageView {
     }
 
     /**
-     * Creates a deep copy of the Piece Object. Used to copy the Board object
-     *
-     * @return A deep copy of this Piece object
-     */
-    public Piece copy() {
-        return new Piece(getRow(), getColumn(), getDirection()[0], getDirection()[1],
-                getPlayer(), sideLength, getContext());
-    }
-
-    /**
      * Updates the position of the Piece and fixes wrap-arounds.
      */
     public void updatePositionNoCollision() {
