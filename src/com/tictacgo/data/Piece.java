@@ -2,6 +2,7 @@ package com.tictacgo.data;
 
 import android.content.Context;
 import android.view.Gravity;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -203,14 +204,14 @@ public class Piece extends ImageView {
         }
     }
 
-  /**
-   * Sets the drawable resource for this Piece to be the direction only.
-   */
-  public void updateImageResourceDirectionOnly() {
-    if (isX()) {
-      setImageResource(R.drawable.piece_x_direction);
-    } else { //Piece is an o
-      setImageResource(R.drawable.piece_o_direction);
+    /**
+    * Sets the drawable resource for this Piece to be the direction only.
+    */
+    public void updateImageResourceDirectionOnly() {
+        if (isX()) {
+            setImageResource(R.drawable.piece_x_direction);
+        } else { //Piece is an o
+            setImageResource(R.drawable.piece_o_direction);
+        }
     }
-  }
 }
