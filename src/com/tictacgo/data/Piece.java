@@ -126,8 +126,8 @@ public class Piece extends ImageView {
         position[1] += direction[1];
 
         // Going off one edge results in wrapping around the other side.
-        position[0] = (position[0] + 4) % 3;
-        position[1] = (position[1] + 4) % 3;
+        position[0] = (position[0] + 3) % 3;
+        position[1] = (position[1] + 3) % 3;
     }
 
     public int getRow() {
@@ -144,7 +144,7 @@ public class Piece extends ImageView {
      * @return the row of of the Piece's last position
      */
     public int getLastRow() {
-        return (position[0] - direction[0] + 4) % 3;
+        return (position[0] - direction[0] + 3) % 3;
     }
 
     /**
@@ -153,7 +153,7 @@ public class Piece extends ImageView {
      * @return the column of the Piece's last position
      */
     public int getLastColumn() {
-        return (position[1] - direction[1] + 4) % 3;
+        return (position[1] - direction[1] + 3) % 3;
     }
 
     public void updateUiPosition() {

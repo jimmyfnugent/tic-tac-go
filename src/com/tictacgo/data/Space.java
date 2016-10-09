@@ -108,7 +108,7 @@ public class Space {
             int pieceHeight = height / 3;
             FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(pieceHeight,
                     pieceHeight, Gravity.TOP | Gravity.LEFT);
-            pieceLayout.setMargins(row * pieceHeight, column * pieceHeight, 0, 0);
+            pieceLayout.setMargins(column * pieceHeight, row * pieceHeight, 0, 0);
 
             ImageView piece = new ImageView(context);
             piece.setImageResource(R.drawable.clear_piece);
