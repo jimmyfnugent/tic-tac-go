@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -94,9 +95,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                 // Make the new DirectionPicker
+                LayoutParams params = (LayoutParams) v.getLayoutParams();
                 DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
-                        board.getTurn(), ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity,
-                        height);
+                        board.getTurn(), params.topMargin * 6 / height,
+                        params.leftMargin * 6 / height, height);
 
                 // Add the new DirectionPicker
                 fragmentTransaction.add(R.id.gameBoard, directionPicker);
@@ -164,11 +166,11 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     }
 
     @Override
-    public void onDirectionPicked(int dirx, int diry, int gravity) {
+    public void onDirectionPicked(int dirVertical, int dirHorizontal, int row, int column) {
         getFragmentManager().popBackStack();
 
-        board.makePiece(gravity);
-        fl.addView(board.newPiece(dirx, diry));
+        board.makePiece(row, column);
+        fl.addView(board.newPiece(dirVertical, dirHorizontal));
 
         notifyWinners(board.getWinners());
         if (board.willMove()) {
@@ -193,12 +195,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 i--; //When we remove a View, every other one goes up one index
             }
         }
-        for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
-            for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
-                board.getSpace(i, j).updateImageResources();
-                if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
-                    board.getSpace(i, j).render(fl, getBaseContext(), height,
-                            Board.getGravity(i, j), onPieceClicked);
+        for (int row = 0; row < Board.SIDE_LENGTH; row++) { //Each row
+            for (int column = 0; column < Board.SIDE_LENGTH; column++) { //Each column
+                board.getSpace(row, column).updateImageResources();
+                if (board.getSpace(row, column).isEmpty()) {// We need a clear piece here
+                    board.getSpace(row, column).render(fl, getBaseContext(), height,
+                            row, column, onPieceClicked);
                 }
             }
         }
@@ -235,10 +237,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Needed in case of undo, redo, or new game
      */
     private void fillBoard() {
-        for (int i = 0; i < Board.SIDE_LENGTH; i++) {
-            for (int j = 0; j < Board.SIDE_LENGTH; j++) {
-                board.getSpace(i, j).updateImageResources();
-                board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+        for (int row = 0; row < Board.SIDE_LENGTH; row++) {
+            for (int column = 0; column < Board.SIDE_LENGTH; column++) {
+                board.getSpace(row, column).updateImageResources();
+                board.getSpace(row, column).render(fl, getBaseContext(), height, row, column,
                         onPieceClicked);
             }
         }

@@ -1,6 +1,7 @@
 package com.tictacgo.data;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -116,11 +117,14 @@ public class Space {
     /**
      * Render this Space on the screen
      */
-    public void render(FrameLayout fl, Context context, int height, int gravity,
+    public void render(FrameLayout fl, Context context, int height, int row, int column,
             View.OnClickListener pieceClicked) {
         if (isEmpty()) { //No Pieces here
-            FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(height / 3,
-                    height / 3, gravity);
+            int pieceHeight = height / 3;
+            FrameLayout.LayoutParams pieceLayout = new FrameLayout.LayoutParams(pieceHeight,
+                    pieceHeight, Gravity.TOP | Gravity.LEFT);
+            pieceLayout.setMargins(row * pieceHeight, row * pieceHeight, 0, 0);
+
             ImageView piece = new ImageView(context);
             piece.setImageResource(R.drawable.clear_piece);
             piece.setLayoutParams(pieceLayout);
@@ -135,8 +139,8 @@ public class Space {
     }
 
     /**
-     * Update the image resources of all of our Pieces. That is, ensure that they are just directions
-     * if need be, and full pieces otherwise.
+     * Update the image resources of all of our Pieces. That is, ensure that they are just
+     * directions if need be, and full pieces otherwise.
      */
     public void updateImageResources() {
         if (pieces.size() == 2 && pieces.get(0).isX() == pieces.get(1).isX()) {

@@ -2,6 +2,7 @@ package com.tictacgo;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,13 @@ import com.tictacgo.data.Board.Player;
  */
 public class DirectionPickerFragment extends Fragment {
     public static final String PLAYER_ARGUMENT_KEY = "player";
-    public static final String GRAVITY_ARGUMENT_KEY = "gravity";
+    public static final String ROW_ARGUMENT_KEY = "row";
+    public static final String COLUMN_ARGUMENT_KEY = "column";
     public static final String HEIGHT_ARGUMENT_KEY = "boardHeight";
 
     private Player player;
-    private int gravity;
+    private int row;
+    private int column;
     private int boardHeight;
 
     private View.OnClickListener onDirectionClicked;
@@ -30,21 +33,24 @@ public class DirectionPickerFragment extends Fragment {
 
     // Container Activity must implement this interface
     public interface OnDirectionPickedListener {
-        public void onDirectionPicked(int dirx, int diry, int gravity);
+        void onDirectionPicked(int dirVertical, int dirHorizontal, int row, int column);
     }
 
     /**
      * Creates and returns a new DirectionPicker object.
      *
      * @param player The player whose turn it is.
-     * @param gravity The gravity of the location that was just pressed.
+     * @param row The row index of the location that was just pressed.
+     * @param column The column index of the location that was just pressed.
      * @param boardHeight The height of the board.
      * @return A new DirectionPicker object with the given parameters.
      */
-    public static DirectionPickerFragment newInstance(Player player, int gravity, int boardHeight) {
+    public static DirectionPickerFragment newInstance(Player player, int row, int column,
+                                                      int boardHeight) {
         Bundle arguments = new Bundle();
         arguments.putSerializable(PLAYER_ARGUMENT_KEY, player);
-        arguments.putInt(GRAVITY_ARGUMENT_KEY, gravity);
+        arguments.putInt(ROW_ARGUMENT_KEY, row);
+        arguments.putInt(COLUMN_ARGUMENT_KEY, column);
         arguments.putInt(HEIGHT_ARGUMENT_KEY, boardHeight);
 
         DirectionPickerFragment directionPicker = new DirectionPickerFragment();
@@ -56,7 +62,8 @@ public class DirectionPickerFragment extends Fragment {
     public void setArguments(Bundle arguments) {
         player = (Player) arguments.getSerializable(PLAYER_ARGUMENT_KEY);
         boardHeight = arguments.getInt(HEIGHT_ARGUMENT_KEY);
-        gravity = arguments.getInt(GRAVITY_ARGUMENT_KEY);
+        row = arguments.getInt(ROW_ARGUMENT_KEY);
+        column = arguments.getInt(COLUMN_ARGUMENT_KEY);
     }
 
     @Override
@@ -69,28 +76,28 @@ public class DirectionPickerFragment extends Fragment {
             public void onClick(View v) {
                 switch (v.getId()) { //Which direction was picked
                     case R.id.directionTopLeft:
-                        listener.onDirectionPicked(-1, -1, gravity);
+                        listener.onDirectionPicked(-1, -1, row, column);
                         break;
                     case R.id.directionTopMiddle:
-                        listener.onDirectionPicked(-1, 0, gravity);
+                        listener.onDirectionPicked(-1, 0, row, column);
                         break;
                     case R.id.directionTopRight:
-                        listener.onDirectionPicked(-1, 1, gravity);
+                        listener.onDirectionPicked(-1, 1, row, column);
                         break;
                     case R.id.directionMiddleLeft:
-                        listener.onDirectionPicked(0, -1, gravity);
+                        listener.onDirectionPicked(0, -1, row, column);
                         break;
                     case R.id.directionMiddleRight:
-                        listener.onDirectionPicked(0, 1, gravity);
+                        listener.onDirectionPicked(0, 1, row, column);
                         break;
                     case R.id.directionBottomLeft:
-                        listener.onDirectionPicked(1, -1, gravity);
+                        listener.onDirectionPicked(1, -1, row, column);
                         break;
                     case R.id.directionBottomMiddle:
-                        listener.onDirectionPicked(1, 0, gravity);
+                        listener.onDirectionPicked(1, 0, row, column);
                         break;
                     case R.id.directionBottomRight:
-                        listener.onDirectionPicked(1, 1, gravity);
+                        listener.onDirectionPicked(1, 1, row, column);
                         break;
                     default:
                         getFragmentManager().popBackStack();
@@ -105,7 +112,10 @@ public class DirectionPickerFragment extends Fragment {
         // Create and locate view properly
         View view = inflater.inflate(R.layout.fragment_direction_picker, container, false);
         LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-                gravity);
+                Gravity.TOP | Gravity.LEFT);
+
+        int pieceHeight = boardHeight / 3;
+        params.setMargins(row * pieceHeight / 2, column * pieceHeight / 2, 0, 0);
         view.setLayoutParams(params);
 
         int id = player == Player.X ? R.drawable.piece_x_direction : R.drawable.piece_o_direction;

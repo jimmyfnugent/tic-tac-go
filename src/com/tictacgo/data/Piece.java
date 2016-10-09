@@ -27,7 +27,7 @@ public class Piece extends ImageView {
      * An Integer Array representing the direction of the Piece.
      *
      * Index 0 represents the vertical direction. 1 represents the horizontal direction.
-     * The values range from 0 to 2, where 0 represents the left and top.
+     * The values range from -1 to 1, where -1 represents the left and top.
      */
     private int[] direction;
 
@@ -58,7 +58,8 @@ public class Piece extends ImageView {
      *
      * @param c the Context of the Piece. Used for the ImageView constructor.
      */
-    public Piece(int row, int column, int dirVertical, int dirHorizontal, Player player, int sideLength, Context c) {
+    public Piece(int row, int column, int dirVertical, int dirHorizontal, Player player,
+                 int sideLength, Context c) {
         super(c); //ImageView constructor
         position = new int[2];
         position[0] = row;

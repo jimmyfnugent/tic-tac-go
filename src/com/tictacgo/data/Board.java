@@ -442,49 +442,13 @@ public class Board {
 
     /**
      * Sets the next Piece Location as the space row, column
-     * row is the top to bottom index.
-     * column is the right to left index.
      *
-     * @param gravity The Gravity of the Space clicked
+     * @param row is the top to bottom index.
+     * @param column is the right to left index.
      */
-    public void makePiece(int gravity) {
-        switch (gravity) {
-            case Gravity.TOP | Gravity.LEFT:
-                row = 0;
-                column = 0;
-                break;
-            case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-                row = 0;
-                column = 1;
-                break;
-            case Gravity.TOP | Gravity.RIGHT:
-                row = 0;
-                column = 2;
-                break;
-            case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-                row = 1;
-                column = 0;
-                break;
-            case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-                row = 1;
-                column = 2;
-                break;
-            case Gravity.BOTTOM | Gravity.LEFT:
-                row = 2;
-                column = 0;
-                break;
-            case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-                row = 2;
-                column = 1;
-                break;
-            case Gravity.BOTTOM | Gravity.RIGHT:
-                row = 2;
-                column = 2;
-                break;
-            default: //Center
-                row = 1;
-                column = 1;
-        }
+    public void makePiece(int row, int column) {
+        this.row = row;
+        this.column = column;
     }
 
     /**
