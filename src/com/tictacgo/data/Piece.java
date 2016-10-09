@@ -1,7 +1,7 @@
 package com.tictacgo.data;
 
 import android.content.Context;
-import android.widget.FrameLayout;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -18,16 +18,16 @@ public class Piece extends ImageView {
     /**
      * An Integer Array representing the position of the Piece.
      *
-     * Index 0 represents the X coordinate. 1 represents the Y coordinate.
-     * The values range from -1 to 1, where -1 represents the left and top.
+     * Index 0 represents the row coordinate. 1 represents the column coordinate.
+     * The values range from 0 to 2, where 0 represents the left and top.
      */
     private int[] position;
 
     /**
      * An Integer Array representing the direction of the Piece.
      *
-     * Index 0 represents the X direction. 1 represents the Y direction.
-     * The values range from -1 to 1, where -1 represents the left and top.
+     * Index 0 represents the vertical direction. 1 represents the horizontal direction.
+     * The values range from 0 to 2, where 0 represents the left and top.
      */
     private int[] direction;
 
@@ -44,13 +44,13 @@ public class Piece extends ImageView {
     /**
      * Constructor
      *
-     * @param posx The x position of the Piece.
+     * @param row The x position of the Piece.
      *
-     * @param posy The y position of the Piece.
+     * @param column The y position of the Piece.
      *
-     * @param dirx The x direction of the Piece.
+     * @param dirVertical The x direction of the Piece.
      *
-     * @param diry The y direction of the Piece.
+     * @param dirHorizontal The y direction of the Piece.
      *
      * @param player The player this piece belongs to.
      *
@@ -58,19 +58,20 @@ public class Piece extends ImageView {
      *
      * @param c the Context of the Piece. Used for the ImageView constructor.
      */
-    public Piece(int posx, int posy, int dirx, int diry, Player player, int sideLength, Context c) {
+    public Piece(int row, int column, int dirVertical, int dirHorizontal, Player player, int sideLength, Context c) {
         super(c); //ImageView constructor
         position = new int[2];
-        position[0] = posx;
-        position[1] = posy;
+        position[0] = row;
+        position[1] = column;
         direction = new int[2];
-        direction[0] = dirx;
-        direction[1] = diry;
+        direction[0] = dirVertical;
+        direction[1] = dirHorizontal;
         this.player = player;
         this.sideLength = sideLength;
         updateImageResourceFullPiece();
-        setLayoutParams(new LayoutParams(sideLength, sideLength,
-                Board.getGravity(posx + 1, posy + 1)));
+
+        setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
+        updateUiPosition();
 
         /**
          * Set the Piece to rotate around its center, to face the correct direction.
@@ -122,7 +123,7 @@ public class Piece extends ImageView {
      * @return A deep copy of this Piece object
      */
     public Piece copy() {
-        return new Piece(getXPosition(), getYPosition(), getDirection()[0], getDirection()[1],
+        return new Piece(getRow(), getColumn(), getDirection()[0], getDirection()[1],
                 getPlayer(), sideLength, getContext());
     }
 
@@ -134,68 +135,38 @@ public class Piece extends ImageView {
         position[1] += direction[1];
 
         // Going off one edge results in wrapping around the other side.
-        position[0] = (position[0] + 4) % 3 - 1;
-        position[1] = (position[1] + 4) % 3 - 1;
-    }
-
-    /**
-     * Returns the x position of the Piece.
-     *
-     * @return The x position of the Piece.
-     */
-    public int getXPosition() {
-        return position[0];
+        position[0] = (position[0] + 4) % 3;
+        position[1] = (position[1] + 4) % 3;
     }
 
     public int getRow() {
-        return position[0] + 1;
+        return position[0];
     }
 
     public int getColumn() {
-        return position[1] + 1;
-    }
-
-    /**
-     * Returns the y position of the Piece.
-     *
-     * @return The y position of the Piece.
-     */
-    public int getYPosition() {
         return position[1];
     }
 
     /**
-     * Returns the x value of the Piece's last position
+     * Returns the Piece's last position's row
      *
-     * @return the x coordinate of of the Piece's last position
+     * @return the row of of the Piece's last position
      */
-    public int getLastXPosition() {
-        int pos = position[0] - direction[0];
-        if (pos > 1) //Wrap around
-            pos -= 3;
-        if (pos < -1) //Wrap around
-            pos += 3;
-        return pos;
+    public int getLastRow() {
+        return (position[0] - direction[0] + 4) % 3;
     }
 
     /**
-     * Returns the y value of the Piece's last position
+     * Returns the Piece's last position's column
      *
-     * @return the y coordinate of of the Piece's last position
+     * @return the column of the Piece's last position
      */
-    public int getLastYPosition() {
-        int pos = position[1] - direction[1];
-        if (pos > 1) //Wrap around
-            pos -= 3;
-        if (pos < -1) //Wrap around
-            pos += 3;
-        return pos;
+    public int getLastColumn() {
+        return (position[1] - direction[1] + 4) % 3;
     }
 
     public void updateUiPosition() {
-        // Board expects positions in the [0, 2] range.
-        ((FrameLayout.LayoutParams) getLayoutParams()).gravity =
-                Board.getGravity(position[0] + 1, position[1] + 1);
+        ((LayoutParams) getLayoutParams()).setMargins(sideLength * getColumn(), sideLength * getRow(), 0, 0);
     }
 
     /**

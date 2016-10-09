@@ -53,12 +53,12 @@ public class Board {
     /**
      * The X (Vertical) position of the next piece to be added
      */
-    private int posx;
+    private int row;
 
     /**
      * The Y (Horizontal) position of the next piece to be added
      */
-    private int posy;
+    private int column;
 
     /**
      * The height of the board, in pixels.
@@ -130,11 +130,11 @@ public class Board {
         // Clones the spaces and pieces lists
         spaces = new ArrayList<>(SIDE_LENGTH);
         pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
-        for (int i = 0; i < SIDE_LENGTH; i++) {
+        for (int row = 0; row < SIDE_LENGTH; row++) {
             spaces.add(new ArrayList<Space>(SIDE_LENGTH));
-            for (int j = 0; j < SIDE_LENGTH; j++) {
-                spaces.get(i).add(b.getSpace(i, j).copy());
-                pieces.addAll(spaces.get(i).get(j).getPieces());
+            for (int column = 0; column < SIDE_LENGTH; column++) {
+                spaces.get(row).add(b.getSpace(row, column).copy());
+                pieces.addAll(spaces.get(row).get(column).getPieces());
             }
         }
     }
@@ -285,13 +285,13 @@ public class Board {
     /**
      * Method newPiece Adds a new Piece to the Board
      *
-     * @param dirx The X direction of the Piece.
-     * @param diry The Y direction of the Piece.
+     * @param dirVertical The X direction of the Piece.
+     * @param dirHorizontal The Y direction of the Piece.
      * @return The new Piece
      */
-    public View newPiece(int dirx, int diry) {
-        Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
-        spaces.get(posx + 1).get(posy + 1).addPiece(p);
+    public View newPiece(int dirVertical, int dirHorizontal) {
+        Piece p = new Piece(row, column, dirVertical, dirHorizontal, turn, height / 3, context);
+        spaces.get(row).get(column).addPiece(p);
         pieces.add(p);
         return p;
     }
@@ -359,28 +359,28 @@ public class Board {
                  * X values are the same.
                  * Y values cross.
                  */
-                if ((pieces.get(i).getLastXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition()) ||
+                if ((pieces.get(i).getLastRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getLastColumn()) ||
 
                 /**
                  * X values cross.
                  * Y values are the same.
                  */
-                    (pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getLastYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getYPosition()) ||
+                    (pieces.get(i).getLastRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getLastColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getColumn()) ||
 
                 /**
                  * X values cross.
                  * Y values cross.
                  */
-                    (pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
+                    (pieces.get(i).getLastRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getLastColumn())) {
                         collision.add(pieces.get(j)); //A collision occurred
                 }
             }
@@ -406,6 +406,7 @@ public class Board {
             Player temp = collision.get(0).getPlayer();
             collision.get(0).setPlayer(collision.get(1).getPlayer());
             collision.get(1).setPlayer(temp);
+
         } else if (collision.size() > 2) {
             // Foreach here creates concurrent mod exception.
             for (int i = collision.size() - 1; i >= 0; i--) {
@@ -413,6 +414,7 @@ public class Board {
             }
             return true;
         }
+
         return false;
     }
 
@@ -422,10 +424,10 @@ public class Board {
      *
      * @param piece The Piece to be removed
      */
-    public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
-                                           //And the Array goes from 0 to 2
-        spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
+    public void removePiece(Piece piece) {
+        spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
         pieces.remove(piece);
+
         ((ViewManager)piece.getParent()).removeView(piece);
     }
 
@@ -439,85 +441,61 @@ public class Board {
     }
 
     /**
-     * Sets the next Piece Location as teh space posx, posy
-     * posx is the top to bottom index.
-     * posy is the right to left index.
+     * Sets the next Piece Location as the space row, column
+     * row is the top to bottom index.
+     * column is the right to left index.
      *
      * @param gravity The Gravity of the Space clicked
      */
     public void makePiece(int gravity) {
         switch (gravity) {
             case Gravity.TOP | Gravity.LEFT:
-                posx = -1;
-                posy = -1;
+                row = 0;
+                column = 0;
                 break;
             case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-                posx = -1;
-                posy = 0;
+                row = 0;
+                column = 1;
                 break;
             case Gravity.TOP | Gravity.RIGHT:
-                posx = -1;
-                posy = 1;
+                row = 0;
+                column = 2;
                 break;
             case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-                posx = 0;
-                posy = -1;
+                row = 1;
+                column = 0;
                 break;
             case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-                posx = 0;
-                posy = 1;
+                row = 1;
+                column = 2;
                 break;
             case Gravity.BOTTOM | Gravity.LEFT:
-                posx = 1;
-                posy = -1;
+                row = 2;
+                column = 0;
                 break;
             case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-                posx = 1;
-                posy = 0;
+                row = 2;
+                column = 1;
                 break;
             case Gravity.BOTTOM | Gravity.RIGHT:
-                posx = 1;
-                posy = 1;
+                row = 2;
+                column = 2;
                 break;
             default: //Center
-                posx = 0;
-                posy = 0;
+                row = 1;
+                column = 1;
         }
     }
 
     /**
-     * Gets the Gravity value of the Piece at coordinates i, j
+     * Returns the Space at index row, column
      *
-     * @param i The X coordinate (top to bottom)
-     * @param j The Y coordinate (right to left)
-     * @return The Gravity value
+     * @param row the row
+     * @param column the column
+     * @return The Space at index row, column
      */
-    public static int getGravity(int i, int j) {
-        int gravity;
-        if (i == 0) //Top row
-            gravity = Gravity.TOP;
-        else if (i == 1) //Middle row
-            gravity = Gravity.CENTER_VERTICAL;
-        else //Bottom row
-            gravity = Gravity.BOTTOM;
-        if (j == 0) //Left column
-            gravity = gravity | Gravity.LEFT;
-        else if (j == 1) //Middle column
-            gravity = gravity | Gravity.CENTER_HORIZONTAL;
-        else //Right column
-            gravity = gravity | Gravity.RIGHT;
-        return gravity;
-    }
-
-    /**
-     * Returns the Space at index i, j
-     *
-     * @param i the first index
-     * @param j the second index
-     * @return The Space at index i, j
-     */
-    public Space getSpace(int i, int j) {
-        return spaces.get(i).get(j);
+    public Space getSpace(int row, int column) {
+        return spaces.get(row).get(column);
     }
 
     public Player getStartTurn() {

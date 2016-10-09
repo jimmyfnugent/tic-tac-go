@@ -125,7 +125,6 @@ public class Space {
             piece.setImageResource(R.drawable.clear_piece);
             piece.setLayoutParams(pieceLayout);
             piece.setOnClickListener(pieceClicked);
-            //piece.setOnDragListener(pieceDragged);
             fl.addView(piece);
 
         } else { //Pieces here
