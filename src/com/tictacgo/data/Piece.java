@@ -47,7 +47,7 @@ public class Piece extends ImageView {
     /**
      * The animator of this Piece
      */
-    private ValueAnimator animator;
+    private ValueAnimator halfwayAnimator;
 
     /**
      * Constructor
@@ -82,7 +82,7 @@ public class Piece extends ImageView {
         setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
         updateUiPosition();
 
-        updateAnimator();
+        updateHalfwayAnimator();
 
         /**
          * Set the Piece to rotate around its center, to face the correct direction.
@@ -244,16 +244,16 @@ public class Piece extends ImageView {
     /**
      * Update the animator for this piece.
      */
-    public void updateAnimator() {
+    public void updateHalfwayAnimator() {
         LayoutParams params = (LayoutParams) getLayoutParams();
 
         PropertyValuesHolder horizontalValues = PropertyValuesHolder.ofInt("left",
-                params.leftMargin, params.leftMargin + sideLength * getHorizontalDirection());
+                params.leftMargin, params.leftMargin + sideLength / 2 * getHorizontalDirection());
         PropertyValuesHolder verticalValues = PropertyValuesHolder.ofInt("top",
-                params.topMargin, params.topMargin + sideLength * getVerticalDirection());
+                params.topMargin, params.topMargin + sideLength / 2 * getVerticalDirection());
 
-        animator = ValueAnimator.ofPropertyValuesHolder(verticalValues, horizontalValues);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        halfwayAnimator = ValueAnimator.ofPropertyValuesHolder(verticalValues, horizontalValues);
+        halfwayAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 setTopMargin((int) valueAnimator.getAnimatedValue("top"));
@@ -268,7 +268,7 @@ public class Piece extends ImageView {
      *
      * @return This Piece's animator.
      */
-    public Animator getAnimator() {
-        return animator;
+    public Animator getHalfwayAnimator() {
+        return halfwayAnimator;
     }
 }

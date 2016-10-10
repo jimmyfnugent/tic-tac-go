@@ -129,6 +129,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         notifyWinners(board.getWinners());
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
+            board.updatePositionsNoCollisions();
             animateBoard();
 
         } else {
@@ -138,19 +139,51 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         }
     }
 
+    /**
+     * Animate the board, first halfway, and then the second half.
+     */
     private void animateBoard() {
-        Animator animator = board.getAnimator();
-        board.updatePositions();
+        Animator halfwayAnimator = board.getHalfwayAnimator();
 
-        animator.addListener(new Animator.AnimatorListener() {
+        halfwayAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {}
 
+            /**
+             * Here, the Pieces have gone halfway. We want to resolve halfway collisions,
+             * and then start a new halfway animator.
+             * @param animator
+             */
             @Override
             public void onAnimationEnd(Animator animator) {
-                board.nextTurn();
-                updateTurnIndicator();
-                updateBoard();
+                board.resolveHalfwayCollisions();
+
+                Animator halfwayAnimatorTwo = board.getHalfwayAnimator();
+                halfwayAnimatorTwo.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {}
+
+                    /**
+                     * Here, the animations are completely finished. We need to resolve any
+                     * full collisions, and then move to the next turn.
+                     * @param animator
+                     */
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        board.resolveFullCollisions();
+                        board.nextTurn();
+                        updateTurnIndicator();
+                        updateBoard();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {}
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {}
+                });
+
+                halfwayAnimatorTwo.start();
             }
 
             @Override
@@ -160,7 +193,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             public void onAnimationRepeat(Animator animator) {}
         });
 
-        animator.start();
+        halfwayAnimator.start();
     }
 
     /**

@@ -12,6 +12,7 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.LinearInterpolator;
 
 /**
  * The Board class represents a single instance of a game of TicTacGo. It contains information
@@ -288,26 +289,12 @@ public class Board {
 
     /**
      * Updates the positions of the Pieces and wraps around out of bounds Pieces.
-     *
-     * This method handles collisions as well.
      */
-    public void updatePositions() {
+    public void updatePositionsNoCollisions() {
         for (Piece piece : pieces) {
             spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
             piece.updatePositionNoCollision();
             spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
-        }
-
-        // halfway collisions
-        resolveHalfwayCollisions();
-
-        // Full collisions
-        for (List<Space> row : spaces) {
-            for (Space space : row) {
-                if (space.collisionOccurred()) {
-                    resolveCollision(space.getPieces());
-                }
-            }
         }
     }
 
@@ -319,7 +306,7 @@ public class Board {
      *  Their X's cross
      *  Both cross
      */
-    private void resolveHalfwayCollisions() {
+    public void resolveHalfwayCollisions() {
         for (int i = 0; i < pieces.size() - 1; i++) {
             List<Piece> collision = new ArrayList<>(4);
             collision.add(pieces.get(i));
@@ -357,6 +344,16 @@ public class Board {
             if (collision.size() > 1) { // Collision occurred
                 if (resolveCollision(collision)) {
                     i--;
+                }
+            }
+        }
+    }
+
+    public void resolveFullCollisions() {
+        for (List<Space> row : spaces) {
+            for (Space space : row) {
+                if (space.collisionOccurred()) {
+                    resolveCollision(space.getPieces());
                 }
             }
         }
@@ -400,18 +397,19 @@ public class Board {
         ((ViewManager)piece.getParent()).removeView(piece);
     }
 
-    public Animator getAnimator() {
+    public Animator getHalfwayAnimator() {
         AnimatorSet animator = new AnimatorSet();
 
         List<Animator> pieceAnimators = new ArrayList<>(pieces.size());
         for (Piece piece : pieces) {
-            piece.updateAnimator();
+            piece.updateHalfwayAnimator();
             piece.updateImageResourceFullPiece();
-            pieceAnimators.add(piece.getAnimator());
+            pieceAnimators.add(piece.getHalfwayAnimator());
         }
 
         animator.playTogether(pieceAnimators);
-        animator.setDuration(1000);
+        animator.setDuration(500);
+        animator.setInterpolator(new LinearInterpolator());
         return animator;
     }
 
