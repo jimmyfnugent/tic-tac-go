@@ -1,6 +1,7 @@
 package com.tictacgo;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -145,10 +146,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     private void animateBoard() {
         Animator halfwayAnimator = board.getHalfwayAnimator();
 
-        halfwayAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {}
-
+        halfwayAnimator.addListener(new AnimatorListenerAdapter() {
             /**
              * Here, the Pieces have gone halfway. We want to resolve halfway collisions,
              * and then start a new halfway animator.
@@ -159,10 +157,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 board.resolveHalfwayCollisions();
 
                 Animator halfwayAnimatorTwo = board.getHalfwayAnimator();
-                halfwayAnimatorTwo.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {}
-
+                halfwayAnimatorTwo.addListener(new AnimatorListenerAdapter() {
                     /**
                      * Here, the animations are completely finished. We need to resolve any
                      * full collisions, and then move to the next turn.
@@ -175,22 +170,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                         updateTurnIndicator();
                         updateBoard();
                     }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) {}
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {}
                 });
 
                 halfwayAnimatorTwo.start();
             }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {}
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {}
         });
 
         halfwayAnimator.start();
