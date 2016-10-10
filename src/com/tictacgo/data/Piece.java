@@ -53,6 +53,9 @@ public class Piece extends ImageView {
      */
     private Animator halfwayAnimator;
 
+    /**
+     * A List of any dummy Pieces we will use for wraparound animations.
+     */
     private List<Piece> dummies;
 
     /**

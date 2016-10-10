@@ -394,10 +394,9 @@ public class Board {
         spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
         pieces.remove(piece);
 
-        ViewManager manager = ((ViewManager)piece.getParent());
-        manager.removeView(piece);
+        piece.setVisibility(View.GONE);
         for (Piece dummy : piece.getDummies()) {
-            manager.removeView(dummy);
+            dummy.setVisibility(View.GONE);
         }
     }
 
