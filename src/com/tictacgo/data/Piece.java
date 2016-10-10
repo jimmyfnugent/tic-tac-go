@@ -1,6 +1,7 @@
 package com.tictacgo.data;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -11,6 +12,9 @@ import android.widget.FrameLayout.LayoutParams;
 import com.tictacgo.Angles;
 import com.tictacgo.R;
 import com.tictacgo.data.Board.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Piece represents a single game piece (X or O), and information about its location, direction,
@@ -47,7 +51,9 @@ public class Piece extends ImageView {
     /**
      * The animator of this Piece
      */
-    private ValueAnimator halfwayAnimator;
+    private Animator halfwayAnimator;
+
+    private List<Piece> dummies;
 
     /**
      * Constructor
@@ -81,6 +87,8 @@ public class Piece extends ImageView {
 
         setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
         updateUiPosition();
+
+        dummies = new ArrayList<>(3);
 
         /**
          * Set the Piece to rotate around its center, to face the correct direction.
@@ -193,6 +201,10 @@ public class Piece extends ImageView {
     public void setPlayer(Player player) {
         this.player = player;
         updateImageResourceFullPiece();
+
+        for (Piece dummy : dummies) {
+            dummy.setPlayer(player);
+        }
     }
 
     /**
@@ -232,6 +244,53 @@ public class Piece extends ImageView {
     }
 
     /**
+     * Get a List of the dummy Pieces we will need for wrap-animation.
+     *
+     * @return A List of dummy Pieces for wrapping around the edges of the Board.
+     */
+    public void updateDummyPieces() {
+        dummies = new ArrayList<>(3);
+
+        if (getHorizontalDirection() == -1 && getLastColumn() == 0) {
+            // Wrapped around the left edge
+            dummies.add(new Piece(getLastRow(), 3, getVerticalDirection(),
+                    getHorizontalDirection(), player, sideLength, getContext()));
+
+        } else if (getHorizontalDirection() == 1 && getLastColumn() == 2) {
+            // Wrapped around the right edge
+            dummies.add(new Piece(getLastRow(), -1, getVerticalDirection(),
+                    getHorizontalDirection(), player, sideLength, getContext()));
+        }
+
+        if (getVerticalDirection() == -1 && getLastRow() == 0) {
+            // Wrapped around the top edge
+            dummies.add(new Piece(3, getLastColumn(), getVerticalDirection(),
+                    getHorizontalDirection(), player, sideLength, getContext()));
+
+        } else if (getVerticalDirection() == 1 && getLastRow() == 2) {
+            // Wrapped around the bottom edge
+            dummies.add(new Piece(-1, getLastColumn(), getVerticalDirection(),
+                    getHorizontalDirection(), player, sideLength, getContext()));
+        }
+
+        if (dummies.size() == 2) {
+            // Wrapped around diagonally
+            dummies.add(new Piece(getRow() - getVerticalDirection(),
+                    getColumn() - getHorizontalDirection(), getVerticalDirection(),
+                    getHorizontalDirection(), player, sideLength, getContext()));
+        }
+    }
+
+    /**
+     * Get the dummy Pieces to use in animation this step for wrap-arounds.
+     *
+     * @return The dummy Pieces associated with this Piece.
+     */
+    public List<Piece> getDummies() {
+        return dummies;
+    }
+
+    /**
      * Update the animator for this piece.
      *
      * NOTE: In this method, the position array has already been updated and wrapped around.
@@ -245,7 +304,7 @@ public class Piece extends ImageView {
                 params.topMargin, params.topMargin + sideLength / 2 * getVerticalDirection());
 
         halfwayAnimator = ValueAnimator.ofPropertyValuesHolder(verticalValues, horizontalValues);
-        halfwayAnimator.addUpdateListener(
+        ((ValueAnimator) halfwayAnimator).addUpdateListener(
                 new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -254,6 +313,18 @@ public class Piece extends ImageView {
                 requestLayout();
             }
         });
+
+        if (!dummies.isEmpty()) {
+            List<Animator> animators = new ArrayList<>(1 + dummies.size());
+            animators.add(halfwayAnimator);
+            for (Piece dummy : dummies) {
+                dummy.updateHalfwayAnimator();
+                animators.add(dummy.getHalfwayAnimator());
+            }
+
+            halfwayAnimator = new AnimatorSet();
+            ((AnimatorSet) halfwayAnimator).playTogether(animators);
+        }
     }
 
     /**

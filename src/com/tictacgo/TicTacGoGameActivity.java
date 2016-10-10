@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
+import com.tictacgo.data.Piece;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -144,6 +146,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Animate the board, first halfway, and then the second half.
      */
     private void animateBoard() {
+        final List<Piece> dummies = board.getDummyPieces();
+        for (Piece dummy : dummies) {
+            fl.addView(dummy);
+        }
         Animator halfwayAnimator = board.getHalfwayAnimator();
 
         halfwayAnimator.addListener(new AnimatorListenerAdapter() {

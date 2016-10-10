@@ -394,9 +394,34 @@ public class Board {
         spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
         pieces.remove(piece);
 
-        ((ViewManager)piece.getParent()).removeView(piece);
+        ViewManager manager = ((ViewManager)piece.getParent());
+        manager.removeView(piece);
+        for (Piece dummy : piece.getDummies()) {
+            manager.removeView(dummy);
+        }
     }
 
+    /**
+     * Update and get the dummy Pieces for each active Piece.
+     *
+     * @return The dummy Pieces for each active Piece in a List.
+     */
+    public List<Piece> getDummyPieces() {
+        List<Piece> dummies = new ArrayList<>();
+
+        for (Piece piece : pieces) {
+            piece.updateDummyPieces();
+            dummies.addAll(piece.getDummies());
+        }
+
+        return dummies;
+    }
+
+    /**
+     * Update and get the halfway animator for the active Pieces.
+     *
+     * @return The halfway animator for the active Pieces.
+     */
     public Animator getHalfwayAnimator() {
         AnimatorSet animator = new AnimatorSet();
 
