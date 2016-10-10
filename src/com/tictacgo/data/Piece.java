@@ -82,8 +82,6 @@ public class Piece extends ImageView {
         setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
         updateUiPosition();
 
-        updateHalfwayAnimator();
-
         /**
          * Set the Piece to rotate around its center, to face the correct direction.
          */
@@ -233,19 +231,13 @@ public class Piece extends ImageView {
         }
     }
 
-    public void setTopMargin(int topMargin) {
-        ((LayoutParams) getLayoutParams()).topMargin = topMargin;
-    }
-
-    public void setLeftMargin(int leftMargin) {
-        ((LayoutParams) getLayoutParams()).leftMargin = leftMargin;
-    }
-
     /**
      * Update the animator for this piece.
+     *
+     * NOTE: In this method, the position array has already been updated and wrapped around.
      */
     public void updateHalfwayAnimator() {
-        LayoutParams params = (LayoutParams) getLayoutParams();
+        final LayoutParams params = (LayoutParams) getLayoutParams();
 
         PropertyValuesHolder horizontalValues = PropertyValuesHolder.ofInt("left",
                 params.leftMargin, params.leftMargin + sideLength / 2 * getHorizontalDirection());
@@ -253,11 +245,12 @@ public class Piece extends ImageView {
                 params.topMargin, params.topMargin + sideLength / 2 * getVerticalDirection());
 
         halfwayAnimator = ValueAnimator.ofPropertyValuesHolder(verticalValues, horizontalValues);
-        halfwayAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        halfwayAnimator.addUpdateListener(
+                new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                setTopMargin((int) valueAnimator.getAnimatedValue("top"));
-                setLeftMargin((int) valueAnimator.getAnimatedValue("left"));
+                params.topMargin = (int) valueAnimator.getAnimatedValue("top");
+                params.leftMargin = (int) valueAnimator.getAnimatedValue("left");
                 requestLayout();
             }
         });
