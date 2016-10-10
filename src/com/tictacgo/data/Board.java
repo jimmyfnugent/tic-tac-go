@@ -9,9 +9,7 @@ import java.util.Set;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewManager;
 
@@ -402,18 +400,19 @@ public class Board {
         ((ViewManager)piece.getParent()).removeView(piece);
     }
 
-    public void updateUiPositions() {
+    public Animator getAnimator() {
         AnimatorSet animator = new AnimatorSet();
 
         List<Animator> pieceAnimators = new ArrayList<>(pieces.size());
         for (Piece piece : pieces) {
             piece.updateAnimator();
+            piece.updateImageResourceFullPiece();
             pieceAnimators.add(piece.getAnimator());
         }
 
         animator.playTogether(pieceAnimators);
-        animator.setDuration(600);
-        animator.start();
+        animator.setDuration(1000);
+        return animator;
     }
 
     /**

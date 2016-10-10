@@ -112,6 +112,7 @@ public class Space {
 
         } else { //Pieces here
             for (Piece piece : pieces) {
+                piece.updateUiPosition();
                 fl.addView(piece);
             }
         }

@@ -1,5 +1,6 @@
 package com.tictacgo;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -69,6 +70,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         ((TextView) findViewById(R.id.gamePlayerTwoName))
                 .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
         fl = (FrameLayout) findViewById(R.id.gameBoard);
+        fl.getLayoutParams().width = height;
 
         // What to do when an empty space is clicked
         onPieceClicked = new View.OnClickListener() {
@@ -127,13 +129,38 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         notifyWinners(board.getWinners());
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
-            board.updateUiPositions();
-            board.updatePositions();
-            updateBoard();
+            animateBoard();
+
+        } else {
+            board.nextTurn();
+            updateTurnIndicator();
+            updateClearPieces();
         }
-        board.nextTurn();
-        updateTurnIndicator();
-        updateClearPieces();
+    }
+
+    private void animateBoard() {
+        Animator animator = board.getAnimator();
+        board.updatePositions();
+
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {}
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                board.nextTurn();
+                updateTurnIndicator();
+                updateBoard();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {}
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {}
+        });
+
+        animator.start();
     }
 
     /**
