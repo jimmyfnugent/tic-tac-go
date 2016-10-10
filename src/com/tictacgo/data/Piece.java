@@ -1,8 +1,10 @@
 package com.tictacgo.data;
 
+import android.animation.Animator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.Gravity;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
 
@@ -43,6 +45,11 @@ public class Piece extends ImageView {
     private int sideLength;
 
     /**
+     * The animator of this Piece
+     */
+    private ValueAnimator animator;
+
+    /**
      * Constructor
      *
      * @param row The x position of the Piece.
@@ -75,6 +82,8 @@ public class Piece extends ImageView {
         setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
         updateUiPosition();
 
+        updateAnimator();
+
         /**
          * Set the Piece to rotate around its center, to face the correct direction.
          */
@@ -89,9 +98,9 @@ public class Piece extends ImageView {
      * @return A value to be used in the ImageView.setRotation Method
      */
     private float getPieceRotation() {
-        switch (direction[0]) {
+        switch (getVerticalDirection()) {
             case -1: //top row
-                switch (direction[1]) {
+                switch (getHorizontalDirection()) {
                     case -1: //left column
                         return Angles.TOP_LEFT;
                     case 1: //right column
@@ -100,7 +109,7 @@ public class Piece extends ImageView {
                         return Angles.TOP;
                 }
             case 1: //bottom row
-                switch (direction[1]) {
+                switch (getHorizontalDirection()) {
                     case -1: //left column
                         return Angles.BOTTOM_LEFT;
                     case 1: //right column
@@ -109,7 +118,7 @@ public class Piece extends ImageView {
                         return Angles.BOTTOM;
                 }
             default: //middle row
-                switch (direction[1]) {
+                switch (getHorizontalDirection()) {
                     case -1: //left column
                         return Angles.LEFT;
                     default: //right column
@@ -145,7 +154,7 @@ public class Piece extends ImageView {
      * @return the row of of the Piece's last position
      */
     public int getLastRow() {
-        return (position[0] - direction[0] + 3) % 3;
+        return (getRow() - getVerticalDirection() + 3) % 3;
     }
 
     /**
@@ -154,7 +163,7 @@ public class Piece extends ImageView {
      * @return the column of the Piece's last position
      */
     public int getLastColumn() {
-        return (position[1] - direction[1] + 3) % 3;
+        return (getColumn() - getHorizontalDirection() + 3) % 3;
     }
 
     public void updateUiPosition() {
@@ -162,12 +171,21 @@ public class Piece extends ImageView {
     }
 
     /**
-     * Method getDirection Returns the direction Array of the Piece.
+     * Returns the vertical direction of the Piece.
      *
-     * @return The direction Array of the Piece.
+     * @return The vertical direction of the Piece.
      */
-    public int[] getDirection() {
-        return direction;
+    public int getVerticalDirection() {
+        return direction[0];
+    }
+
+    /**
+     * Returns the horizontal direction of the Piece.
+     *
+     * @return The horizontal direction of the Piece.
+     */
+    public int getHorizontalDirection() {
+        return direction[1];
     }
 
     public Player getPlayer() {
@@ -213,5 +231,44 @@ public class Piece extends ImageView {
         } else { //Piece is an o
             setImageResource(R.drawable.piece_o_direction);
         }
+    }
+
+    public void setTopMargin(int topMargin) {
+        ((LayoutParams) getLayoutParams()).topMargin = topMargin;
+    }
+
+    public void setLeftMargin(int leftMargin) {
+        ((LayoutParams) getLayoutParams()).leftMargin = leftMargin;
+    }
+
+    /**
+     * Update the animator for this piece.
+     */
+    public void updateAnimator() {
+        LayoutParams params = (LayoutParams) getLayoutParams();
+
+        PropertyValuesHolder horizontalValues = PropertyValuesHolder.ofInt("left",
+                params.leftMargin, params.leftMargin + sideLength * getHorizontalDirection());
+        PropertyValuesHolder verticalValues = PropertyValuesHolder.ofInt("top",
+                params.topMargin, params.topMargin + sideLength * getVerticalDirection());
+
+        animator = ValueAnimator.ofPropertyValuesHolder(verticalValues, horizontalValues);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                setTopMargin((int) valueAnimator.getAnimatedValue("top"));
+                setLeftMargin((int) valueAnimator.getAnimatedValue("left"));
+                requestLayout();
+            }
+        });
+    }
+
+    /**
+     * Get this Piece's animator.
+     *
+     * @return This Piece's animator.
+     */
+    public Animator getAnimator() {
+        return animator;
     }
 }

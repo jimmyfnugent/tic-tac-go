@@ -15,8 +15,6 @@ import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,14 +107,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 board = new Board(turn, height, getBaseContext());
                 updateBoard();
                 updateTurnIndicator();
-                play();
             }
         });
 
         /**
          * Step 5: Play the game
          */
-        play();
         updateBoard();
         updateTurnIndicator();
     }
@@ -131,13 +127,13 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         notifyWinners(board.getWinners());
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
-            board.updatePositions();
             board.updateUiPositions();
+            board.updatePositions();
+            updateBoard();
         }
         board.nextTurn();
         updateTurnIndicator();
         updateClearPieces();
-        play();
     }
 
     /**
@@ -200,13 +196,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                         onPieceClicked);
             }
         }
-    }
-
-    /**
-     * Run at the beginning of the game and the end of each turn
-     */
-    private void play(){
-
     }
 
     /**

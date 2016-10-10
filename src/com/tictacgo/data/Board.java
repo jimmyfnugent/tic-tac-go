@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -400,12 +403,17 @@ public class Board {
     }
 
     public void updateUiPositions() {
-        // Iterate through the board and update each piece's UI position.
-        for (List<Space> row : spaces) {
-            for (Space space : row) {
-                space.updateUiPosition();
-            }
+        AnimatorSet animator = new AnimatorSet();
+
+        List<Animator> pieceAnimators = new ArrayList<>(pieces.size());
+        for (Piece piece : pieces) {
+            piece.updateAnimator();
+            pieceAnimators.add(piece.getAnimator());
         }
+
+        animator.playTogether(pieceAnimators);
+        animator.setDuration(600);
+        animator.start();
     }
 
     /**
