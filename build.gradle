@@ -9,14 +9,18 @@ buildscript {
 
 apply plugin: 'com.android.application'
 
+dependencies {
+    compile 'com.android.support:support-v4:24.2.1'
+}
+
 android {
-    compileSdkVersion 14
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.tictacgo"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 24
     }
 
     compileOptions {

@@ -5,9 +5,11 @@ import android.animation.AnimatorSet;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.FrameLayout.LayoutParams;
+import android.support.v4.content.ContextCompat;
 
 import com.tictacgo.Angles;
 import com.tictacgo.R;
@@ -21,6 +23,15 @@ import java.util.List;
  * as well as graphical information from the ImageView class.
  */
 public class Piece extends ImageView {
+
+    private final Drawable X_FULL_DRAWABLE = ContextCompat.getDrawable(getContext(),
+            R.drawable.piece_x);
+    private final Drawable X_DIR_DRAWABLE = ContextCompat.getDrawable(getContext(),
+            R.drawable.piece_x_direction);
+    private final Drawable O_FULL_DRAWABLE = ContextCompat.getDrawable(getContext(),
+            R.drawable.piece_o);
+    private final Drawable O_DIR_DRAWABLE = ContextCompat.getDrawable(getContext(),
+            R.drawable.piece_o_direction);
 
     /**
      * An Integer Array representing the position of the Piece.
@@ -229,9 +240,9 @@ public class Piece extends ImageView {
      */
     public void updateImageResourceFullPiece() {
         if (isX()) {
-            setImageResource(R.drawable.piece_x);
+            setImageDrawable(X_FULL_DRAWABLE);
         } else { //Piece is an o
-            setImageResource(R.drawable.piece_o);
+            setImageDrawable(O_FULL_DRAWABLE);
         }
     }
 
@@ -240,9 +251,9 @@ public class Piece extends ImageView {
     */
     public void updateImageResourceDirectionOnly() {
         if (isX()) {
-            setImageResource(R.drawable.piece_x_direction);
+            setImageDrawable(X_DIR_DRAWABLE);
         } else { //Piece is an o
-            setImageResource(R.drawable.piece_o_direction);
+            setImageDrawable(O_DIR_DRAWABLE);
         }
     }
 
