@@ -401,9 +401,12 @@ public class Board {
     }
 
     /**
-     * Update and get the dummy Pieces for each active Piece.
+     * Get a List of the dummy Pieces for each active Piece. A Piece's dummy
+     * Pieces are initially placed outside of the screen, but are animated
+     * identically to the normal Pieces. Thus, wrap-around animations work.
      *
-     * @return The dummy Pieces for each active Piece in a List.
+     * @return A List of the dummy Pieces for each active Piece. If no Pieces
+     * will wrap around, the returned List will be empty.
      */
     public List<Piece> getDummyPieces() {
         List<Piece> dummies = new ArrayList<>();
