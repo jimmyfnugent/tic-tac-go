@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.LinearInterpolator;
 
 /**
  * The Board class represents a single instance of a game of TicTacGo. It contains information
@@ -53,12 +55,12 @@ public class Board {
     /**
      * The X (Vertical) position of the next piece to be added
      */
-    private int posx;
+    private int row;
 
     /**
      * The Y (Horizontal) position of the next piece to be added
      */
-    private int posy;
+    private int column;
 
     /**
      * The height of the board, in pixels.
@@ -114,38 +116,6 @@ public class Board {
                 turn = Player.X; //X goes first
         }
         startTurn = turn; //To decide when to move the Pieces
-    }
-
-    /**
-     * Create a new Board object that is a clone of the Board b
-     *
-     * @param b The Board object to clone
-     */
-    public Board(Board b) {
-        turn = b.getTurn();
-        startTurn = b.getStartTurn();
-        context = b.getContext();
-        height = b.getHeight();
-
-        // Clones the spaces and pieces lists
-        spaces = new ArrayList<>(SIDE_LENGTH);
-        pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
-        for (int i = 0; i < SIDE_LENGTH; i++) {
-            spaces.add(new ArrayList<Space>(SIDE_LENGTH));
-            for (int j = 0; j < SIDE_LENGTH; j++) {
-                spaces.get(i).add(b.getSpace(i, j).copy());
-                pieces.addAll(spaces.get(i).get(j).getPieces());
-            }
-        }
-    }
-
-    /**
-     * Creates a deep copy of the Board Object
-     *
-     * @return A deep copy of this Board object
-     */
-    public Board copy() {
-        return new Board(this);
     }
 
     /**
@@ -285,13 +255,13 @@ public class Board {
     /**
      * Method newPiece Adds a new Piece to the Board
      *
-     * @param dirx The X direction of the Piece.
-     * @param diry The Y direction of the Piece.
+     * @param dirVertical The X direction of the Piece.
+     * @param dirHorizontal The Y direction of the Piece.
      * @return The new Piece
      */
-    public View newPiece(int dirx, int diry) {
-        Piece p = new Piece(posx, posy, dirx, diry, turn, height / 3, context);
-        spaces.get(posx + 1).get(posy + 1).addPiece(p);
+    public View newPiece(int dirVertical, int dirHorizontal) {
+        Piece p = new Piece(row, column, dirVertical, dirHorizontal, turn, height / 3, context);
+        spaces.get(row).get(column).addPiece(p);
         pieces.add(p);
         return p;
     }
@@ -319,26 +289,12 @@ public class Board {
 
     /**
      * Updates the positions of the Pieces and wraps around out of bounds Pieces.
-     *
-     * This method handles collisions as well.
      */
-    public void updatePositions() {
+    public void updatePositionsNoCollisions() {
         for (Piece piece : pieces) {
             spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
             piece.updatePositionNoCollision();
             spaces.get(piece.getRow()).get(piece.getColumn()).addPiece(piece);
-        }
-
-        // halfway collisions
-        resolveHalfwayCollisions();
-
-        // Full collisions
-        for (List<Space> row : spaces) {
-            for (Space space : row) {
-                if (space.collisionOccurred()) {
-                    resolveCollision(space.getPieces());
-                }
-            }
         }
     }
 
@@ -350,7 +306,7 @@ public class Board {
      *  Their X's cross
      *  Both cross
      */
-    private void resolveHalfwayCollisions() {
+    public void resolveHalfwayCollisions() {
         for (int i = 0; i < pieces.size() - 1; i++) {
             List<Piece> collision = new ArrayList<>(4);
             collision.add(pieces.get(i));
@@ -359,28 +315,28 @@ public class Board {
                  * X values are the same.
                  * Y values cross.
                  */
-                if ((pieces.get(i).getLastXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition()) ||
+                if ((pieces.get(i).getLastRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getLastColumn()) ||
 
                 /**
                  * X values cross.
                  * Y values are the same.
                  */
-                    (pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getLastYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getYPosition()) ||
+                    (pieces.get(i).getLastRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getLastColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getColumn()) ||
 
                 /**
                  * X values cross.
                  * Y values cross.
                  */
-                    (pieces.get(i).getLastXPosition() == pieces.get(j).getXPosition() &&
-                     pieces.get(i).getXPosition() == pieces.get(j).getLastXPosition() &&
-                     pieces.get(i).getLastYPosition() == pieces.get(j).getYPosition() &&
-                     pieces.get(i).getYPosition() == pieces.get(j).getLastYPosition())) {
+                    (pieces.get(i).getLastRow() == pieces.get(j).getRow() &&
+                     pieces.get(i).getRow() == pieces.get(j).getLastRow() &&
+                     pieces.get(i).getLastColumn() == pieces.get(j).getColumn() &&
+                     pieces.get(i).getColumn() == pieces.get(j).getLastColumn())) {
                         collision.add(pieces.get(j)); //A collision occurred
                 }
             }
@@ -388,6 +344,16 @@ public class Board {
             if (collision.size() > 1) { // Collision occurred
                 if (resolveCollision(collision)) {
                     i--;
+                }
+            }
+        }
+    }
+
+    public void resolveFullCollisions() {
+        for (List<Space> row : spaces) {
+            for (Space space : row) {
+                if (space.collisionOccurred()) {
+                    resolveCollision(space.getPieces());
                 }
             }
         }
@@ -406,6 +372,7 @@ public class Board {
             Player temp = collision.get(0).getPlayer();
             collision.get(0).setPlayer(collision.get(1).getPlayer());
             collision.get(1).setPlayer(temp);
+
         } else if (collision.size() > 2) {
             // Foreach here creates concurrent mod exception.
             for (int i = collision.size() - 1; i >= 0; i--) {
@@ -413,6 +380,7 @@ public class Board {
             }
             return true;
         }
+
         return false;
     }
 
@@ -422,102 +390,76 @@ public class Board {
      *
      * @param piece The Piece to be removed
      */
-    public void removePiece(Piece piece) { //We need the + 1 because pos ranges from -1 to 1
-                                           //And the Array goes from 0 to 2
-        spaces.get(piece.getXPosition() + 1).get(piece.getYPosition() + 1).removePiece(piece);
+    public void removePiece(Piece piece) {
+        spaces.get(piece.getRow()).get(piece.getColumn()).removePiece(piece);
         pieces.remove(piece);
-        ((ViewManager)piece.getParent()).removeView(piece);
-    }
 
-    public void updateUiPositions() {
-        // Iterate through the board and update each piece's UI position.
-        for (List<Space> row : spaces) {
-            for (Space space : row) {
-                space.updateUiPosition();
-            }
+        piece.setVisibility(View.GONE);
+        for (Piece dummy : piece.getDummies()) {
+            dummy.setVisibility(View.GONE);
         }
     }
 
     /**
-     * Sets the next Piece Location as teh space posx, posy
-     * posx is the top to bottom index.
-     * posy is the right to left index.
+     * Get a List of the dummy Pieces for each active Piece. A Piece's dummy
+     * Pieces are initially placed outside of the screen, but are animated
+     * identically to the normal Pieces. Thus, wrap-around animations work.
      *
-     * @param gravity The Gravity of the Space clicked
+     * @return A List of the dummy Pieces for each active Piece. If no Pieces
+     * will wrap around, the returned List will be empty.
      */
-    public void makePiece(int gravity) {
-        switch (gravity) {
-            case Gravity.TOP | Gravity.LEFT:
-                posx = -1;
-                posy = -1;
-                break;
-            case Gravity.TOP | Gravity.CENTER_HORIZONTAL:
-                posx = -1;
-                posy = 0;
-                break;
-            case Gravity.TOP | Gravity.RIGHT:
-                posx = -1;
-                posy = 1;
-                break;
-            case Gravity.CENTER_VERTICAL | Gravity.LEFT:
-                posx = 0;
-                posy = -1;
-                break;
-            case Gravity.CENTER_VERTICAL | Gravity.RIGHT:
-                posx = 0;
-                posy = 1;
-                break;
-            case Gravity.BOTTOM | Gravity.LEFT:
-                posx = 1;
-                posy = -1;
-                break;
-            case Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL:
-                posx = 1;
-                posy = 0;
-                break;
-            case Gravity.BOTTOM | Gravity.RIGHT:
-                posx = 1;
-                posy = 1;
-                break;
-            default: //Center
-                posx = 0;
-                posy = 0;
+    public List<Piece> getDummyPieces() {
+        List<Piece> dummies = new ArrayList<>();
+
+        for (Piece piece : pieces) {
+            piece.updateDummyPieces();
+            dummies.addAll(piece.getDummies());
         }
+
+        return dummies;
     }
 
     /**
-     * Gets the Gravity value of the Piece at coordinates i, j
+     * Update and get the halfway animator for the active Pieces.
      *
-     * @param i The X coordinate (top to bottom)
-     * @param j The Y coordinate (right to left)
-     * @return The Gravity value
+     * @return The halfway animator for the active Pieces.
      */
-    public static int getGravity(int i, int j) {
-        int gravity;
-        if (i == 0) //Top row
-            gravity = Gravity.TOP;
-        else if (i == 1) //Middle row
-            gravity = Gravity.CENTER_VERTICAL;
-        else //Bottom row
-            gravity = Gravity.BOTTOM;
-        if (j == 0) //Left column
-            gravity = gravity | Gravity.LEFT;
-        else if (j == 1) //Middle column
-            gravity = gravity | Gravity.CENTER_HORIZONTAL;
-        else //Right column
-            gravity = gravity | Gravity.RIGHT;
-        return gravity;
+    public Animator getHalfwayAnimator() {
+        AnimatorSet animator = new AnimatorSet();
+
+        List<Animator> pieceAnimators = new ArrayList<>(pieces.size());
+        for (Piece piece : pieces) {
+            piece.updateHalfwayAnimator();
+            piece.updateImageResourceFullPiece();
+            pieceAnimators.add(piece.getHalfwayAnimator());
+        }
+
+        animator.playTogether(pieceAnimators);
+        animator.setDuration(500);
+        animator.setInterpolator(new LinearInterpolator());
+        return animator;
     }
 
     /**
-     * Returns the Space at index i, j
+     * Sets the next Piece Location as the space row, column
      *
-     * @param i the first index
-     * @param j the second index
-     * @return The Space at index i, j
+     * @param row is the top to bottom index.
+     * @param column is the right to left index.
      */
-    public Space getSpace(int i, int j) {
-        return spaces.get(i).get(j);
+    public void makePiece(int row, int column) {
+        this.row = row;
+        this.column = column;
+    }
+
+    /**
+     * Returns the Space at index row, column
+     *
+     * @param row the row
+     * @param column the column
+     * @return The Space at index row, column
+     */
+    public Space getSpace(int row, int column) {
+        return spaces.get(row).get(column);
     }
 
     public Player getStartTurn() {

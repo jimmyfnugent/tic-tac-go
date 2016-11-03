@@ -1,5 +1,7 @@
 package com.tictacgo;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,14 +9,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
 import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
+import com.tictacgo.data.Piece;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,16 +47,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     private int height;
 
     /**
-     * An ArrayList of the Boards for undo and redo
-     */
-    private List<Board> undoHistory;
-
-    /**
-     * The index of the current undo/redo history
-     */
-    private int historyIndex;
-
-    /**
      * The initial turn selection. Used for the New Game Button
      */
     private Player turn;
@@ -71,10 +64,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
         turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
 
-        // Undo/redo initialization
-        undoHistory = new ArrayList<>();
-        historyIndex = 0;
-
         height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
         board = new Board(turn, height, getBaseContext());
 
@@ -84,6 +73,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         ((TextView) findViewById(R.id.gamePlayerTwoName))
                 .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
         fl = (FrameLayout) findViewById(R.id.gameBoard);
+        fl.getLayoutParams().width = height;
 
         // What to do when an empty space is clicked
         onPieceClicked = new View.OnClickListener() {
@@ -94,9 +84,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                 // Make the new DirectionPicker
+                LayoutParams params = (LayoutParams) v.getLayoutParams();
                 DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
-                        board.getTurn(), ((FrameLayout.LayoutParams) v.getLayoutParams()).gravity,
-                        height);
+                        board.getTurn(), params.topMargin * 3 / height,
+                        params.leftMargin * 3 / height, height);
 
                 // Add the new DirectionPicker
                 fragmentTransaction.add(R.id.gameBoard, directionPicker);
@@ -121,65 +112,77 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 board = new Board(turn, height, getBaseContext());
                 updateBoard();
                 updateTurnIndicator();
-                undoHistory = new ArrayList<>();
-                historyIndex = 0;
-                play();
-            }
-        });
-
-        /**
-        * Sets up the Undo Button
-        */
-        findViewById(R.id.undoButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (historyIndex == 0) //First turn already
-                    return;
-                historyIndex--; //Go back one index
-                board = undoHistory.get(historyIndex).copy(); //Go back one Board
-                updateBoard();
-                updateTurnIndicator();
-            }
-        });
-
-        /**
-         * Sets up the Redo Button
-         */
-        findViewById(R.id.redoButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (historyIndex == undoHistory.size() - 1) //Last turn already
-                    return;
-                historyIndex++; //Go forward one index
-                board = undoHistory.get(historyIndex).copy(); //Go forward one Board
-                updateBoard();
-                updateTurnIndicator();
             }
         });
 
         /**
          * Step 5: Play the game
          */
-        play();
         updateBoard();
         updateTurnIndicator();
     }
 
     @Override
-    public void onDirectionPicked(int dirx, int diry, int gravity) {
+    public void onDirectionPicked(int dirVertical, int dirHorizontal, int row, int column) {
         getFragmentManager().popBackStack();
 
-        board.makePiece(gravity);
-        fl.addView(board.newPiece(dirx, diry));
+        board.makePiece(row, column);
+        fl.addView(board.newPiece(dirVertical, dirHorizontal));
 
         notifyWinners(board.getWinners());
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
-            board.updatePositions();
-            board.updateUiPositions();
+            board.updatePositionsNoCollisions();
+            animateBoard();
+
+        } else {
+            board.nextTurn();
+            updateTurnIndicator();
+            updateClearPieces();
         }
-        board.nextTurn();
-        updateTurnIndicator();
-        updateClearPieces();
-        play();
+    }
+
+    /**
+     * Animate the board, first halfway, and then the second half.
+     */
+    private void animateBoard() {
+        final List<Piece> dummies = board.getDummyPieces();
+        for (Piece dummy : dummies) {
+            fl.addView(dummy);
+        }
+        Animator halfwayAnimator = board.getHalfwayAnimator();
+
+        halfwayAnimator.addListener(new AnimatorListenerAdapter() {
+            /**
+             * Here, the Pieces have gone halfway. We want to resolve halfway collisions,
+             * and then start a new halfway animator.
+             * @param animator
+             */
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                board.resolveHalfwayCollisions();
+
+                Animator halfwayAnimatorTwo = board.getHalfwayAnimator();
+                halfwayAnimatorTwo.addListener(new AnimatorListenerAdapter() {
+                    /**
+                     * Here, the animations are completely finished. We need to resolve any
+                     * full collisions, and then move to the next turn.
+                     * @param animator
+                     */
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        board.resolveFullCollisions();
+                        board.nextTurn();
+                        updateTurnIndicator();
+                        updateBoard();
+                    }
+                });
+
+                halfwayAnimatorTwo.start();
+            }
+        });
+
+        halfwayAnimator.start();
     }
 
     /**
@@ -193,12 +196,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 i--; //When we remove a View, every other one goes up one index
             }
         }
-        for (int i = 0; i < Board.SIDE_LENGTH; i++) { //Each row
-            for (int j = 0; j < Board.SIDE_LENGTH; j++) { //Each column
-                board.getSpace(i, j).updateImageResources();
-                if (board.getSpace(i, j).isEmpty()) {// We need a clear piece here
-                    board.getSpace(i, j).render(fl, getBaseContext(), height,
-                            Board.getGravity(i, j), onPieceClicked);
+        for (int row = 0; row < Board.SIDE_LENGTH; row++) { //Each row
+            for (int column = 0; column < Board.SIDE_LENGTH; column++) { //Each column
+                board.getSpace(row, column).updateImageResources();
+                if (board.getSpace(row, column).isEmpty()) {// We need a clear piece here
+                    board.getSpace(row, column).render(fl, getBaseContext(), height,
+                            row, column, onPieceClicked);
                 }
             }
         }
@@ -235,24 +238,13 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Needed in case of undo, redo, or new game
      */
     private void fillBoard() {
-        for (int i = 0; i < Board.SIDE_LENGTH; i++) {
-            for (int j = 0; j < Board.SIDE_LENGTH; j++) {
-                board.getSpace(i, j).updateImageResources();
-                board.getSpace(i, j).render(fl, getBaseContext(), height, Board.getGravity(i, j),
+        for (int row = 0; row < Board.SIDE_LENGTH; row++) {
+            for (int column = 0; column < Board.SIDE_LENGTH; column++) {
+                board.getSpace(row, column).updateImageResources();
+                board.getSpace(row, column).render(fl, getBaseContext(), height, row, column,
                         onPieceClicked);
             }
         }
-    }
-
-    /**
-     * Run at the beginning of the game and the end of each turn
-     */
-    private void play(){
-        while (undoHistory.size() > historyIndex + 1) { //Remove all unwanted redo Boards
-            undoHistory.remove(historyIndex + 1);
-        }
-        undoHistory.add(board.copy()); //Add our board to the undo history
-        historyIndex++;
     }
 
     /**

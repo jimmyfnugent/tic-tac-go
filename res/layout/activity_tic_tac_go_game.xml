@@ -29,23 +29,7 @@
                 android:layout_height="wrap_content"
                 android:text="New Game"/>
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_above="@id/gameControlButtons"
-            android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
-                <Button
-                android:id="@+id/undoButton"
-                android:text="Undo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/redoButton"
-                android:text="Redo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+
         <TextView
             android:id="@+id/gamePlayerOneName"
             android:text="Player 1"

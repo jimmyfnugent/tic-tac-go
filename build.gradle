@@ -3,20 +3,24 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:2.2.2'
     }
 }
 
 apply plugin: 'com.android.application'
 
+dependencies {
+    compile 'com.android.support:support-v4:25.0.0'
+}
+
 android {
-    compileSdkVersion 14
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.tictacgo"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 24
     }
 
     compileOptions {
