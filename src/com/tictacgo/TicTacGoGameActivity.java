@@ -26,6 +26,9 @@ import java.util.Map;
  * while the game is actually being played.
  */
 public class TicTacGoGameActivity extends Activity implements OnDirectionPickedListener {
+    private static final String BOARD_KEY = "board";
+    private static final String TURN_KEY = "activityTurn";
+
     /**
      * The Board of the game
      */
@@ -57,9 +60,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
         Intent intent = getIntent();
 
-        turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
-
-        board = new Board(turn, 0, getBaseContext());
+        if (savedInstanceState == null) {
+            turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
+            board = new Board(turn, 0, getBaseContext());
+        }
 
         // Set up the screen
         ((TextView) findViewById(R.id.gamePlayerOneName))
@@ -109,6 +113,22 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                 updateTurnIndicator();
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        state.putSerializable(TURN_KEY, turn);
+        state.putBundle(BOARD_KEY, board.getBundle());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+
+        turn = ((Player) state.getSerializable(TURN_KEY));
+        board = new Board(fl.getHeight(), getBaseContext(), state.getBundle(BOARD_KEY));
     }
 
     @Override
