@@ -19,7 +19,6 @@ public class TicTacGoMenuActivity extends Activity {
     public static final String P1_NAME_KEY = "com.tictacgo.p1Name";
     public static final String P2_NAME_KEY = "com.tictacgo.p2Name";
     public static final String PLAYER_KEY = "com.tictacgo.player";
-    public static final String HEIGHT_KEY = "com.tictacgo.height";
 
     /** Called when the activity is first created. */
     @Override
@@ -48,9 +47,6 @@ public class TicTacGoMenuActivity extends Activity {
                     turn = Player.O;
                 }
                 playGame.putExtra(PLAYER_KEY, turn);
-
-                int height = findViewById(R.id.gameSelectScreen).getBottom();
-                playGame.putExtra(HEIGHT_KEY, height);
 
                 v.getContext().startActivity(playGame);
             }

@@ -42,11 +42,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     private View.OnClickListener onPieceClicked;
 
     /**
-     * The height of the usable screen area
-     */
-    private int height;
-
-    /**
      * The initial turn selection. Used for the New Game Button
      */
     private Player turn;
@@ -64,8 +59,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
         turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
 
-        height = intent.getIntExtra(TicTacGoMenuActivity.HEIGHT_KEY, 300);
-        board = new Board(turn, height, getBaseContext());
+        board = new Board(turn, 0, getBaseContext());
 
         // Set up the screen
         ((TextView) findViewById(R.id.gamePlayerOneName))
@@ -73,11 +67,12 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         ((TextView) findViewById(R.id.gamePlayerTwoName))
                 .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
         fl = (FrameLayout) findViewById(R.id.gameBoard);
-        fl.getLayoutParams().width = height;
 
         // What to do when an empty space is clicked
         onPieceClicked = new View.OnClickListener() {
             public void onClick(View v) {
+                int height = fl.getHeight();
+
                 // Create new Fragment Transaction and remove all previous DirectionPickers
                 fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -109,17 +104,25 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
          */
         findViewById(R.id.newGameButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                board = new Board(turn, height, getBaseContext());
+                board = new Board(turn, fl.getHeight(), getBaseContext());
                 updateBoard();
                 updateTurnIndicator();
             }
         });
+    }
 
-        /**
-         * Step 5: Play the game
-         */
-        updateBoard();
-        updateTurnIndicator();
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            int height = findViewById(R.id.background).getHeight();
+            fl.getLayoutParams().height = findViewById(R.id.background).getHeight();
+            fl.getLayoutParams().width = findViewById(R.id.background).getHeight();
+            board.setHeight(height);
+            updateBoard();
+            updateTurnIndicator();
+        }
     }
 
     @Override
@@ -200,7 +203,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             for (int column = 0; column < Board.SIDE_LENGTH; column++) { //Each column
                 board.getSpace(row, column).updateImageResources();
                 if (board.getSpace(row, column).isEmpty()) {// We need a clear piece here
-                    board.getSpace(row, column).render(fl, getBaseContext(), height,
+                    board.getSpace(row, column).render(fl, getBaseContext(), fl.getHeight(),
                             row, column, onPieceClicked);
                 }
             }
@@ -247,8 +250,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         for (int row = 0; row < Board.SIDE_LENGTH; row++) {
             for (int column = 0; column < Board.SIDE_LENGTH; column++) {
                 board.getSpace(row, column).updateImageResources();
-                board.getSpace(row, column).render(fl, getBaseContext(), height, row, column,
-                        onPieceClicked);
+                board.getSpace(row, column).render(fl, getBaseContext(), fl.getHeight(), row,
+                        column, onPieceClicked);
             }
         }
     }

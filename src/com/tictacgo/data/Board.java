@@ -470,8 +470,17 @@ public class Board {
         return turn;
     }
 
-    public int getHeight() {
-        return height;
+    /**
+     * Set the height of this board to the given value. Also pass this through to the Pieces.
+     *
+     * @param height The new height of this board.
+     */
+    public void setHeight(int height) {
+        this.height = height;
+
+        for (Piece piece : pieces) {
+            piece.setBoardHeight(height);
+        }
     }
 
     public Context getContext() {
