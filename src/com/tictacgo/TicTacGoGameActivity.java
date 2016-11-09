@@ -214,8 +214,14 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Needed in case of undo, redo, or new game
      */
     private void updateBoard() {
-        fl.removeAllViews();
-        fl.addView(new Background(getBaseContext()));
+        // Remove all views except the background
+        for (int i = 0; i < fl.getChildCount(); i++) {
+            if (fl.getChildAt(i).getId() != R.id.background) {
+                fl.removeViewAt(i);
+                i--;
+            }
+        }
+
         fillBoard();
     }
 

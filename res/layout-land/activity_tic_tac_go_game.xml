@@ -2,18 +2,18 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gameScreen"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
     <FrameLayout
         android:id="@+id/gameBoard"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
         android:clickable="false"
         android:layout_alignParentLeft="true">
         <ImageView
             android:id="@+id/background"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
             android:clickable="false"
             android:src="@drawable/board"
             android:adjustViewBounds="true"/>
@@ -22,7 +22,7 @@
         android:id="@+id/gameInfo"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/gameBoard">
+        android:layout_toRightOf="@id/gameBoard">
         <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/gameControlButtons"
@@ -30,13 +30,12 @@
             android:layout_centerHorizontal="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content">
-                <Button
+            <Button
                 android:id="@+id/newGameButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="New Game"/>
         </LinearLayout>
-
         <TextView
             android:id="@+id/gamePlayerOneName"
             android:text="Player 1"
