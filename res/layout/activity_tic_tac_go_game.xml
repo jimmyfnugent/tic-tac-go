@@ -27,7 +27,8 @@
             android:orientation="horizontal"
             android:id="@+id/gameControlButtons"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content">
                 <Button
@@ -40,14 +41,19 @@
         <TextView
             android:id="@+id/gamePlayerOneName"
             android:text="Player 1"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:textSize="50sp"/>
         <TextView
             android:id="@+id/gamePlayerTwoName"
             android:text="Player 2"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/gamePlayerOneName"
@@ -58,12 +64,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/gamePlayerTwoName"
-            android:layout_centerHorizontal="true"
             android:textSize="50sp"/>
         <ImageView
             android:id="@+id/turnIndicator"
-            android:layout_below="@id/turnIndicatorText"
-            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@id/turnIndicatorText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5sp"/>

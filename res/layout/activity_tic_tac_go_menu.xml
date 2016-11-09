@@ -29,7 +29,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
-                    android:hint="Player 1"/>
+                    android:hint="Player 1"
+                    android:singleLine="true" />
                 </LinearLayout>
             <LinearLayout
                 android:id="@+id/localScreenPlayerTwo"
@@ -47,7 +48,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
-                    android:hint="Player 2"/>
+                    android:hint="Player 2"
+                    android:singleLine="true" />
             </LinearLayout>
             <RadioGroup
                 android:id="@+id/localTurnSelect"
