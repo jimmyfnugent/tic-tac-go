@@ -20,8 +20,8 @@
     </FrameLayout>
     <RelativeLayout
         android:id="@+id/gameInfo"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/gameBoard">
         <LinearLayout
             android:orientation="horizontal"
@@ -37,6 +37,17 @@
                 android:layout_height="wrap_content"
                 android:text="New Game"/>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/gamePlayerOnePiece"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:src="@drawable/piece_x"
+            android:maxWidth="60sp"
+            android:adjustViewBounds="true"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/gamePlayerOneName"
             android:text="Player 1"
@@ -44,10 +55,22 @@
             android:maxLines="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/gamePlayerOnePiece"
+            android:layout_toRightOf="@id/gamePlayerOnePiece"
+            android:layout_alignTop="@id/gamePlayerOnePiece"
+            android:layout_alignBottom="@id/gamePlayerOnePiece"
+            android:textSize="50sp"/>
+
+        <ImageView
+            android:id="@+id/gamePlayerTwoPiece"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:textSize="50sp"/>
+            android:layout_below="@id/gamePlayerOnePiece"
+            android:layout_width="wrap_content"
+            android:src="@drawable/piece_o"
+            android:maxWidth="60sp"
+            android:adjustViewBounds="true"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/gamePlayerTwoName"
             android:text="Player 2"
@@ -55,20 +78,11 @@
             android:maxLines="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/gamePlayerTwoPiece"
+            android:layout_toRightOf="@id/gamePlayerTwoPiece"
             android:layout_below="@id/gamePlayerOneName"
+            android:layout_alignTop="@id/gamePlayerTwoPiece"
+            android:layout_alignBottom="@id/gamePlayerTwoPiece"
             android:textSize="50sp"/>
-        <TextView
-            android:id="@+id/turnIndicatorText"
-            android:text="Turn:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/gamePlayerTwoName"
-            android:textSize="50sp"/>
-        <ImageView
-            android:id="@+id/turnIndicator"
-            android:layout_toRightOf="@id/turnIndicatorText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5sp"/>
     </RelativeLayout>
 </RelativeLayout>

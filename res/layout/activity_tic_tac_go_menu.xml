@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:hint="Player 1"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
                 </LinearLayout>
             <LinearLayout
                 android:id="@+id/localScreenPlayerTwo"
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:hint="Player 2"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
             </LinearLayout>
             <RadioGroup
                 android:id="@+id/localTurnSelect"

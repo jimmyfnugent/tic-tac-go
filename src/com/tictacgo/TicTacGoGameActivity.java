@@ -249,15 +249,14 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     }
 
     /**
-     * Redraws the turn indicator
-     *
-     * Should be called in between every turn
+     * Animates the appropriate turn indicator
      */
     private void updateTurnIndicator() {
-        if (board.getTurn() == Player.X)
-            ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.piece_x);
-        else
-            ((ImageView) findViewById(R.id.turnIndicator)).setImageResource(R.drawable.piece_o);
+        if (board.getTurn() == Player.X) {
+            ((ImageView) findViewById(R.id.gamePlayerOnePiece)).setImageResource(R.drawable.piece_x);
+        } else {
+            ((ImageView) findViewById(R.id.gamePlayerTwoPiece)).setImageResource(R.drawable.piece_o);
+        }
     }
 
     /**
