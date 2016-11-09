@@ -8,6 +8,8 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -252,10 +254,15 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * Animates the appropriate turn indicator
      */
     private void updateTurnIndicator() {
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
         if (board.getTurn() == Player.X) {
-            ((ImageView) findViewById(R.id.gamePlayerOnePiece)).setImageResource(R.drawable.piece_x);
+            findViewById(R.id.gamePlayerTwoPiece).clearAnimation();
+            findViewById(R.id.gamePlayerTwoPiece).setRotation(0);
+            findViewById(R.id.gamePlayerOnePiece).startAnimation(rotation);
         } else {
-            ((ImageView) findViewById(R.id.gamePlayerTwoPiece)).setImageResource(R.drawable.piece_o);
+            findViewById(R.id.gamePlayerOnePiece).clearAnimation();
+            findViewById(R.id.gamePlayerOnePiece).setRotation(0);
+            findViewById(R.id.gamePlayerTwoPiece).startAnimation(rotation);
         }
     }
 
