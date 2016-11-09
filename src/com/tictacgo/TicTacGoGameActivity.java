@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tictacgo.DirectionPickerFragment.OnDirectionPickedListener;
@@ -255,6 +254,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      */
     private void updateTurnIndicator() {
         Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
+        rotation.setDuration(3000);
+
         if (board.getTurn() == Player.X) {
             findViewById(R.id.gamePlayerTwoPiece).clearAnimation();
             findViewById(R.id.gamePlayerTwoPiece).setRotation(0);

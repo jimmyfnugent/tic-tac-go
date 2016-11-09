@@ -9,8 +9,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentTop="true">
         <ImageView
+            android:contentDescription="@string/board"
             android:id="@+id/background"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
@@ -35,10 +36,11 @@
                 android:id="@+id/newGameButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Game"/>
+                android:text="@string/newGame"/>
         </LinearLayout>
 
         <ImageView
+            android:contentDescription="@string/xPiece"
             android:id="@+id/gamePlayerOnePiece"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -50,7 +52,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/gamePlayerOneName"
-            android:text="Player 1"
+            android:text="@string/playerOneName"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_width="fill_parent"
@@ -62,6 +64,7 @@
             android:textSize="50sp"/>
 
         <ImageView
+            android:contentDescription="@string/oPiece"
             android:id="@+id/gamePlayerTwoPiece"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -73,7 +76,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/gamePlayerTwoName"
-            android:text="Player 2"
+            android:text="@string/playerTwoName"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_width="fill_parent"

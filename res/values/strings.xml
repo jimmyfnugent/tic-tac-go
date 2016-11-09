@@ -3,4 +3,20 @@
     <string name="app_name">Tic-Tac-Go</string>
     <string name="playerOneName">Player 1</string>
     <string name="playerTwoName">Player 2</string>
+    <string name="xPiece">X</string>
+    <string name="oPiece">O</string>
+    <string name="random">Random</string>
+    <string name="newGame">New Game</string>
+    <string name="play">Play!</string>
+    <string name="board">Board</string>
+
+    <string name="upLeft">Up Left</string>
+    <string name="upMiddle">Up Middle</string>
+    <string name="upRight">Up Right</string>
+    <string name="middleLeft">Middle Left</string>
+    <string name="clear">Clear</string>
+    <string name="middleRight">Middle Right</string>
+    <string name="downLeft">Down Left</string>
+    <string name="downMiddle">Down Middle</string>
+    <string name="downRight">Down Right</string>
 </resources>
