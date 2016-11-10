@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gameSelectScreen"
-    android:layout_width="wrap_content" android:layout_height="fill_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent">
     <LinearLayout
         android:id="@+id/localScreenNames"
         android:layout_width="fill_parent"
@@ -26,7 +27,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="100"
                 android:hint="@string/playerOneName"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:inputType="text"/>
             </LinearLayout>
         <LinearLayout
             android:id="@+id/localScreenPlayerTwo"
@@ -46,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="100"
                 android:hint="@string/playerTwoName"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:inputType="text"/>
         </LinearLayout>
         <RadioGroup
             android:id="@+id/localTurnSelect"
