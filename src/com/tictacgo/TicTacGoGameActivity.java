@@ -19,6 +19,7 @@ import com.tictacgo.data.Board;
 import com.tictacgo.data.Board.Player;
 import com.tictacgo.data.Piece;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -231,6 +232,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      * We must do this after each time the Pieces move
      */
     private void updateClearPieces() {
+        if (!finished && board.isFull()) {
+            notifyWinners(null);
+        }
+        
         for (int i = 0; i < fl.getChildCount(); i++) {
             if (fl.getChildAt(i).isClickable()) { //Only clear Pieces are clickable
                 fl.removeViewAt(i);
@@ -312,8 +317,11 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      */
     private void notifyWinners(Map<Player, Integer> winners) {
         if (winners == null) { //Cat's Game
-
+            winners = new HashMap<>(2);
+            winners.put(Player.O, 1);
+            winners.put(Player.X, 1);
         }
+
         int winnersX = winners.get(Player.X);
         int winnersO = winners.get(Player.O);
         if (winnersX == 0 && winnersO == 0) { // No winners yet
