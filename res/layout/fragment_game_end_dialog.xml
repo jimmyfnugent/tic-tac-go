@@ -2,59 +2,71 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:background="@color/black">
-
-    <TextView
-        android:id="@+id/gameEndTitle"
-        style="@style/playerNameText"
-        android:text="@string/gameEndTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+    android:background="@color/white"
+    android:layout_centerInParent="true">
 
     <RelativeLayout
-        android:id="@+id/gameEndTextLayout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gameEndTitle"
-        android:layout_centerHorizontal="true">
+        android:layout_margin="4dp"
+        android:background="@color/black">
 
         <TextView
-            android:text="@string/gameEndText"
-            android:id="@+id/gameEndText"
+            android:id="@+id/gameEndTitle"
             style="@style/playerNameText"
-            android:textSize="30dp"
+            android:text="@string/gameEndTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"/>
 
-        <ImageView
-            android:id="@+id/gameEndPieceLeft"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/gameEndTextLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:adjustViewBounds="true"
-            android:layout_alignBottom="@id/gameEndText"
-            android:layout_alignTop="@id/gameEndText"
-            android:scaleType="fitStart"
-            android:src="@drawable/piece_x"/>
+            android:layout_below="@id/gameEndTitle"
+            android:layout_centerHorizontal="true">
 
-        <ImageView
-            android:id="@+id/gameEndPieceRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:adjustViewBounds="true"
-            android:layout_alignBottom="@id/gameEndText"
-            android:layout_alignTop="@id/gameEndText"
-            android:scaleType="fitEnd"
-            android:src="@drawable/piece_o"/>
+            <TextView
+                android:text="@string/gameEndText"
+                android:id="@+id/gameEndText"
+                style="@style/playerNameText"
+                android:textSize="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/gameEndPieceLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:adjustViewBounds="true"
+                android:layout_alignBottom="@id/gameEndText"
+                android:layout_alignTop="@id/gameEndText"
+                android:scaleType="fitCenter"
+                android:src="@drawable/piece_x"
+                android:layout_toLeftOf="@id/gameEndText"
+                android:layout_toStartOf="@id/gameEndText"/>
+
+            <ImageView
+                android:id="@+id/gameEndPieceRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:adjustViewBounds="true"
+                android:layout_alignBottom="@id/gameEndText"
+                android:layout_alignTop="@id/gameEndText"
+                android:scaleType="fitCenter"
+                android:src="@drawable/piece_o"
+                android:layout_toRightOf="@id/gameEndText"
+                android:layout_toEndOf="@id/gameEndText"/>
+        </RelativeLayout>
+
     </RelativeLayout>
 </RelativeLayout>

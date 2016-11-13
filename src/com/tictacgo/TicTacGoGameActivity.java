@@ -101,6 +101,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate(DirectionPickerFragment.class.getName(),
                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getFragmentManager().popBackStackImmediate(GameEndFragment.class.getName(),
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         });
 
@@ -153,7 +155,6 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         board.makePiece(row, column);
         fl.addView(board.newPiece(dirVertical, dirHorizontal));
 
-        notifyWinners(board.getWinners());
         if (board.willMove()) {
             // Only move the pieces after both players have moved.
             board.updatePositionsNoCollisions();
@@ -321,5 +322,10 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         for (int i = 0; i < fl.getChildCount(); i++) {
             fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
         }
+
+        findViewById(R.id.gamePlayerTwoPiece).clearAnimation();
+        findViewById(R.id.gamePlayerTwoPiece).setRotation(0);
+        findViewById(R.id.gamePlayerOnePiece).clearAnimation();
+        findViewById(R.id.gamePlayerOnePiece).setRotation(0);
     }
 }

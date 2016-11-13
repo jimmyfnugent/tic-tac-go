@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.tictacgo.data.Board.Player;
 
@@ -33,17 +37,36 @@ public class GameEndFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Create and locate view properly
         View view = inflater.inflate(R.layout.fragment_game_end_dialog, container, false);
+
+        ImageView pieceLeft = (ImageView) view.findViewById(R.id.gameEndPieceLeft);
+        ImageView pieceRight = (ImageView) view.findViewById(R.id.gameEndPieceRight);
+        TextView text = (TextView) view.findViewById(R.id.gameEndText);
+
+        pieceLeft.setImageResource(winner == Player.O ? R.drawable.piece_o : R.drawable.piece_x);
+        pieceRight.setImageResource(winner == Player.X ? R.drawable.piece_x : R.drawable.piece_o);
+
+        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+        rotation.setDuration(1000);
+        pieceLeft.startAnimation(rotation);
+        pieceRight.startAnimation(rotation);
+
+        if (winner == Player.X) {
+            CharSequence name =
+                    ((TextView) getActivity().findViewById(R.id.gamePlayerOneName)).getText();
+            text.setText(name + " wins!");
+
+        } else if (winner == Player.O) {
+            CharSequence name =
+                    ((TextView) getActivity().findViewById(R.id.gamePlayerTwoName)).getText();
+            text.setText(name + " wins!");
+
+        } else {
+            text.setText("Tie game");
+        }
 
         return view;
     }
