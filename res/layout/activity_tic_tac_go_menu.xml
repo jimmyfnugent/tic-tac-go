@@ -28,7 +28,7 @@
                 android:layout_weight="100"
                 android:hint="@string/playerOneName"
                 android:maxLines="1"
-                android:inputType="text"/>
+                android:inputType="textCapSentences"/>
             </LinearLayout>
         <LinearLayout
             android:id="@+id/localScreenPlayerTwo"
@@ -49,7 +49,7 @@
                 android:layout_weight="100"
                 android:hint="@string/playerTwoName"
                 android:maxLines="1"
-                android:inputType="text"/>
+                android:inputType="textCapSentences"/>
         </LinearLayout>
         <RadioGroup
             android:id="@+id/localTurnSelect"
