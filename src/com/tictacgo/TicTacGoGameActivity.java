@@ -121,6 +121,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
          */
         findViewById(R.id.newGameButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                getFragmentManager().popBackStackImmediate(GameEndFragment.class.getName(),
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 board = new Board(turn, fl.getHeight(), getBaseContext());
                 finished = false;
                 updateBoard();
