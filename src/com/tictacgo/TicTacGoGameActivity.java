@@ -29,6 +29,7 @@ import java.util.Map;
 public class TicTacGoGameActivity extends Activity implements OnDirectionPickedListener {
     private static final String BOARD_KEY = "board";
     private static final String TURN_KEY = "activityTurn";
+    private static final String FINISHED_KEY = "finished";
 
     /**
      * The Board of the game
@@ -50,6 +51,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      */
     private Player turn;
 
+    private boolean finished;
+
     private FragmentManager fragmentManager;
 
     @Override
@@ -64,6 +67,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         if (savedInstanceState == null) {
             turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
             board = new Board(turn, 0, getBaseContext());
+            finished = false;
         }
 
         // Set up the screen
@@ -76,23 +80,29 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         // What to do when an empty space is clicked
         onPieceClicked = new View.OnClickListener() {
             public void onClick(View v) {
-                int height = fl.getHeight();
+                if (!finished) {
+                    int height = fl.getHeight();
 
-                // Create new Fragment Transaction and remove all previous DirectionPickers
-                fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    // Create new Fragment Transaction and remove all previous DirectionPickers
+                    fragmentManager.popBackStackImmediate(DirectionPickerFragment.class.getName(),
+                            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                // Make the new DirectionPicker
-                LayoutParams params = (LayoutParams) v.getLayoutParams();
-                DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
-                        board.getTurn(), params.topMargin * 3 / height,
-                        params.leftMargin * 3 / height, height);
+                    // Make the new DirectionPicker
+                    LayoutParams params = (LayoutParams) v.getLayoutParams();
+                    DirectionPickerFragment directionPicker = DirectionPickerFragment.newInstance(
+                            board.getTurn(), params.topMargin * 3 / height,
+                            params.leftMargin * 3 / height, height);
 
-                // Add the new DirectionPicker
-                fragmentTransaction.add(R.id.gameBoard, directionPicker);
-                fragmentTransaction.addToBackStack(DirectionPickerFragment.class.getName());
-                fragmentTransaction.commit();
+                    // Add the new DirectionPicker
+                    fragmentTransaction.add(R.id.gameBoard, directionPicker);
+                    fragmentTransaction.addToBackStack(DirectionPickerFragment.class.getName());
+                    fragmentTransaction.commit();
+
+                } else {
+                    getFragmentManager().popBackStackImmediate(GameEndFragment.class.getName(),
+                            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
             }
         };
 
@@ -112,6 +122,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         findViewById(R.id.newGameButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 board = new Board(turn, fl.getHeight(), getBaseContext());
+                finished = false;
                 updateBoard();
                 updateTurnIndicator();
             }
@@ -124,6 +135,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
         state.putSerializable(TURN_KEY, turn);
         state.putBundle(BOARD_KEY, board.getBundle());
+        state.putBoolean(FINISHED_KEY, finished);
     }
 
     @Override
@@ -132,6 +144,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
 
         turn = ((Player) state.getSerializable(TURN_KEY));
         board = new Board(fl.getHeight(), getBaseContext(), state.getBundle(BOARD_KEY));
+        finished = state.getBoolean(FINISHED_KEY);
     }
 
     @Override
@@ -198,9 +211,9 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                     public void onAnimationEnd(Animator animator) {
                         board.resolveFullCollisions();
                         board.nextTurn();
+                        notifyWinners(board.getWinners());
                         updateTurnIndicator();
                         updateBoard();
-                        notifyWinners(board.getWinners());
                     }
                 });
 
@@ -261,11 +274,16 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         if (board.getTurn() == Player.X) {
             findViewById(R.id.gamePlayerTwoPiece).clearAnimation();
             findViewById(R.id.gamePlayerTwoPiece).setRotation(0);
-            findViewById(R.id.gamePlayerOnePiece).startAnimation(rotation);
+            if (!finished) {
+                findViewById(R.id.gamePlayerOnePiece).startAnimation(rotation);
+            }
+
         } else {
             findViewById(R.id.gamePlayerOnePiece).clearAnimation();
             findViewById(R.id.gamePlayerOnePiece).setRotation(0);
-            findViewById(R.id.gamePlayerTwoPiece).startAnimation(rotation);
+            if (!finished) {
+                findViewById(R.id.gamePlayerTwoPiece).startAnimation(rotation);
+            }
         }
     }
 
@@ -298,8 +316,9 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         int winnersO = winners.get(Player.O);
         if (winnersX == 0 && winnersO == 0) { // No winners yet
             return;
-        }
-        else {
+
+        } else {
+            finished = true;
             GameEndFragment fragment = null;
             if (winnersX == winnersO) { //Tie
                 fragment = GameEndFragment.newInstance(null);
@@ -318,14 +337,5 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             fragmentTransaction.addToBackStack(GameEndFragment.class.getName());
             fragmentTransaction.commit();
         }
-
-        for (int i = 0; i < fl.getChildCount(); i++) {
-            fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
-        }
-
-        findViewById(R.id.gamePlayerTwoPiece).clearAnimation();
-        findViewById(R.id.gamePlayerTwoPiece).setRotation(0);
-        findViewById(R.id.gamePlayerOnePiece).clearAnimation();
-        findViewById(R.id.gamePlayerOnePiece).setRotation(0);
     }
 }
