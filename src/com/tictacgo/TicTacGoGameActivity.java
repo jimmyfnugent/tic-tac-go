@@ -199,6 +199,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
                         board.nextTurn();
                         updateTurnIndicator();
                         updateBoard();
+                        notifyWinners(board.getWinners());
                     }
                 });
 
@@ -298,16 +299,25 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             return;
         }
         else {
+            GameEndFragment fragment = null;
             if (winnersX == winnersO) { //Tie
-
+                fragment = GameEndFragment.newInstance(null);
             }
             else if (winnersX < winnersO) { //O wins
-
+                fragment = GameEndFragment.newInstance(Player.O);
             }
             else { //X wins
-
+                fragment = GameEndFragment.newInstance(Player.X);
             }
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            // Add the new DirectionPicker
+            fragmentTransaction.add(R.id.gameScreen, fragment);
+            fragmentTransaction.addToBackStack(GameEndFragment.class.getName());
+            fragmentTransaction.commit();
         }
+
         for (int i = 0; i < fl.getChildCount(); i++) {
             fl.getChildAt(i).setClickable(false); //Make sure you can't click on the board anymore
         }
