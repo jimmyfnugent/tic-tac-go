@@ -21,5 +21,6 @@
     <string name="downRight">Down Right</string>
 
     <string name="gameEndTitle">Game Over</string>
-    <string name="gameEndText">Player 1 Wins</string>
+    <string name="gameEndTie">Tie game</string>
+    <string name="winsSuffix">\u0020wins!</string>
 </resources>

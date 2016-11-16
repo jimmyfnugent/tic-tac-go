@@ -32,6 +32,13 @@ public class GameEndFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        state.putSerializable(WINNER_ARGUMENT_KEY, winner);
+    }
+
+    @Override
     public void setArguments(Bundle arguments) {
         winner = (Player) arguments.getSerializable(WINNER_ARGUMENT_KEY);
     }
@@ -39,6 +46,10 @@ public class GameEndFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            setArguments(savedInstanceState);
+        }
+
         // Create and locate view properly
         View view = inflater.inflate(R.layout.fragment_game_end_dialog, container, false);
 
@@ -57,15 +68,15 @@ public class GameEndFragment extends Fragment {
         if (winner == Player.X) {
             CharSequence name =
                     ((TextView) getActivity().findViewById(R.id.gamePlayerOneName)).getText();
-            text.setText(name + " wins!");
+            text.setText(name + getString(R.string.winsSuffix));
 
         } else if (winner == Player.O) {
             CharSequence name =
                     ((TextView) getActivity().findViewById(R.id.gamePlayerTwoName)).getText();
-            text.setText(name + " wins!");
+            text.setText(name + getString(R.string.winsSuffix));
 
         } else {
-            text.setText("Tie game");
+            text.setText(getString(R.string.gameEndTie));
         }
 
         return view;
