@@ -107,10 +107,6 @@ public class Board {
                 row.add(new Space());
             }
 
-            for (int j = 0; j < SIDE_LENGTH; j++) {
-                row.add(new Space());
-            }
-
             spaces.add(row);
         }
 

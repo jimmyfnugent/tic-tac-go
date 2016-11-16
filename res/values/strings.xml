@@ -19,4 +19,8 @@
     <string name="downLeft">Down Left</string>
     <string name="downMiddle">Down Middle</string>
     <string name="downRight">Down Right</string>
+
+    <string name="gameEndTitle">Game Over</string>
+    <string name="gameEndTie">Tie game</string>
+    <string name="winsSuffix">\u0020wins!</string>
 </resources>

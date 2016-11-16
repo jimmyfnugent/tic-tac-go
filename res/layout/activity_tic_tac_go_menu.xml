@@ -3,6 +3,13 @@
     android:id="@+id/gameSelectScreen"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/name"/>
     <LinearLayout
         android:id="@+id/localScreenNames"
         android:layout_width="fill_parent"
