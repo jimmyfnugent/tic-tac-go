@@ -235,7 +235,7 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         if (!finished && board.isFull()) {
             notifyWinners(null);
         }
-        
+
         for (int i = 0; i < fl.getChildCount(); i++) {
             if (fl.getChildAt(i).isClickable()) { //Only clear Pieces are clickable
                 fl.removeViewAt(i);
