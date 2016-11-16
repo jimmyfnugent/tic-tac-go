@@ -18,8 +18,17 @@ import com.tictacgo.data.Board.Player;
 public class GameEndFragment extends Fragment {
     private static final String WINNER_ARGUMENT_KEY = "winner";
 
+    /**
+     * The player who won, or null if it was a tie game.
+     */
     public Player winner;
 
+    /**
+     * Create and return a new GameEndFragment with the given winner.
+     *
+     * @param winner The winner of the game, or null if it was a tie game.
+     * @return The GameEndFragmentwith the given winner.
+     */
     public static GameEndFragment newInstance(Player winner) {
         Bundle arguments = new Bundle();
 
@@ -57,6 +66,7 @@ public class GameEndFragment extends Fragment {
         ImageView pieceRight = (ImageView) view.findViewById(R.id.gameEndPieceRight);
         TextView text = (TextView) view.findViewById(R.id.gameEndText);
 
+        // Set correct pieces
         pieceLeft.setImageResource(winner == Player.O ? R.drawable.piece_o : R.drawable.piece_x);
         pieceRight.setImageResource(winner == Player.X ? R.drawable.piece_x : R.drawable.piece_o);
 
@@ -65,6 +75,7 @@ public class GameEndFragment extends Fragment {
         pieceLeft.startAnimation(rotation);
         pieceRight.startAnimation(rotation);
 
+        // Set winner text
         if (winner == Player.X) {
             CharSequence name =
                     ((TextView) getActivity().findViewById(R.id.gamePlayerOneName)).getText();
