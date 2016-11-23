@@ -31,6 +31,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
     private static final String BOARD_KEY = "board";
     private static final String TURN_KEY = "activityTurn";
     private static final String FINISHED_KEY = "finished";
+    private static final String PLAYER_X_NAME_KEY = "playerXName";
+    private static final String PLAYER_O_NAME_KEY = "playerOName";
 
     /**
      * The Board of the game
@@ -52,31 +54,51 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
      */
     private Player turn;
 
+    /**
+     * Whether this game has ended (true) or not (false). Used to disable clicking.
+     */
     private boolean finished;
+
+    /**
+     * The X Player's name
+     */
+    private String playerXName;
+
+    /**
+     * The O player's name
+     */
+    private String playerOName;
 
     private FragmentManager fragmentManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle state) {
+        super.onCreate(state);
         setContentView(R.layout.activity_tic_tac_go_game);
 
         fragmentManager = getFragmentManager();
 
         Intent intent = getIntent();
+        fl = (FrameLayout) findViewById(R.id.gameBoard);
 
-        if (savedInstanceState == null) {
+        if (state == null) {
             turn = (Player) intent.getSerializableExtra(TicTacGoMenuActivity.PLAYER_KEY);
             board = new Board(turn, 0, getBaseContext());
             finished = false;
+            playerXName = intent.getStringExtra(TicTacGoMenuActivity.P1_NAME_KEY);
+            playerOName = intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY);
+
+        } else {
+            turn = ((Player) state.getSerializable(TURN_KEY));
+            board = new Board(fl.getHeight(), getBaseContext(), state.getBundle(BOARD_KEY));
+            finished = state.getBoolean(FINISHED_KEY);
+            playerXName = state.getString(PLAYER_X_NAME_KEY);
+            playerOName = state.getString(PLAYER_O_NAME_KEY);
         }
 
         // Set up the screen
-        ((TextView) findViewById(R.id.gamePlayerOneName))
-                .setText(intent.getStringExtra(TicTacGoMenuActivity.P1_NAME_KEY));
-        ((TextView) findViewById(R.id.gamePlayerTwoName))
-                .setText(intent.getStringExtra(TicTacGoMenuActivity.P2_NAME_KEY));
-        fl = (FrameLayout) findViewById(R.id.gameBoard);
+        ((TextView) findViewById(R.id.gamePlayerOneName)).setText(playerXName);
+        ((TextView) findViewById(R.id.gamePlayerTwoName)).setText(playerOName);
 
         // What to do when an empty space is clicked
         onPieceClicked = new View.OnClickListener() {
@@ -139,15 +161,8 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
         state.putSerializable(TURN_KEY, turn);
         state.putBundle(BOARD_KEY, board.getBundle());
         state.putBoolean(FINISHED_KEY, finished);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
-
-        turn = ((Player) state.getSerializable(TURN_KEY));
-        board = new Board(fl.getHeight(), getBaseContext(), state.getBundle(BOARD_KEY));
-        finished = state.getBoolean(FINISHED_KEY);
+        state.putString(PLAYER_X_NAME_KEY, playerXName);
+        state.putString(PLAYER_O_NAME_KEY, playerOName);
     }
 
     @Override
@@ -331,13 +346,13 @@ public class TicTacGoGameActivity extends Activity implements OnDirectionPickedL
             finished = true;
             GameEndFragment fragment = null;
             if (winnersX == winnersO) { //Tie
-                fragment = GameEndFragment.newInstance(null);
+                fragment = GameEndFragment.newInstance(null, null);
             }
             else if (winnersX < winnersO) { //O wins
-                fragment = GameEndFragment.newInstance(Player.O);
+                fragment = GameEndFragment.newInstance(Player.O, playerOName);
             }
             else { //X wins
-                fragment = GameEndFragment.newInstance(Player.X);
+                fragment = GameEndFragment.newInstance(Player.X, playerXName);
             }
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

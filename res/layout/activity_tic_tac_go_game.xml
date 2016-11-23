@@ -8,14 +8,12 @@
         android:id="@+id/gameBoard"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
         android:layout_alignParentTop="true">
         <ImageView
             android:contentDescription="@string/board"
             android:id="@+id/background"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:clickable="false"
             android:src="@drawable/board"
             android:adjustViewBounds="true"/>
     </FrameLayout>
@@ -28,7 +26,6 @@
             android:orientation="horizontal"
             android:id="@+id/gameControlButtons"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content">
@@ -43,7 +40,6 @@
             android:contentDescription="@string/xPiece"
             android:id="@+id/gamePlayerOnePiece"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:src="@drawable/piece_x"
@@ -57,14 +53,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/gamePlayerOnePiece"
-            android:layout_toRightOf="@id/gamePlayerOnePiece"
             android:layout_alignTop="@id/gamePlayerOnePiece"
             android:layout_alignBottom="@id/gamePlayerOnePiece"/>
 
         <ImageView
             android:contentDescription="@string/oPiece"
             android:id="@+id/gamePlayerTwoPiece"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/gamePlayerOnePiece"
             android:layout_width="wrap_content"
@@ -79,7 +73,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/gamePlayerTwoPiece"
-            android:layout_toRightOf="@id/gamePlayerTwoPiece"
             android:layout_below="@id/gamePlayerOneName"
             android:layout_alignTop="@id/gamePlayerTwoPiece"
             android:layout_alignBottom="@id/gamePlayerTwoPiece"/>
