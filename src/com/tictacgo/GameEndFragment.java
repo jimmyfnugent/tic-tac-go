@@ -17,11 +17,17 @@ import com.tictacgo.data.Board.Player;
  */
 public class GameEndFragment extends Fragment {
     private static final String WINNER_ARGUMENT_KEY = "winner";
+    private static final String WINNER_NAME_ARGUMENT_KEY = "winnerName";
+
+    /**
+     * The name of the player who won, or null if it was a tie game.
+     */
+    private String winnerName;
 
     /**
      * The player who won, or null if it was a tie game.
      */
-    public Player winner;
+    private Player winner;
 
     /**
      * Create and return a new GameEndFragment with the given winner.
@@ -29,10 +35,11 @@ public class GameEndFragment extends Fragment {
      * @param winner The winner of the game, or null if it was a tie game.
      * @return The GameEndFragmentwith the given winner.
      */
-    public static GameEndFragment newInstance(Player winner) {
+    public static GameEndFragment newInstance(Player winner, String winnerName) {
         Bundle arguments = new Bundle();
 
         arguments.putSerializable(WINNER_ARGUMENT_KEY, winner);
+        arguments.putString(WINNER_NAME_ARGUMENT_KEY, winnerName);
 
         GameEndFragment fragment = new GameEndFragment();
         fragment.setArguments(arguments);
@@ -45,11 +52,13 @@ public class GameEndFragment extends Fragment {
         super.onSaveInstanceState(state);
 
         state.putSerializable(WINNER_ARGUMENT_KEY, winner);
+        state.putString(WINNER_NAME_ARGUMENT_KEY, winnerName);
     }
 
     @Override
     public void setArguments(Bundle arguments) {
         winner = (Player) arguments.getSerializable(WINNER_ARGUMENT_KEY);
+        winnerName = arguments.getString(WINNER_NAME_ARGUMENT_KEY);
     }
 
     @Override
@@ -76,18 +85,11 @@ public class GameEndFragment extends Fragment {
         pieceRight.startAnimation(rotation);
 
         // Set winner text
-        if (winner == Player.X) {
-            CharSequence name =
-                    ((TextView) getActivity().findViewById(R.id.gamePlayerOneName)).getText();
-            text.setText(name + getString(R.string.winsSuffix));
-
-        } else if (winner == Player.O) {
-            CharSequence name =
-                    ((TextView) getActivity().findViewById(R.id.gamePlayerTwoName)).getText();
-            text.setText(name + getString(R.string.winsSuffix));
+        if (winner == null) {
+            text.setText(getString(R.string.gameEndTie));
 
         } else {
-            text.setText(getString(R.string.gameEndTie));
+            text.setText(winnerName + getString(R.string.winsSuffix));
         }
 
         return view;
