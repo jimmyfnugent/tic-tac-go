@@ -4,19 +4,22 @@
     android:id="@+id/directionPicker"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/black">
+    android:background="@android:color/black">
     <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
+            android:contentDescription="@string/upLeft"
             android:id="@+id/directionTopLeft"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/upMiddle"
             android:id="@+id/directionTopMiddle"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/upRight"
             android:id="@+id/directionTopRight"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
@@ -25,14 +28,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
+            android:contentDescription="@string/middleLeft"
             android:id="@+id/directionMiddleLeft"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/clear"
             android:id="@+id/directionClear"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/middleRight"
             android:id="@+id/directionMiddleRight"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
@@ -41,14 +47,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
+            android:contentDescription="@string/downLeft"
             android:id="@+id/directionBottomLeft"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/downMiddle"
             android:id="@+id/directionBottomMiddle"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>
         <ImageView
+            android:contentDescription="@string/downRight"
             android:id="@+id/directionBottomRight"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"/>

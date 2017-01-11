@@ -6,14 +6,14 @@
     android:layout_height="fill_parent">
     <FrameLayout
         android:id="@+id/gameBoard"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentStart="true">
         <ImageView
             android:contentDescription="@string/board"
             android:id="@+id/background"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
             android:src="@drawable/board"
             android:adjustViewBounds="true"/>
     </FrameLayout>
@@ -21,7 +21,7 @@
         android:id="@+id/gameInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gameBoard">
+        android:layout_toEndOf="@id/gameBoard">
         <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/gameControlButtons"
@@ -29,7 +29,7 @@
             android:layout_alignParentEnd="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content">
-                <Button
+            <Button
                 android:id="@+id/newGameButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,9 +67,9 @@
             android:adjustViewBounds="true"
             android:layout_height="wrap_content" />
         <TextView
+            style="@style/playerNameText"
             android:id="@+id/gamePlayerTwoName"
             android:text="@string/playerTwoName"
-            style="@style/playerNameText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/gamePlayerTwoPiece"

@@ -349,4 +349,22 @@ public class Piece extends ImageView {
     public Animator getHalfwayAnimator() {
         return halfwayAnimator;
     }
+
+    /**
+     * Set the board height of the current game. This updates sideLength to be 1/3 of that value.
+     *
+     * @param boardHeight The board height of the current game.
+     */
+    public void setBoardHeight(int boardHeight) {
+        sideLength = boardHeight / 3;
+
+        setLayoutParams(new LayoutParams(sideLength, sideLength, Gravity.TOP | Gravity.LEFT));
+        updateUiPosition();
+
+        /**
+         * Set the Piece to rotate around its center, to face the correct direction.
+         */
+        setPivotX(sideLength / 2);
+        setPivotY(sideLength / 2);
+    }
 }

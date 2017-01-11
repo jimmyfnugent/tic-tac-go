@@ -10,6 +10,7 @@ import java.util.Set;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewManager;
 import android.view.animation.LinearInterpolator;
@@ -20,6 +21,14 @@ import android.view.animation.LinearInterpolator;
  * it is.
  */
 public class Board {
+
+    private static final String TURN_KEY = "boardTurn";
+    private static final String START_TURN_KEY = "boardStartTurn";
+    private static final String PIECES_ROW_KEY = "piecesRow";
+    private static final String PIECES_COLUMN_KEY = "piecesColumn";
+    private static final String PIECES_DIR_HORIZ_KEY = "piecesDirHorizontal";
+    private static final String PIECES_DIR_VERT_KEY = "piecesDirVertical";
+    private static final String PIECES_PLAYER_KEY = "piecesPlayer";
 
     public enum Player {
         X,
@@ -98,10 +107,6 @@ public class Board {
                 row.add(new Space());
             }
 
-            for (int j = 0; j < SIDE_LENGTH; j++) {
-                row.add(new Space());
-            }
-
             spaces.add(row);
         }
 
@@ -116,6 +121,97 @@ public class Board {
                 turn = Player.X; //X goes first
         }
         startTurn = turn; //To decide when to move the Pieces
+    }
+
+    /**
+     * Load this Board from the given Bundle.
+     *
+     * @param height The height of the Board.
+     * @param context The context of the Board.
+     * @param state The Bundle to load state from, created in {@link Board#getBundle()}.
+     */
+    public Board(int height, Context context, Bundle state) {
+        this.context = context;
+        this.height = height;
+
+        /**
+         * Initializes the spaces ArrayList to all empty Spaces
+         */
+        spaces = new ArrayList<>(SIDE_LENGTH);
+
+        for (int i = 0; i < SIDE_LENGTH; i++) {
+            List<Space> row = new ArrayList<>(SIDE_LENGTH);
+
+            for (int j = 0; j < SIDE_LENGTH; j++) {
+                row.add(new Space());
+            }
+
+            for (int j = 0; j < SIDE_LENGTH; j++) {
+                row.add(new Space());
+            }
+
+            spaces.add(row);
+        }
+
+        /**
+         * Sets up turn
+         */
+        turn = ((Player) state.getSerializable(TURN_KEY));
+        startTurn = ((Player) state.getSerializable(START_TURN_KEY)); //To decide when to move the Pieces
+
+        // Load the Pieces
+        pieces = new ArrayList<>(SIDE_LENGTH * SIDE_LENGTH * 2);
+
+        int[] columns = state.getIntArray(PIECES_COLUMN_KEY);
+        int[] rows = state.getIntArray(PIECES_ROW_KEY);
+        int[] dirHoriz = state.getIntArray(PIECES_DIR_HORIZ_KEY);
+        int[] dirVert = state.getIntArray(PIECES_DIR_VERT_KEY);
+        String[] players = state.getStringArray(PIECES_PLAYER_KEY);
+
+        for (int i = 0; i < columns.length; i++) {
+            Piece piece = new Piece(rows[i], columns[i], dirVert[i], dirHoriz[i],
+                    players[i].equals("X") ? Player.X : Player.O, height / 3, context);
+
+            pieces.add(piece);
+            getSpace(rows[i], columns[i]).addPiece(piece);
+        }
+    }
+
+    /**
+     * Create and return a Bundle which can be used to restore state after app reload.
+     *
+     * @return A Bundle which can be used to restore state, with the
+     * {@link Board#Board(int, Context, Bundle)} constructor.
+     */
+    public Bundle getBundle() {
+        Bundle state = new Bundle();
+
+        state.putSerializable(TURN_KEY, turn);
+        state.putSerializable(START_TURN_KEY, startTurn);
+
+        int[] columns = new int[pieces.size()];
+        int[] rows = new int[pieces.size()];
+        int[] dirHoriz = new int[pieces.size()];
+        int[] dirVert = new int[pieces.size()];
+        String[] players = new String[pieces.size()];
+
+        for (int i = 0; i < pieces.size(); i++) {
+            Piece piece = pieces.get(i);
+
+            columns[i] = piece.getColumn();
+            rows[i] = piece.getRow();
+            dirHoriz[i] = piece.getHorizontalDirection();
+            dirVert[i] = piece.getVerticalDirection();
+            players[i] = piece.getPlayer() == Player.X ? "X" : "O";
+        }
+
+        state.putIntArray(PIECES_COLUMN_KEY, columns);
+        state.putIntArray(PIECES_ROW_KEY, rows);
+        state.putIntArray(PIECES_DIR_HORIZ_KEY, dirHoriz);
+        state.putIntArray(PIECES_DIR_VERT_KEY, dirVert);
+        state.putStringArray(PIECES_PLAYER_KEY, players);
+
+        return state;
     }
 
     /**
@@ -470,8 +566,17 @@ public class Board {
         return turn;
     }
 
-    public int getHeight() {
-        return height;
+    /**
+     * Set the height of this board to the given value. Also pass this through to the Pieces.
+     *
+     * @param height The new height of this board.
+     */
+    public void setHeight(int height) {
+        this.height = height;
+
+        for (Piece piece : pieces) {
+            piece.setBoardHeight(height);
+        }
     }
 
     public Context getContext() {
